@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+	  'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<!-- All text on this page is property of Michael Sartin-Tarm. (c) 2013. -->
+<html xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html charset=utf-8'/>
+    <title>WebGL Demo</title>
+    <link rel='stylesheet' type='text/css' href='styles.css'/>
+    <link rel='icon' type='image/x-icon' href='./favicon.ico'/>
+	
+    <link rel="stylesheet" href="webgl.css" type="text/css">
+    <script src="glMatrix-0.9.5.min.js" type="text/javascript"></script>
+    <script src="sylvester.js" type="text/javascript"></script>
+    <script src="webgl-utils.js" type="text/javascript"></script>
+    <script src="functions.js" type="text/javascript"></script>
+    <script src="vec3.js" type="text/javascript"></script>
+    <script src="GLobject.js" type="text/javascript"></script>
+    <script src="GLmatrix.js" type="text/javascript"></script>
+    <script src="Cylinder.js" type="text/javascript"></script>
+    <script src="Stool.js" type="text/javascript"></script>
+    <script src="Sphere.js" type="text/javascript"></script>
+    <script src="Torus.js" type="text/javascript"></script>
+    <script src="Disk.js" type="text/javascript"></script>
+    <script src="SixSidedPrism.js" type="text/javascript"></script>
+    <script src="start.js" type="text/javascript"></script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+precision mediump float;
+
+varying float vDiffuse;
+varying float vSpecular;
+
+varying vec3 vColor;
+
+void main(void) {
+
+  vec3 ambColor = vColor * 0.1;
+  vec3 diffColor = vColor * vDiffuse;
+  vec3 specColor = vec3(.6,.6,.6) * vSpecular;
+
+  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
+}
+    </script>
+    <script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aVertexPosition;
+attribute vec3 aVertexNormal;
+attribute vec3 aVertexColor;
+
+uniform mat4 uMVmatrix;
+uniform mat4 uTransMatrix;
+uniform mat4 uPmatrix;
+uniform mat4 uNmatrix;
+
+uniform vec3 uLightPos;
+uniform vec3 uViewPos;
+
+varying float vDiffuse;
+varying float vSpecular;
+varying vec3 vColor;
+
+void main(void) {
+
+  vec3 lightPosN = normalize(uLightPos);
+  // -- Position -- //
+
+  gl_Position = uPmatrix * uMVmatrix * vec4(aVertexPosition, 1.0);
+
+  // -- Lighting -- //
+
+  // Ambient component we'll leave until frag shader
+  vColor = aVertexColor;
+
+  // Diffuse component
+  vDiffuse = dot(aVertexNormal, lightPosN);
+  if (vDiffuse < 0.0) { vDiffuse = 0.0; }
+       
+  // Specular
+    vec3 vReflection = (aVertexNormal * vDiffuse *
+		 2.0) - lightPosN;
+    vec3 normalizedR = normalize(vReflection);
+    vSpecular = dot(normalizedR, uViewPos);
+    if (vSpecular <= 0. || vDiffuse <= 0.) { vSpecular = 0.0; }
+    vSpecular = vSpecular * vSpecular;
+    vSpecular = vSpecular * vSpecular;
+    vSpecular = vSpecular * vSpecular;
+    vSpecular = vSpecular * vSpecular;
+}
+    </script>
+  </head>
+
+  <body>
+    <div id='wrap'>
+      <div id='header'>
+        <div class='one_third'>
+          <input type="button" 
+		 onclick="expand('title2', 'content2')" 
+		 value="WebGL:" 
+		 class="button_add" />
+	</div>
+        <div class='one_third'>A</div>
+        <div class='one_third'>Demo</div>
+      </div>
+
+      <script type="text/javascript">
+        function expand() {
+	document.getElementById("header").style.display = "none";
+	document.getElementById("footer").style.display = "none";
+        var id_ = document.getElementById(arguments[1]);
+        var notOpen_ = (id_.style.display !== "inline-block");
+        if (notOpen_ == true) {
+        var cont_ = document.getElementById(arguments[0]);
+        id_.style.display = 'inline-block';
+        cont_.style.color = '#555577';
+	} else {
+        id_.style.display = 'none';
+        var cont_ = document.getElementById(arguments[0]);
+        cont_.style.width = '90%';
+        cont_.style.color = '#111144';
+        }
+        }
+      </script>
+
+      <div class='padDiv'> 
+	<div id = "banner">       
+	  <div class="lowAcross" ></div>
+          <div class="topAcross" ></div>
+          <div class="leftSide" ></div>
+          <div class="rightSide" ></div>
+          <div class="topLeft" ></div>
+          <div class="topRight" ></div>
+	  <div class="lowLeft" ></div>
+          <div class="lowRight" ></div>
+	  <div id="dashboard" style="padding: 20px; background-color: #000000;">
+	    <div id="positionXStats" style="display:none;"></div>
+	    <div id="positionYStats" style="display:none;"></div>
+	    <div id="rotateStats" style="display:none;"></div>
+	    <div id="rotateCamStats" style="display:none;"></div>
+	  </div>
+	</div>
+
+        <div class='main'>
+          <div class="border lowAcross" ></div>
+          <div class="border topAcross" ></div>
+          <div class="border leftSide" ></div>
+          <div class="border rightSide" ></div>
+          <div class="border topLeft" ></div>
+          <div class="border topRight" ></div>
+	  <div class="border lowLeft" ></div>
+          <div class="border lowRight" ></div>
+            <canvas id="glcanvas" width="1100" height="600" style="position: absolute 0px 0px; background-color:red; display:none;">
+			Your browser doesn't appear to support the HTML5 
+			<code>&lt;canvas&gt;</code> element.
+	    </canvas>
+          <div class="title" id="title2">            
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); start('cylinder')" 
+		   value="Cylinder" 
+		   class="button_add" 
+		   style="width:20%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); start('sphere')" 
+		   value="Sphere" 
+		   class="button_add"
+		   style="width:20%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); start('stool')" 
+		   value="Stool" 
+		   class="button_add"
+		   style="width:20%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); start('torus')" 
+		   value="Torus" 
+		   class="button_add"
+		   style="width:20%;"/>
+          </div>
+          <div id="webgl_object" class="content">
+<!--            <canvas id="glcanvas" style="width:400px; height:400px">
+			Your browser doesn't appear to support the HTML5 
+			<code>&lt;canvas&gt;</code> element.
+	    </canvas>-->
+	    <input type="button"
+		   onclick="expand('title2', 'settings')" 
+		   value="Change settings!" 
+		   class="button_add" />
+          </div>       
+		  
+          <div id="settings" class="content">
+              Move scene:<br/>
+              <input type="button" onclick="positionY.setInc(-1)" value="Up"/>
+              <input type="button" onclick="positionY.setInc(1)" value="Down"/>
+              <input type="button" onclick="positionX.setInc(-1)" value="Left"/>
+              <input type="button" onclick="positionX.setInc(1)" value="Right"/>
+	      <br/><br/>
+              Rotate camera once every:<br/>
+              <input type="button" onclick="rotateCam.setInc(6)" value="second"/>
+              <input type="button" onclick="rotateCam.setInc(3)" value="2 seconds"/>
+              <input type="button" onclick="rotateCam.setInc(2)" value="3 seconds"/>
+              <input type="button" onclick="rotateCam.setInc(1.5)" value="4 seconds"/>
+              <input type="button" onclick="rotateCam.setInc(1.2)" value="5 seconds"/>
+	      <br/>
+              <input type="button" onclick="rotateCam.pause()" value="||"/>
+              <br/>Rotate viewing frame once every:<br/>
+              <input type="button" onclick="rotateY.setInc(6)" value="second"/>
+              <input type="button" onclick="rotateY.setInc(3)" value="2 seconds"/>
+              <input type="button" onclick="rotateY.setInc(2)" value="3 seconds"/>
+              <input type="button" onclick="rotateY.setInc(1.5)" value="4 seconds"/>
+              <input type="button" onclick="rotateY.setInc(1.2)" value="5 seconds"/>
+	      <br/>
+              <input type="button" onclick="rotateY.pause()" value="||"/>
+              <br/><br/>Zoom:<br/>
+              <input type="button" onclick="zoom.setIncZoom(-1)" value="in"/>
+              <input type="button" onclick="zoom.setIncZoom(1)" value="out"/>
+              <input type="button" onclick="zoom.pause()" value="||"/>
+              <br/><br/>Adjust Stool Height:<br/>
+              <input type="button" onclick="stoolHeight.setStoolHeight(0.1)" value="up"/>
+              <input type="button" onclick="stoolHeight.setStoolHeight(-0.1)" value="down"/>
+              <br/><br/>Pause:<br/>
+              <input type="button" onclick="pause.toggle()" value="||"/>
+              <br/><br/>Select Shading:<br/>
+              <input type="button" value="ADS model"/>
+              <br/><br/>Reset Model:<br/>
+              <input type="button" value="Do Not Press" onclick="resetModel()"/>
+
+          </div>        
+	</div>
+      </div>
+    </div>
+      
+    <div id="footer"> 
+      <input type="button" 
+	     onclick="expand('title4', 'content4')" 
+	     value="(c) 2013 Batman and Robin" 
+	     class="button_add" />
+      <div id="content4" class="content">
+	A noob
+	
+      </div>
+      <div class="title" id="title4" > </div>            
+      
+    </div>
+    
+</div>
+</body>
+</html>
