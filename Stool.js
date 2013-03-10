@@ -32,6 +32,7 @@ function Stool() {
     this.cylinder3 = new Cylinder(0.065,0.070,0.015,30,30);
     this.disk3b = new Disk(0.015,0.070,30,30);
     this.torus1 = new Torus(0.008,0.115);
+    this.torus1.o.translate([0,0,0]);
 
     //moving parts
     colorVec.setvec(new vec3(0.5,0,1));
@@ -48,7 +49,6 @@ function Stool() {
     this.disk5 = new Disk(0,0.003,30,30);
 
     
-
 }
 
 Stool.prototype.draw = function() {

@@ -43,6 +43,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 
 	    var x_norm = x*xy;
 	    var y_norm = y*xy
+	    // z norm = sin theta
 
 	    this.o.addNorms(x_norm, y_norm, z_norm);;
 	    this.o.addPos(radius * x, radius * y, z);
@@ -58,10 +59,10 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
     //        Array indices of C and D are A / B + 1
 
     var indexData = [];
-    for (var latitude = 0; latitude < slices; latitude++) {
-	for (var longitude = 0; longitude < stacks; longitude++) {
-	    var A = (latitude * (slices + 1)) + longitude;
-	    var B = A + slices + 1;
+    for (var latitude = 0; latitude < this.stacks; latitude++) {
+	for (var longitude = 0; longitude < this.slices; longitude++) {
+	    var A = (latitude * (this.slices + 1)) + longitude;
+	    var B = A + this.slices + 1;
 	    var C = A + 1;
 	    var D = B + 1;
 	    this.o.addIndexes(A, B, C);

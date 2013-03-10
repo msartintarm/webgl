@@ -98,10 +98,6 @@ GLobject.prototype.initBuffers = function() {
 		  gl.STATIC_DRAW);
     this.indexBuff.itemSize = 1;
     this.indexBuff.numItems = this.indexData.length;
-    this.normData = [];
-    this.posData = [];
-    this.colData = [];
-    this.indexData = [];
 }
 
 GLobject.prototype.rotate = function(vec) {
@@ -116,9 +112,12 @@ GLobject.prototype.scale = function(number) {
 }
 
 GLobject.prototype.translate = function(vec) {
-    this.position[2] += vec[2]; 
-    this.position[1] += vec[1]; 
-    this.position[0] += vec[0]; 
+    for(var i = 0; i < this.posData.length; i += 3) {
+	this.posData[i] += vec[0]; 
+	this.posData[i+1] += vec[1]; 
+	this.posData[i+2] += vec[2]; 
+    }
+    this.initBuffers();
 }
 
 /**
