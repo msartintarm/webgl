@@ -112,34 +112,6 @@ function drawDashboard() {
     zoom.inc();
 }
 
-//
-// initWebGL
-//
-// Initialize WebGL, returning the GL context or null if
-// WebGL isn't available or could not be initialized.
-//
-function initGL() {
-    colorVec = new vec3(1,1,0);
-    try {
-	gl = canvas.getContext("experimental-webgl");
-	gl.viewportWidth = canvas.width;
-	gl.viewportHeight = canvas.height;
-    }
-    catch(e) {}
-    // If we don't have a GL context, give up now
-    if (!gl) {
-	alert("Unable to initialize WebGL. Your browser may not support it.");
-    }
-    positionX = new MatrixData("positionXStats");
-    positionY = new MatrixData("positionYStats");
-    rotateY = new MatrixData("rotateStats");
-    rotateCam = new MatrixData("rotateCamStats");
-    zoom = new MatrixData("zoomPerspectiveStats");
-    zoom.set(45);
-    pause = new booleanData("pause");
-    stoolHeight = new MatrixData("stoolHeight");
-}
-
 function tick() {
     requestAnimFrame(tick);
     drawScene();

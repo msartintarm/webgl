@@ -24,39 +24,45 @@ function Stool() {
     this.disk1t = new Disk(0.01,0.047,30,30);
     this.cylinder1 = new Cylinder(0.047,0.05,0.015,30,30);
     this.disk1b = new Disk(0.015,0.05,30,30);
-    colorVec.setvec(new vec3(1,0,0));
+    colorVec.setvec(new vec3(0.5,0,0));
     this.cylinder2 = new Cylinder(0.015,0.015,0.06,30,300); 
+    this.cylinder2.drawScrew();
 
-    colorVec.setvec(new vec3(0,1,1));
+    colorVec.setvec(new vec3(0,0.5,0.5));
     this.disk3t = new Disk(0.015,0.065,30,30);
     this.cylinder3 = new Cylinder(0.065,0.070,0.015,30,30);
     this.disk3b = new Disk(0.015,0.070,30,30);
     this.torus1 = new Torus(0.008,0.115);
-    this.torus1.o.translate([0,0,0]);
 
     //moving parts
-    colorVec.setvec(new vec3(0.5,0,1));
+    colorVec.setvec(new vec3(0.25,0,.5));
     this.disk4 = new Disk(0,seat_radius,30,30);
     this.cylinder4 = new Cylinder(seat_radius,seat_radius,0.005,30,30);
     this.cylinder5 = new Cylinder(seat_radius,seat_radius/2,0.0075,30,30);
-    colorVec.setvec(new vec3(1,1,1));
-    this.cylinder6 = new Cylinder(seat_radius/2,seat_radius/4,0.0015,30,30);
-    colorVec.setvec(new vec3(0,1,1));
-    this.cylinder7 = new Cylinder(seat_radius/4,0.01,0.006,30,30);
-    colorVec.setvec(new vec3(0,0,1));
-    this.cylinder8 = new Cylinder(0.01,0.01,0.16,30,30);
-    colorVec.setvec(new vec3(1,1,1));
-    this.disk5 = new Disk(0,0.003,30,30);
+    this.cylinder5.o.translate([0,0,0]);
 
-    
+    colorVec.setvec(new vec3(.5,.5,.5));
+    this.cylinder6 = new Cylinder(seat_radius/2,seat_radius/4,0.0015,30,30);
+    colorVec.setvec(new vec3(0,.5,.5));
+    this.cylinder7 = new Cylinder(seat_radius/4,0.01,0.006,30,30);
+    colorVec.setvec(new vec3(0,0,.5));
+    this.cylinder8 = new Cylinder(0.01,0.01,0.16,30,30);
+    colorVec.setvec(new vec3(.5,.5,.5));
+    this.disk5 = new Disk(0,0.003,30,30);
 }
 
-Stool.prototype.draw = function() {
+Stool.prototype.initBuffers = function(gl_) {
+    for(var i in this) {
+	alert(i);
+    }
+}
+
+Stool.prototype.draw = function(gl_) {
 
     //draws the legs of the stool
     for (var i = 0; i < 4; ++i) {
 	theMatrix.rotate(Math.PI/2, [0, 1.0, 0]);
-	this.stoolLeg.draw();
+	this.stoolLeg.draw(gl_);
     }
     
     //draw first fat cylinder
@@ -65,25 +71,25 @@ Stool.prototype.draw = function() {
     theMatrix.scale([12,12,12]);    
     theMatrix.rotate(Math.PI/2, [1, 0, 0]);
 
-    this.disk1t.draw();
-    this.cylinder1.draw();
+    this.disk1t.draw(gl_);
+    this.cylinder1.draw(gl_);
     theMatrix.translate([0,0,0.015]);
-    this.disk1b.draw();
+    this.disk1b.draw(gl_);
 
     //draw long cylinder between two fats
-    this.cylinder2.draw();
+    this.cylinder2.draw(gl_);
 
     //draw bottom fat cylinder
     theMatrix.translate([0,0,0.06]);
-    this.disk3t.draw();
-    this.cylinder3.draw();
+    this.disk3t.draw(gl_);
+    this.cylinder3.draw(gl_);
     theMatrix.translate([0,0,0.015]);
-    this.disk3b.draw();
+    this.disk3b.draw(gl_);
 
     //draw torus
     theMatrix.translate([0,0,0.2]);
     theMatrix.rotate(-Math.PI/2, [1, 0, 0]);
-    this.torus1.draw();
+    this.torus1.draw(gl_);
 
     theMatrix.pop();
 
@@ -95,17 +101,17 @@ Stool.prototype.draw = function() {
     theMatrix.rotate((seat_height/4.375)*100*Math.PI, [0, 1, 0]);
     theMatrix.rotate(Math.PI/2, [1, 0, 0]);
     theMatrix.scale([12,12,12]); 
-    this.disk4.draw();
-    this.cylinder4.draw();
+    this.disk4.draw(gl_);
+    this.cylinder4.draw(gl_);
 
     theMatrix.translate([0,0,0.005]);
-    this.cylinder5.draw();
+    this.cylinder5.draw(gl_);
     theMatrix.translate([0,0,0.0075]);
-    this.cylinder6.draw();
+    this.cylinder6.draw(gl_);
     theMatrix.translate([0,0,0.0015]);
-    this.cylinder7.draw();
+    this.cylinder7.draw(gl_);
     theMatrix.translate([0,0,0.006]);
-    this.cylinder8.draw();
+    this.cylinder8.draw(gl_);
 
     theMatrix.rotate(-Math.PI/2, [1, 0, 0]);
     theMatrix.translate([0,-0.13,0]);

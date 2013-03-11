@@ -50,9 +50,12 @@ function Torus(innerRadius, outerRadius) {
 	}
     }
     
-    this.o.initBuffers();
 };
 
-Torus.prototype.draw = function() {
-    this.o.drawBuffers();
+Torus.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Torus.prototype.draw = function(gl_) {
+    this.o.drawBuffers(gl_);
 };

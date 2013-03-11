@@ -55,9 +55,12 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 	    this.o.addIndexes(B, D, C);
 	}
     }
-    this.o.initBuffers();
 };
 
-Disk.prototype.draw = function() {
-    this.o.drawBuffers();
+Disk.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Disk.prototype.draw = function(gl_) {
+    this.o.drawBuffers(gl_);
 };

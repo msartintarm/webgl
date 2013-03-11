@@ -11,11 +11,13 @@ function GLobject() {
     this.colData = [];
     this.indexData = [];
 
-    // Buffers themselves
-    this.normBuff = gl.createBuffer();
-    this.posBuff = gl.createBuffer();
-    this.colBuff = gl.createBuffer();
-    this.indexBuff = gl.createBuffer();
+    this.normBuff = null;
+    this.posBuff = null;
+    this.colBuff = null;
+    this.indexBuff = null;
+
+    // Quads use an index position counter
+    this.indexPos = 0;
 
     // Position / scale / rotation data for this object
     // X-Y-Z position to translate
@@ -61,41 +63,69 @@ GLobject.prototype.addQuadIndexes = function(a,b,c,d) {
     this.indexData.push3(b,d,c); }
 
 /**
+   Buffers a quadrilateral.
+ */
+GLobject.prototype.Quad = function(a, b, c, d) { 
+    this.addPosVec(a);
+    this.addPosVec(b);   
+    this.addPosVec(c);   
+    this.addPosVec(d);
+
+    var normalVec = crossVec3(subVec3(b,a), 
+			      subVec3(c,a));
+    for (var i = 0; i < 4; ++i) {
+	this.addNormVec(normalVec);
+	this.addColors(.3, .5, .7);
+    }
+    this.addQuadIndexes(this.indexPos++,
+			this.indexPos++,
+			this.indexPos++,
+			this.indexPos++);
+}
+
+/**
  * Once the arrays are full, call to 
  *  buffer WebGL with their data
  */
-GLobject.prototype.initBuffers = function() {
+GLobject.prototype.initBuffers = function(gl_) {
+    if(!gl_) gl_ = thisGL;
+    else thisGL = gl_;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuff);
-    gl.bufferData(gl.ARRAY_BUFFER, 
+    this.normBuff = gl_.createBuffer();
+    this.posBuff = gl_.createBuffer();
+    this.colBuff = gl_.createBuffer();
+    this.indexBuff = gl_.createBuffer();
+
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER, 
 		  new Float32Array(this.normData), 
-		  gl.STATIC_DRAW);
+		  gl_.STATIC_DRAW);
     this.normBuff.itemSize = 3;
     this.normBuff.numItems = 
 	this.normData.length / 3;
 
-    this.posBuff = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuff);
-    gl.bufferData(gl.ARRAY_BUFFER, 
+    this.posBuff = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER, 
 		  new Float32Array(this.posData), 
-		  gl.STATIC_DRAW);
+		  gl_.STATIC_DRAW);
     this.posBuff.itemSize = 3;
     this.posBuff.numItems = 
 	this.posData.length / 3;
 
-    this.colBuff = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.colBuff);
-    gl.bufferData(gl.ARRAY_BUFFER, 
+    this.colBuff = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER, 
 		  new Float32Array(this.colData), 
-		  gl.STATIC_DRAW);
+		  gl_.STATIC_DRAW);
     this.colBuff.itemSize = 3;
     this.colBuff.numItems = this.colData.length / 3;
 
-    this.indexBuff = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuff);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 
+    this.indexBuff = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
+    gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
 		  new Uint16Array(this.indexData), 
-		  gl.STATIC_DRAW);
+		  gl_.STATIC_DRAW);
     this.indexBuff.itemSize = 1;
     this.indexBuff.numItems = this.indexData.length;
 }
@@ -123,7 +153,7 @@ GLobject.prototype.translate = function(vec) {
 /**
  * Point to, and draw, the buffered triangles
  */
-GLobject.prototype.drawBuffers = function() {
+GLobject.prototype.drawBuffers = function(gl_) {
 
 //    theMatrix.rotate(this.rotationM, this.rotation);
 //    theMatrix.translate(this.position);
@@ -140,24 +170,24 @@ GLobject.prototype.drawBuffers = function() {
 
     theMatrix.scale([this.scale, this.scale, this.scale]);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuff);
-    gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
+    gl_.vertexAttribPointer(shaders.vertexNormalAttribute, 
 			   this.normBuff.itemSize, 
-			   gl.FLOAT, false, 0, 0);
+			   gl_.FLOAT, false, 0, 0);
     
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuff);
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
+    gl_.vertexAttribPointer(shaders.vertexPositionAttribute, 
 			   this.posBuff.itemSize, 
-			   gl.FLOAT, false, 0, 0);
+			   gl_.FLOAT, false, 0, 0);
     
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.colBuff);
-    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
+    gl_.vertexAttribPointer(shaders.vertexColorAttribute, 
 			   this.colBuff.itemSize,
-			   gl.FLOAT, false, 0, 0);
+			   gl_.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuff);
-    theMatrix.setUniforms();
-    gl.drawElements(gl.TRIANGLES, 
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
+    theMatrix.setUniforms(gl_);
+    gl_.drawElements(gl_.TRIANGLES, 
 		    this.indexBuff.numItems, 
-		    gl.UNSIGNED_SHORT, 0);
+		    gl_.UNSIGNED_SHORT, 0);
 };

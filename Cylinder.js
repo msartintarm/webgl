@@ -1,15 +1,4 @@
-var canvas;
-var gl;
-
 var rotateY;
-
-var shaderProgram;
-
-var CylinderPositionBuffer;
-var CylinderNormalBuffer;
-var CylinderColorBuffer;
-var CylinderIndexBuffer;
-var colorVec;
 
 function Cylinder(base_radius, top_radius, height, slices, stacks) { 
 
@@ -69,29 +58,39 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    this.o.addIndexes(B, D, C);
 	}
     }
+}
 
-    radius = base_radius;
+Cylinder.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Cylinder.prototype.drawScrew = function(gl_) {
+
+    var radius_change = this.top_radius - this.base_radius;
+    var radius_step_size = radius_change/this.stacks;
+    var radius = this.base_radius;
+
+    var theta = Math.atan(Math.abs(this.top_radius-this.base_radius)/this.height);
+    var z_norm = Math.sin(theta);
+    var xy =  Math.cos(theta);
+
+    var radius = this.base_radius;
 
     var index = 0;
 
     var minAngle = 0;
-    var maxAngle = 3 / (slices/2) * Math.PI;
+    var maxAngle = 3 / (this.slices/2) * Math.PI;
 
-    for (var i = 0; i <= stacks - 4; i++) {
+    for (var i = 1; i <= this.stacks - 4; i++) {
 	// From 0 to height
-	var z = (i/stacks)*height;
+	var z = (i/this.stacks)*this.height;
 	if(i!=0) radius += radius_step_size;
 
-	for (var j = 0; j <= slices; j++) {
+	for (var j = 0; j <= this.slices; j++) {
 
 	    // From 0 to 2 pi
-	    var phi = j / (slices/2) * Math.PI;
+	    var phi = j / (this.slices/2) * Math.PI;
 	    // x = r sin theta cos phi
-
-//		alert("Min angle: " + minAngle + ", max angle: " + maxAngle +
-//		      ", phi: " + phi);
-
-
 
 	    if(minAngle < phi && phi < maxAngle) {
 //		alert("Index: " + 
@@ -103,23 +102,81 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 //		      ".");
 	    var x = 1 * Math.cos(phi);
 	    var y = 1 * Math.sin(phi);
-//		this.o.posData[index] = radius * 0.8 * x;
-//		this.o.posData[index+1] = radius * 0.8 * y;
-//		this.o.colData[index] = 1.0;
-//		this.o.colData[index+1] = 1.0;
+		this.o.posData[index] /= 0.9;
+		this.o.posData[index+1] /= 0.9;
+		this.o.posData[index+(3*this.slices)] *= 0.9;
+		this.o.posData[index+1+(3*this.slices)] *= 0.9;
+		this.o.posData[index-(3*this.slices)] *= 0.9;
+		this.o.posData[index+1-(3*this.slices)] *= 0.9;
+		this.o.colData[index] /= 0.3;
+		this.o.colData[index+1] /= 0.3;
+		this.o.colData[index+2] /= 0.3;
+//		this.o.colData[index+this.slices] = 0.0;
+//		this.o.colData[index+1+this.slices] = 0.0;
+//		this.o.colData[index+2+this.slices] = 0.0;
 	    }
 
 	    index += 3;
 	}
-	minAngle += 2 / slices * Math.PI * 2;
-	maxAngle += 2 / slices * Math.PI * 2;
+	minAngle += 1 / this.slices * Math.PI * 2;
+	maxAngle += 1 / this.slices * Math.PI * 2;
 	minAngle %= Math.PI * 2;
 	maxAngle %= Math.PI * 2;
     }
 
-    this.o.initBuffers();
+    this.o.initBuffers(gl_);
 };
 
-Cylinder.prototype.draw = function() {
-    this.o.drawBuffers();
+Cylinder.prototype.drawBlackStreak = function(gl_) {
+
+    var radius_change = this.top_radius - this.base_radius;
+    var radius_step_size = radius_change/this.stacks;
+    var radius = this.base_radius;
+
+    var theta = Math.atan(Math.abs(this.top_radius-this.base_radius)/this.height);
+    var z_norm = Math.sin(theta);
+    var xy =  Math.cos(theta);
+
+    var radius = this.base_radius;
+
+    var index = 0;
+
+    var minAngle = 0;
+    var maxAngle = 3 / (this.slices/2) * Math.PI;
+
+    for (var i = 0; i <= this.stacks - 4; i++) {
+	// From 0 to height
+	var z = (i/this.stacks)*this.height;
+	if(i!=0) radius += radius_step_size;
+
+	for (var j = 0; j <= this.slices; j++) {
+
+	    // From 0 to 2 pi
+	    var phi = j / (this.slices/2) * Math.PI;
+	    // x = r sin theta cos phi
+
+	    if(minAngle < phi && phi < maxAngle) {
+		this.o.colData[index] = 0.0;
+		this.o.colData[index+1] = 0.0;
+		this.o.colData[index+2] = 0.0;
+		this.o.colData[index+(3*this.slices)] = 0.0;
+		this.o.colData[index+1+(3*this.slices)] = 0.0;
+		this.o.colData[index+2+(3*this.slices)] = 0.0;
+	    }
+
+	    index += 3;
+	}
+	minAngle += 1 / this.slices * Math.PI * 2;
+	maxAngle += 1 / this.slices * Math.PI * 2;
+	minAngle %= Math.PI * 2;
+	maxAngle %= Math.PI * 2;
+    }
+}    
+
+Cylinder.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Cylinder.prototype.draw = function(gl_) {
+    this.o.drawBuffers(gl_);
 };

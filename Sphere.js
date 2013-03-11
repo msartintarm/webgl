@@ -39,10 +39,12 @@ function Sphere(radius) {
 	    this.o.addQuadIndexes(A++,B++,C++,D++);
 	}
     }
-
-    this.o.initBuffers();
 };
 
-Sphere.prototype.draw = function() {
-    this.o.drawBuffers();
+Sphere.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Sphere.prototype.draw = function(gl_) {
+    this.o.drawBuffers(gl_);
 };
