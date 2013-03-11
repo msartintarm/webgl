@@ -61,6 +61,6 @@ Disk.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }
 
-Disk.prototype.draw = function(gl_) {
-    this.o.drawBuffers(gl_);
+Disk.prototype.draw = function(gl_, buffer_) {
+    this.o.drawBuffers(gl_, buffer_);
 };

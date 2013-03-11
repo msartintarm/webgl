@@ -12,10 +12,13 @@ function Floor(width, height, countX, countY) {
 	    );
 	}
     }
-    this.o.initBuffers();
 }
 
-Floor.prototype.draw = function() {
-    this.o.drawBuffers();
+Floor.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
+}
+
+Floor.prototype.draw = function(gl_, buffer_) {
+    this.o.drawBuffers(gl_, buffer_);
     
 }

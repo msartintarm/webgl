@@ -3,7 +3,6 @@
  *  defined in 'functions.js'
  */
 
-var models;
 /**
  * Object holding modelview and perspective matrices.
  */
@@ -16,8 +15,6 @@ function GLcanvas() {
     this.canvas = null;
     theMatrix = new GLmatrix();
 }
-
-var theCanvas = new GLcanvas();
 
 GLcanvas.prototype.add = function(objToDraw) {
     if(objToDraw == "cylinder") {
@@ -35,19 +32,21 @@ GLcanvas.prototype.add = function(objToDraw) {
 GLcanvas.prototype.bufferModels = function() {
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
-	this.objects[i].initBuffers(this.gl); } }
+	this.objects[i].initBuffers(this.gl); 
+    }
+}
 
 GLcanvas.prototype.drawModels = function() {
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
-	this.objects[i].draw(this.gl); } }
+	this.objects[i].draw(this.gl, this.shaders); 
+    } 
+}
 
 /**
  * Begins the canvas.
  */
 GLcanvas.prototype.start = function(objToDraw) {
-
-    theMatrix = new GLmatrix();
 
     this.canvas = document.getElementById("glcanvas");
     this.canvas.style.display = "block";
@@ -71,63 +70,83 @@ GLcanvas.prototype.start = function(objToDraw) {
     
     // Instantiate models
     this.add(objToDraw);
-
     this.bufferModels();
 
-    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);  // Set background color
-    this.gl.clearDepth(1.0);                 // Clear everything
-    this.gl.enable(this.gl.DEPTH_TEST);      // Enable depth testing
+    // Set background color, clear everything, and
+    //  enable depth testing
+    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    this.gl.clearDepth(1.0);
+    this.gl.enable(this.gl.DEPTH_TEST);
     
     // Set up to draw the scene periodically.
-    this.tick();    
-
+    tick();  
     document.onkeydown = handleKeyDown;
 }
 
 /**
  * Begins the canvas.
  */
-function start2() {
+GLcanvas.prototype.start2 = function(objToDraw) {
 
-    canvas2 = document.getElementById("glcanvas2");
-    canvas2.style.display = "block";
-    canvas2.style.width = "100%";
-    gl2 = initGL(canvas2);
-    if (gl2 == null) { return; }
+    this.canvas = document.getElementById("glcanvas2");
+    this.canvas.style.display = "block";
+    this.canvas.style.width = "100%";
+    this.initGL();
+    if (this.gl == null) { return; }
 
     // Initialize the shaders; this is where all the lighting for the
     // vertices and so forth is established.
-    initShaders();
+    this.initShaders();
     
     // Instantiate models
-    models = new Models();
-    models.add(objToDraw);
+    this.add(objToDraw);
+    this.bufferModels();
 
-    gl.clearColor(0.1, 0.1, 0.1, 1.0);  // Set background color
-    gl.clearDepth(1.0);                 // Clear everything
-    gl.enable(gl.DEPTH_TEST);           // Enable depth testing
+    // Set background color, clear everything, and
+    //  enable depth testing
+    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    this.gl.clearDepth(1.0);
+    this.gl.enable(this.gl.DEPTH_TEST);
     
     // Set up to draw the scene periodically.
-    tick();    
+    tick2();  
 }
 
 function handleKeyDown(theEvent) {
-    if(theEvent.keyCode == 39) {
-	theMatrix.moveLeft(); }
-    else if(theEvent.keyCode == 37) {
-	theMatrix.moveRight(); }
-    if(theEvent.keyCode == 38) {
-	theMatrix.moveUp(); }
-    if(theEvent.keyCode == 40) {
-	theMatrix.moveDown(); }
-    if(theEvent.keyCode == 74) { // j
-	theMatrix.lookLeft(); }
-    else if(theEvent.keyCode == 76) { // l
-	theMatrix.lookRight(); }
-    if(theEvent.keyCode == 73) { // i
-	theMatrix.lookUp(); }
-    if(theEvent.keyCode == 75) { // k
-	theMatrix.lookDown(); }
+
+    switch(theEvent.keyCode) {
+	
+    case 39:
+	theMatrix.moveLeft();
+	break;
+    case 37:
+	theMatrix.moveRight();
+	break;
+    case 38:
+	theMatrix.moveUp();
+	break;
+    case 40:
+	theMatrix.moveDown();
+	break;
+    case 65: // a
+	theMatrix.moveForward();
+	break;
+    case 90: // z
+	theMatrix.moveBack();
+	break;
+    case 74: // j
+	theMatrix.lookLeft();
+	break;
+    case 76: // l
+	theMatrix.lookRight();
+	break;
+    case 73: // i
+	theMatrix.lookUp();
+	break;
+    case 75: // k
+	theMatrix.lookDown();
+	break;
+    }
 }
 
 /*
@@ -145,11 +164,6 @@ GLcanvas.prototype.initGL = function() {
     if (!this.gl) {
 	alert("Unable to initialize WebGL. Your browser may not support it.");
     }
-}
-
-GLcanvas.prototype.tick = function() {
-    window.requestAnimFrame(this.tick);
-    this.drawScene();
 }
 
 /**
@@ -177,48 +191,56 @@ GLcanvas.prototype.drawScene = function() {
     drawDashboard();
 }
 
+function tick() {
+    requestAnimFrame(tick);
+    theCanvas.drawScene();
+}
+
 GLcanvas.prototype.initShaders = function() {
     var fragmentShader = getShader(this.gl, "shader-fs");
     var vertexShader = getShader(this.gl, "shader-vs");
     
-    shaders = this.gl.createProgram();
+    this.shaders = this.gl.createProgram();
     this.gl.attachShader(
-	shaders, vertexShader);
+	this.shaders, vertexShader);
     this.gl.attachShader(
-	shaders, fragmentShader);
-    this.gl.linkProgram(shaders);
+	this.shaders, fragmentShader);
+    this.gl.linkProgram(this.shaders);
 
     if (!this.gl.getProgramParameter(
-	shaders, this.gl.LINK_STATUS)) {
+	this.shaders, this.gl.LINK_STATUS)) {
         alert("Could not initialise shaders");
     }
 
-    this.gl.useProgram(shaders);
+    this.gl.useProgram(this.shaders);
 
-    shaders.vPosA = 
+    this.shaders.vPosA = 
 	this.gl.getAttribLocation(
-	    shaders, "vPosA");
+	    this.shaders, "vPosA");
     this.gl.enableVertexAttribArray(
-	shaders.vPosA);
+	this.shaders.vPosA);
 
-    shaders.vNormA = 
+    this.shaders.vNormA = 
 	this.gl.getAttribLocation(
-	    shaders, "vNormA");
+	    this.shaders, "vNormA");
     this.gl.enableVertexAttribArray(
-	shaders.vNormA);
+	this.shaders.vNormA);
 
-    shaders.vColA = 
-	this.gl.getAttribLocation(shaders, "vColA");
-    this.gl.enableVertexAttribArray(shaders.vColA);
+    this.shaders.vColA = 
+	this.gl.getAttribLocation(this.shaders, "vColA");
+    this.gl.enableVertexAttribArray(this.shaders.vColA);
 
-    shaders.pMatU = 
-	this.gl.getUniformLocation(shaders, "pMatU");
-    shaders.mMatU = 
-	this.gl.getUniformLocation(shaders, "mMatU");
-    shaders.vMatU = 
-	this.gl.getUniformLocation(shaders, "vMatU");
-    shaders.nMatU = 
-	this.gl.getUniformLocation(shaders, "nMatU");
-    shaders.lightPosU = 
-	this.gl.getUniformLocation(shaders, "lightPosU");
+    this.shaders.pMatU = 
+	this.gl.getUniformLocation(this.shaders, "pMatU");
+    this.shaders.mMatU = 
+	this.gl.getUniformLocation(this.shaders, "mMatU");
+    this.shaders.vMatU = 
+	this.gl.getUniformLocation(this.shaders, "vMatU");
+    this.shaders.nMatU = 
+	this.gl.getUniformLocation(this.shaders, "nMatU");
+    this.shaders.lightPosU = 
+	this.gl.getUniformLocation(this.shaders, "lightPosU");
 }
+
+var theCanvas = new GLcanvas();
+

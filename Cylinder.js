@@ -47,7 +47,6 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
     // B  D   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
-    var indexData = [];
     for (var latitude = 0; latitude < this.stacks; latitude++) {
 	for (var longitude = 0; longitude < this.slices; longitude++) {
 	    var A = (latitude * (this.slices + 1)) + longitude;
@@ -58,10 +57,6 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    this.o.addIndexes(B, D, C);
 	}
     }
-}
-
-Cylinder.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
 }
 
 Cylinder.prototype.drawScrew = function(gl_) {
@@ -168,15 +163,16 @@ Cylinder.prototype.drawBlackStreak = function(gl_) {
 	}
 	minAngle += 1 / this.slices * Math.PI * 2;
 	maxAngle += 1 / this.slices * Math.PI * 2;
-	minAngle %= Math.PI * 2;
+	minAngle %= Math.PI * 2; 
 	maxAngle %= Math.PI * 2;
     }
+    this.o.initBuffers(gl_);
 }    
 
 Cylinder.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }
 
-Cylinder.prototype.draw = function(gl_) {
-    this.o.drawBuffers(gl_);
+Cylinder.prototype.draw = function(gl_, buffer_) {
+    this.o.drawBuffers(gl_, buffer_);
 };

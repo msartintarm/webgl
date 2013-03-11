@@ -45,6 +45,6 @@ Sphere.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }
 
-Sphere.prototype.draw = function(gl_) {
-    this.o.drawBuffers(gl_);
+Sphere.prototype.draw = function(gl_, shader_) {
+    this.o.drawBuffers(gl_, shader_);
 };

@@ -38,6 +38,11 @@ GLmatrix.prototype.calcViewer = function() {
 
 GLmatrix.prototype.translate = function(vector) {
     mat4.translate(this.mMatrix, vector); }
+GLmatrix.prototype.translateN = function(vector) {
+    mat4.translate(this.mMatrix, 
+		   [-vector[2], 
+		    -vector[1], 
+		    -vector[0]]); }
 GLmatrix.prototype.rotate = function(rads, vector) {
     mat4.rotate(this.mMatrix, rads, vector); }
 GLmatrix.prototype.scale = function(vector) {
@@ -45,40 +50,54 @@ GLmatrix.prototype.scale = function(vector) {
 GLmatrix.prototype.mult = function(m) {
     this.mMatrix = this.mMatrix.x(m); }
 
-const moveDist = 1;
+const lookDist = 1 / 64;
+const moveDist = 1 / 2;
 
 GLmatrix.prototype.lookUp = function() {
-    this.vMatrix = mat4.rotate(this.vMatrix, 
-			       moveDist * Math.PI / 16, 
+    this.vMatrix = mat4.rotate(this.vMatrix,
+			       lookDist * 2 * Math.PI, 
 			       [1, 0, 0]); 
 }
 GLmatrix.prototype.lookDown = function() {
     this.vMatrix = mat4.rotate(this.vMatrix, 
-			       moveDist * Math.PI / 16, 
+			       lookDist * 2 * Math.PI, 
 			       [-1, 0, 0]); 
 }
 GLmatrix.prototype.lookLeft = function() {
     this.vMatrix = mat4.rotate(this.vMatrix, 
-			       moveDist * Math.PI / 16, 
+			       lookDist * 2 * Math.PI, 
 			       [ 0,-1, 0]); 
 }
 GLmatrix.prototype.lookRight = function() {
     this.vMatrix = mat4.rotate(this.vMatrix, 
-			       moveDist * Math.PI / 16, 
+			       lookDist * 2 * Math.PI, 
 			       [ 0, 1, 0]); 
 }
 
 GLmatrix.prototype.moveRight = function() {
-    this.vMatrix = mat4.translate(this.vMatrix, [moveDist, 0, 0]); 
+    this.vMatrix = mat4.translate(
+	this.vMatrix, [moveDist, 0, 0]); 
 }
 GLmatrix.prototype.moveLeft = function() {
-    this.vMatrix = mat4.translate(this.vMatrix, [-moveDist, 0, 0]); 
+    this.vMatrix = mat4.translate(
+	this.vMatrix, [-moveDist, 0, 0]); 
 }
 GLmatrix.prototype.moveUp = function() {
-    this.vMatrix = mat4.translate(this.vMatrix, [0, moveDist, 0]); 
+    this.vMatrix = mat4.translate(
+ 	this.vMatrix, [0, moveDist, 0]); 
 }
 GLmatrix.prototype.moveDown = function() {
-    this.vMatrix = mat4.translate(this.vMatrix, [0, -moveDist, 0]); 
+    this.vMatrix = mat4.translate(
+	this.vMatrix, [0, -moveDist, 0]); 
+}
+GLmatrix.prototype.moveForward = function() {
+    this.vMatrix = mat4.translate(
+	this.vMatrix, [0, 0, moveDist]); 
+}
+
+GLmatrix.prototype.moveBack = function() {
+    this.vMatrix = mat4.translate(
+	this.vMatrix, [0, 0, -moveDist]); 
 }
 
 // maybe this translate is faster??
@@ -86,21 +105,21 @@ GLmatrix.prototype.mvTranslate = function(v) {
     this.mult(Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4());
 }
 
-GLmatrix.prototype.setUniforms = function(gl_) {
+GLmatrix.prototype.setUniforms = function(gl_, shader_) {
 //    mat4.multiply(this.travelMatrix, this.mvMatrix);
 //    mat4.multiply(this.mvMatrix, this.travelMatrix);
-    gl_.uniformMatrix4fv(shaders.pMatU, 
+    gl_.uniformMatrix4fv(shader_.pMatU, 
 			false, this.pMatrix);
-    gl_.uniformMatrix4fv(shaders.mMatU, 
+    gl_.uniformMatrix4fv(shader_.mMatU, 
 			false, this.mMatrix);
-    gl_.uniformMatrix4fv(shaders.vMatU, 
+    gl_.uniformMatrix4fv(shader_.vMatU, 
 			false, this.vMatrix);
     var normalMatrix = mat3.create();
-    mat4.toInverseMat3(this.mMatrix, normalMatrix);
+    mat4.toInverseMat3(this.vMatrix, normalMatrix);
     mat3.transpose(normalMatrix);
-    gl_.uniformMatrix3fv(shaders.nMatU, 
+    gl_.uniformMatrix3fv(shader_.nMatU, 
 			false, normalMatrix);
-    gl_.uniform3fv(shaders.lightPosU, 
+    gl_.uniform3fv(shader_.lightPosU, 
 		  rotatedLightPos);
 }
 

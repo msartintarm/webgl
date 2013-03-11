@@ -1,11 +1,7 @@
 /**
  * A bunch of utility functions we created.
  */
-var canvas;
-var gl;
 var colorVec;
-
-var shaderProgram;
 
 // Default lighting and viewer positions
 var lightPos =  [0.57735, 0.57735, 0.57735];
@@ -112,11 +108,6 @@ function drawDashboard() {
     zoom.inc();
 }
 
-function tick() {
-    requestAnimFrame(tick);
-    drawScene();
-}
-
 Array.prototype.push3 = function(a, b, c) {
     this.push(a);
     this.push(b);
@@ -135,7 +126,7 @@ Array.prototype.pushV = function(vector) {
 // Loads a shader program by scouring the current document,
 // looking for a script with the specified ID.
 //
-function getShader(gl, id) {
+function getShader(gl_, id) {
     var shaderScript = document.getElementById(id);
     
     // Didn't find an element with the specified ID; abort.
@@ -164,24 +155,24 @@ function getShader(gl, id) {
     var shader;
     
     if (shaderScript.type == "x-shader/x-fragment") {
-	shader = gl.createShader(gl.FRAGMENT_SHADER);
+	shader = gl_.createShader(gl_.FRAGMENT_SHADER);
     } else if (shaderScript.type == "x-shader/x-vertex") {
-	shader = gl.createShader(gl.VERTEX_SHADER);
+	shader = gl_.createShader(gl_.VERTEX_SHADER);
     } else {
 	return null;  // Unknown shader type
     }
     
     // Send the source to the shader object
-    gl.shaderSource(shader, theSource);
+    gl_.shaderSource(shader, theSource);
     
     // Compile the shader program
-    gl.compileShader(shader);
+    gl_.compileShader(shader);
     
     // See if it compiled successfully
     
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    if (!gl_.getShaderParameter(shader, gl_.COMPILE_STATUS)) {
 	alert("An error occurred compiling the shaders: " + 
-	      gl.getShaderInfoLog(shader));
+	      gl_.getShaderInfoLog(shader));
 	return null;
     }    
     return shader;

@@ -29,7 +29,7 @@ SixSidedPrism.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }
 
-SixSidedPrism.prototype.draw = function() {
-    this.o.drawBuffers();
+SixSidedPrism.prototype.draw = function(gl_, buffer_) {
+    this.o.drawBuffers(gl_, buffer_);
 };
 
