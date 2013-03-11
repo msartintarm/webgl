@@ -51,5 +51,11 @@ SixSidedPrism.prototype.Quad = function(a, b, c, d) {
 			  this.indexPos++,
 			  this.indexPos++,
 			  this.indexPos++);
+
+    //not correct, to add texture this should be adjusted
+    this.o.addTexture(0.0, 0.0);  
+    this.o.addTexture(1.0, 1.0); 
+    this.o.addTexture(0.0, 0.0);  
+    this.o.addTexture(1.0, 1.0);
 }
 

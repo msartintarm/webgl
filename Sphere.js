@@ -20,6 +20,10 @@ function Sphere(radius) {
 	    this.o.addPos(radius * x,
 	                  radius * y,
 			  radius * z);
+
+	    //not correct to add texture must set properly
+	    this.o.addTexture(0.0, 0.0);  
+
 	    this.o.addColors(x/2, y/2, z/2);
 	}
     }

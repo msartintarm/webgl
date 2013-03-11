@@ -10,12 +10,14 @@ function GLobject() {
     this.posData = [];
     this.colData = [];
     this.indexData = [];
+    this.textureData =  [];
 
     // Buffers themselves
     this.normBuff = gl.createBuffer();
     this.posBuff = gl.createBuffer();
     this.colBuff = gl.createBuffer();
     this.indexBuff = gl.createBuffer();
+    this.textureBuff = gl.createBuffer();
 
     // Position / scale / rotation data for this object
     // X-Y-Z position to translate
@@ -36,6 +38,8 @@ GLobject.prototype.addPos =
     function(x,y,z) { this.posData.push3(x,y,z); }
 GLobject.prototype.addColors = 
     function(x,y,z) { this.colData.push3(x,y,z); }
+GLobject.prototype.addTexture = 
+    function(x,y) { this.textureData.push3(x,y); }
 GLobject.prototype.addIndexes =
     function(a,b,c) { this.indexData.push3(a,b,c); }
 
@@ -90,6 +94,12 @@ GLobject.prototype.initBuffers = function() {
 		  gl.STATIC_DRAW);
     this.colBuff.itemSize = 3;
     this.colBuff.numItems = this.colData.length / 3;
+
+    this.textureBuff = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuff);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureData), gl.STATIC_DRAW);
+    this.textureBuff.itemSize = 2;
+    this.textureBuff.numItems = this.textureBuff.length/2;
 
     this.indexBuff = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuff);
@@ -153,6 +163,11 @@ GLobject.prototype.drawBuffers = function() {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colBuff);
     gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
 			   this.colBuff.itemSize,
+			   gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuff);
+    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, 
+			   this.textureBuff.itemSize,
 			   gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuff);

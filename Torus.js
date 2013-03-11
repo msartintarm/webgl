@@ -29,6 +29,9 @@ function Torus(innerRadius, outerRadius) {
 			  y * innerRadius, 
 			  xzPlane * sin_phi);
 	    this.o.addColors(x/2, y/2, z/2);
+
+	    //not correct must adjust to add texture
+	    this.o.addTexture(0.0, 0.0);
 	}
     }
 

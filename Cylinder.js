@@ -47,6 +47,10 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 
 	    this.o.addNorms(x_norm, y_norm, z_norm);;
 	    this.o.addPos(radius * x, radius * y, z);
+
+	    //not correct, to add texture to cylinder must adjust
+	    this.o.addTexture(0.0, 0.0);  
+
 	    this.o.addColors(colorVec.x,colorVec.y,colorVec.z);
 	}
     }
