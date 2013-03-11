@@ -23,6 +23,8 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Sphere(2));
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
+	this.objects.push(new Floor());
+	this.objects.push(new Wall());
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
@@ -37,8 +39,12 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
+	var uUseTextureLocation;
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
+	uUseTextureLocation = 
+	    this.gl.getUniformLocation(this.shaders,"uUseTexture");
+	this.gl.uniform1f(uUseTextureLocation, 0);
 	this.objects[i].draw(this.gl, this.shaders); 
     } 
 }
@@ -97,6 +103,7 @@ GLcanvas.prototype.start2 = function(objToDraw) {
     // Initialize the shaders; this is where all the lighting for the
     // vertices and so forth is established.
     this.initShaders();
+	this.initTextures();
     
     // Instantiate models
     this.add(objToDraw);
@@ -190,10 +197,40 @@ GLcanvas.prototype.drawScene = function() {
     // Update side display as well
     drawDashboard();
 }
-
 function tick() {
-    requestAnimFrame(tick);
-    theCanvas.drawScene();
+	requestAnimFrame(tick);
+	theCanvas.drawScene();
+}
+GLcanvas.prototype.initTextures = function() {
+    woodTexture = this.gl.createTexture();
+    woodImage = new Image();
+    woodImage.crossOrigin = "anonymous";
+    woodImage.onload = function() {handleTextureLoaded(woodImage, woodTexture);}
+    woodImage.src = "textures/opera.png";
+    
+    brickTexture = this.gl.createTexture();
+    brickImage = new Image();
+    brickImage.onload = function() {handleTextureLoaded(brickImage, brickTexture);}
+    brickImage.src = "textures/brick.jpg";
+
+    tileTexture = this.gl.createTexture();
+    tileImage = new Image();
+    tileImage.onload = function() {handleTextureLoaded(tileImage, tileTexture);}
+    tileImage.src = "textures/tiles.jpg";
+
+    //default to not use texture
+    var uUseTextureLocation = this.gl.getUniformLocation(shaderProgram,"uUseTexture");
+    this.gl.uniform1f(uUseTextureLocation, 0.0);
+    this.gl.activeTexture(gl.TEXTURE0);
+}
+
+function handleTextureLoaded(image, texture){
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 GLcanvas.prototype.initShaders = function() {
@@ -201,10 +238,8 @@ GLcanvas.prototype.initShaders = function() {
     var vertexShader = getShader(this.gl, "shader-vs");
     
     this.shaders = this.gl.createProgram();
-    this.gl.attachShader(
-	this.shaders, vertexShader);
-    this.gl.attachShader(
-	this.shaders, fragmentShader);
+    this.gl.attachShader(this.shaders, vertexShader);
+    this.gl.attachShader(this.shaders, fragmentShader);
     this.gl.linkProgram(this.shaders);
 
     if (!this.gl.getProgramParameter(
@@ -230,6 +265,10 @@ GLcanvas.prototype.initShaders = function() {
 	this.gl.getAttribLocation(this.shaders, "vColA");
     this.gl.enableVertexAttribArray(this.shaders.vColA);
 
+    this.shaders.textureA = 
+	this.gl.getAttribLocation(this.shaders, "textureA");
+    this.gl.enableVertexAttribArray(this.shaders.textureA);
+
     this.shaders.pMatU = 
 	this.gl.getUniformLocation(this.shaders, "pMatU");
     this.shaders.mMatU = 
@@ -241,6 +280,6 @@ GLcanvas.prototype.initShaders = function() {
     this.shaders.lightPosU = 
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
 }
-
+ 
 var theCanvas = new GLcanvas();
 

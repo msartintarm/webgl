@@ -31,8 +31,10 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 	    var z = 0;
 
 	    this.o.addNorms(0, 0, 1);
-
 	    this.o.addPos(radius * x, radius * y, z);
+
+	    //not correct to add textures must adjust
+	    this.o.addTexture(0.0, 0.0);  
 	    this.o.addColors(colorVec.x,colorVec.y,colorVec.z);
 	}
     }

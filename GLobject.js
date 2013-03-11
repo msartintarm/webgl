@@ -10,6 +10,7 @@ function GLobject() {
     this.posData = [];
     this.colData = [];
     this.indexData = [];
+    this.textureData =  [];
 
     // Quads use an index position counter
     this.indexPos = 0;
@@ -33,6 +34,8 @@ GLobject.prototype.addPos =
     function(x,y,z) { this.posData.push3(x,y,z); }
 GLobject.prototype.addColors = 
     function(x,y,z) { this.colData.push3(x,y,z); }
+GLobject.prototype.addTexture = 
+    function(x,y) { this.textureData.push3(x,y); }
 GLobject.prototype.addIndexes =
     function(a,b,c) { this.indexData.push3(a,b,c); }
 
@@ -91,6 +94,7 @@ GLobject.prototype.initBuffers = function(gl_) {
     this.posBuff = gl_.createBuffer();
     this.colBuff = gl_.createBuffer();
     this.indexBuff = gl_.createBuffer();
+    this.textureBuff = gl_.createBuffer();
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
@@ -114,6 +118,11 @@ GLobject.prototype.initBuffers = function(gl_) {
 		  gl_.STATIC_DRAW);
     this.colBuff.itemSize = 3;
     this.colBuff.numItems = this.colData.length / 3;
+
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER, new Float32Array(this.textureData), gl_.STATIC_DRAW);
+    this.textureBuff.itemSize = 2;
+    this.textureBuff.numItems = this.textureBuff.length/2;
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
@@ -172,6 +181,11 @@ GLobject.prototype.drawBuffers = function(gl_, shader_) {
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.vertexAttribPointer(shader_.vColA, 
 			   this.colBuff.itemSize,
+			   gl_.FLOAT, false, 0, 0);
+
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
+    gl_.vertexAttribPointer(shader_.textureCoordAttribute, 
+			   this.textureBuff.itemSize,
 			   gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
