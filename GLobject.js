@@ -179,17 +179,6 @@ GLobject.prototype.scale = function(number) {
  */
 GLobject.prototype.drawBuffers = function(gl_, shader_) {
 
-    theMatrix.translate(this.position);
-
-    if(this.rotation[2] != 0)
-	theMatrix.rotate(1, [this.rotation[2], 0, 0]);
-    if(this.rotation[1] != 0)
-	theMatrix.rotate(1, [0, this.rotation[1], 0]);
-    if(this.rotation[0] != 0)
-	theMatrix.rotate(1, [0, 0, this.rotation[0]]);
-
-    theMatrix.scale([this.scale, this.scale, this.scale]);
-
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.vNormA, 
 			    this.normBuff.itemSize, 

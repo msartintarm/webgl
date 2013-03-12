@@ -147,8 +147,10 @@ GLcanvas.prototype.drawScene = function() {
 			  this.gl.viewportWidth / 
 			  this.gl.viewportHeight,
 			  0.1, 100.0);
-    theMatrix.modelview();
-    theMatrix.calcViewer();
+
+
+    theMatrix.modelInit();
+    theMatrix.viewInit();
 
     // Draw all our objects
     theMatrix.push();
