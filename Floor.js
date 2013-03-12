@@ -31,7 +31,7 @@ Floor.prototype.draw = function(gl_, shaders_) {
 
     this.q1.draw(gl_, shaders_);
 
-    gl_.bindTexture(gl_.TEXTURE_2D, null);
     gl_.uniform1f(shaders_.useTextureU, 0.0);
+    gl_.bindTexture(gl_.TEXTURE_2D, null);
 
 };

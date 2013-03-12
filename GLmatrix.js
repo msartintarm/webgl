@@ -105,8 +105,6 @@ GLmatrix.prototype.mvTranslate = function(v) {
 }
 
 GLmatrix.prototype.setUniforms = function(gl_, shader_) {
-//    mat4.multiply(this.travelMatrix, this.mvMatrix);
-//    mat4.multiply(this.mvMatrix, this.travelMatrix);
     gl_.uniformMatrix4fv(shader_.pMatU, 
 			false, this.pMatrix);
     gl_.uniformMatrix4fv(shader_.mMatU, 
@@ -118,8 +116,8 @@ GLmatrix.prototype.setUniforms = function(gl_, shader_) {
     gl_.uniformMatrix4fv(shader_.vMatU, 
 			false, inverseViewMatrix);
     var normalMatrix = mat3.create();
-    mat4.toInverseMat3(this.vMatrix, normalMatrix);
-    mat3.transpose(normalMatrix);
+    mat4.toInverseMat3(this.mMatrix, normalMatrix);
+    mat3.transpose(normalMatrix, normalMatrix);
     gl_.uniformMatrix3fv(shader_.nMatU, 
 			false, normalMatrix);
     gl_.uniform3fv(shader_.lightPosU, 

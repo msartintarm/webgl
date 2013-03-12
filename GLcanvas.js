@@ -12,8 +12,19 @@ var canvas2, gl2;
 
 function GLcanvas() {
     this.objects = [];
-    this.canvas = null;
+    this.canvas = document.getElementById("glcanvas");
+    this.gl = null;
     theMatrix = new GLmatrix();
+
+    colorVec = new vec3(1,1,0);
+    positionX = new MatrixData("positionXStats");
+    positionY = new MatrixData("positionYStats");
+    rotateY = new MatrixData("rotateStats");
+    rotateCam = new MatrixData("rotateCamStats");
+    zoom = new MatrixData("zoomPerspectiveStats");
+    zoom.set(45);
+    pause = new booleanData("pause");
+    stoolHeight = new MatrixData("stoolHeight");
 }
 
 GLcanvas.prototype.add = function(objToDraw) {
@@ -23,12 +34,13 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Sphere(2));
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
+    } else if(objToDraw == "room") {
 	this.objects.push(new Floor());
 	this.objects.push(new Wall());
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
-	this.objects.push(new Light());
+//	this.objects.push(new Light());
 }
 
 GLcanvas.prototype.bufferModels = function() {
@@ -50,40 +62,34 @@ GLcanvas.prototype.drawModels = function() {
  */
 GLcanvas.prototype.start = function(objToDraw) {
 
-    this.canvas = document.getElementById("glcanvas");
-    this.canvas.style.display = "block";
-    this.canvas.style.width = "100%";
-    this.initGL();
-    if (this.gl == null) { return; }
+    if (this.gl == null) {
+	// One-time display methods
+	this.canvas.style.display = "block";
+	this.canvas.style.width = "100%";
+	this.initGL();
+	if (this.gl == null) { return; }
+	this.initShaders("shader-fs", "shader-vs");
+	this.initTextures();
+	
+	// Instantiate models
+	this.add(objToDraw);
+	this.bufferModels();
 
-    colorVec = new vec3(1,1,0);
-    positionX = new MatrixData("positionXStats");
-    positionY = new MatrixData("positionYStats");
-    rotateY = new MatrixData("rotateStats");
-    rotateCam = new MatrixData("rotateCamStats");
-    zoom = new MatrixData("zoomPerspectiveStats");
-    zoom.set(45);
-    pause = new booleanData("pause");
-    stoolHeight = new MatrixData("stoolHeight");
-
-    // Initialize the shaders; this is where all the lighting for the
-    // vertices and so forth is established.
-    this.initShaders();
-    this.initTextures();
-    
-    // Instantiate models
-    this.add(objToDraw);
-    this.bufferModels();
-
-    // Set background color, clear everything, and
-    //  enable depth testing
-    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
-    this.gl.clearDepth(1.0);
-    this.gl.enable(this.gl.DEPTH_TEST);
-    
-    // Set up to draw the scene periodically.
-    tick();  
-    document.onkeydown = handleKeyDown;
+	// Set background color, clear everything, and
+	//  enable depth testing
+	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+	this.gl.clearDepth(1.0);
+	this.gl.enable(this.gl.DEPTH_TEST);
+	
+	// Set up to draw the scene periodically.
+	tick();  
+	document.onkeydown = handleKeyDown;
+    } else {
+	// If we have started GL already, 
+	//  just add the new model.
+	this.add(objToDraw);
+	this.bufferModels();
+    }
 }
 
 /**
@@ -189,9 +195,15 @@ GLcanvas.prototype.initTextures = function() {
     tileImage.src = "textures/tiles.jpg";
 }
 
-GLcanvas.prototype.initShaders = function() {
-    var fragmentShader = getShader(this.gl, "shader-fs");
-    var vertexShader = getShader(this.gl, "shader-vs");
+GLcanvas.prototype.changeShaders = function(frag, vert) {
+    this.initShaders(frag, vert);
+    this.initTextures();
+    this.bufferModels();
+}
+
+GLcanvas.prototype.initShaders = function(frag, vert) {
+    var fragmentShader = getShader(this.gl, frag);
+    var vertexShader = getShader(this.gl, vert);
     
     this.shaders = this.gl.createProgram();
     this.gl.attachShader(this.shaders, vertexShader);
@@ -243,5 +255,5 @@ GLcanvas.prototype.initShaders = function() {
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
 }
  
-var theCanvas = new GLcanvas();
+var theCanvas;
 

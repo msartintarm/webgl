@@ -1,7 +1,6 @@
 var rotateY;
 
 function Cylinder(base_radius, top_radius, height, slices, stacks) { 
-
     this.o = new GLobject();
 
     this.base_radius = base_radius;
@@ -36,10 +35,6 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 
 	    this.o.addNorms(x_norm, y_norm, z_norm);;
 	    this.o.addPos(radius * x, radius * y, z);
-
-	    //not correct, to add texture to cylinder must adjust
-	    this.o.addTexture(0.0, 0.0);  
-
 	    this.o.addColors(colorVec.x,colorVec.y,colorVec.z);
 	}
     }
@@ -60,6 +55,15 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    this.o.addIndexes(A, B, C);
 	    this.o.addIndexes(B, D, C);
 	}
+    }
+}
+
+/**
+ * Flip the z-coordinate of normals to -1
+ */
+Cylinder.prototype.invertNorms = function() {
+    for(var i = 0; i < this.o.normData.length; i += 1) {
+	this.o.normData[i] = -this.o.normData[i];
     }
 }
 

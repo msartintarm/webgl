@@ -59,6 +59,15 @@ function Disk(inner_radius, outer_radius, slices, loops) {
     }
 };
 
+/**
+ * Flip the z-coordinate of normals to -1
+ */
+Disk.prototype.invert = function() {
+    for(var i = 2; i < this.o.normData.length; i += 3) {
+	this.o.normData[i] = -1;
+    }
+}
+
 Disk.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }

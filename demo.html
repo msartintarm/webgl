@@ -54,6 +54,24 @@ void main(void) {
   gl_FragColor = textureColor + vertColor;
 }
     </script>
+    <script id="frag-shader-bad" type="x-shader/x-fragment">
+precision mediump float;
+
+varying float diffuseV;
+varying float specularV;
+varying vec3 colorV;
+
+varying vec2 textureV;
+uniform sampler2D uSampler;
+uniform float uUseTexture;
+
+void main(void) {
+  vec3 diffColor = vec3(0.4, 0.4, 0.4) * diffuseV;
+  vec3 specColor = vec3(.6,.6,.6) * specularV;
+
+  gl_FragColor = vec4(diffColor + specColor, 1.0);
+}
+    </script>
     <script id="shader-vs" type="x-shader/x-vertex">
 
 // Vector Attributes
@@ -92,6 +110,62 @@ void main(void) {
   colorV = vColA;
   textureV = textureA;
 
+  vec3 n = normalize(nMatU * vNormA);
+
+  // Diffuse component
+  diffuseV = dot(n, lightNorm);
+  if (diffuseV < 0.0) { diffuseV = 0.0; }
+       
+  // Specular
+    vec3 reflection = (n * diffuseV *
+		 2.0) - lightNorm;
+    vec4 reflectNorm = vec4(normalize(reflection), 0.0);
+    specularV = dot(reflectNorm, vec4(0,0,1,1) * vMatU);
+    if (specularV <= 0. || diffuseV <= 0.) { specularV = 0.0; }
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+}
+    </script>
+    <script id="vertex-shader-bad" type="x-shader/x-vertex">
+
+// Vector Attributes
+attribute vec3 vPosA;
+attribute vec3 vNormA;
+attribute vec3 vColA;
+attribute vec2 textureA;
+
+// Matrixes
+uniform mat4 pMatU; // Position
+uniform mat4 mMatU; // Model
+uniform mat4 vMatU; // View
+uniform mat3 nMatU; // Normal
+
+// Position attributes
+uniform vec3 lightPosU;
+uniform vec3 viewPosU;
+
+// Passed to the fragment shader
+varying float diffuseV;
+varying float specularV;
+varying vec3 colorV;
+varying vec2 textureV;
+
+void main(void) {
+
+  vec3 lightNorm = normalize(lightPosU);
+  // -- Position -- //
+
+  gl_Position = pMatU * mMatU * vMatU * vec4(vPosA, 1.0);
+
+  // -- Lighting -- //
+
+  // Ambient component we'll leave until frag shader
+
+  colorV = vColA;
+  textureV = textureA;
+
   vec3 n = nMatU * vNormA;
 
   // Diffuse component
@@ -112,7 +186,7 @@ void main(void) {
     </script>
   </head>
 
-  <body>
+  <body onload="theCanvas = new GLcanvas();">
     <div id='wrap'>
       <div id='header'>
         <div class='one_third'>
@@ -181,22 +255,27 @@ void main(void) {
 		   onclick="expand('title2', 'webgl_object'); theCanvas.start('cylinder');" 
 		   value="Cylinder" 
 		   class="button_add" 
-		   style="width:20%;"/>
+		   style="width:15%;"/>
             <input type="button" 
 		   onclick="expand('title2', 'webgl_object'); theCanvas.start('sphere');" 
 		   value="Sphere" 
 		   class="button_add"
-		   style="width:20%;"/>
-            <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('stool');" 
-		   value="Stool" 
-		   class="button_add"
-		   style="width:20%;"/>
+		   style="width:15%;"/>
             <input type="button" 
 		   onclick="expand('title2', 'webgl_object'); theCanvas.start('torus');" 
 		   value="Torus" 
 		   class="button_add"
-		   style="width:20%;"/>
+		   style="width:15%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); theCanvas.start('stool');" 
+		   value="Stool" 
+		   class="button_add"
+		   style="width:15%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); theCanvas.start('room');" 
+		   value="Room" 
+		   class="button_add"
+		   style="width:15%;"/>
           </div>
           <div id="webgl_object" class="content">
 <!--            <canvas id="glcanvas" style="width:400px; height:400px">
@@ -242,7 +321,12 @@ void main(void) {
               <br/><br/>Pause:<br/>
               <input type="button" onclick="pause.toggle()" value="||"/>
               <br/><br/>Select Shading:<br/>
-              <input type="button" value="ADS model"/>
+              <input type="button" value="ADS model"
+onclick="theCanvas.changeShaders('shader-fs', 'shader-vs')"/>
+              <input type="button" value="Bad shading" 
+onclick="theCanvas.changeShaders('frag-shader-bad', 'shader-vs')"/>
+              <input type="button" value="Worse shading" 
+onclick="theCanvas.changeShaders('shader-fs', 'vertex-shader-bad')"/>
               <br/><br/>Reset Model:<br/>
               <input type="button" value="Do Not Press" onclick="resetModel()"/>
 
