@@ -15,6 +15,9 @@ function GLobject() {
     // Quads use an index position counter
     this.indexPos = 0;
 
+    // Toggle textures on / off
+    this.enableTextures = false;
+
     // Position / scale / rotation data for this object
     // X-Y-Z position to translate
     this.position = [0,0,0];
@@ -28,16 +31,25 @@ function GLobject() {
 /**
  * Pass 3 numbers into the object's internal arrays
  */
-GLobject.prototype.addNorms = 
-    function(x,y,z) { this.normData.push3(x,y,z); }
-GLobject.prototype.addPos = 
-    function(x,y,z) { this.posData.push3(x,y,z); }
-GLobject.prototype.addColors = 
-    function(x,y,z) { this.colData.push3(x,y,z); }
-GLobject.prototype.addTexture = 
-    function(x,y) { this.textureData.push3(x,y); }
-GLobject.prototype.addIndexes =
-    function(a,b,c) { this.indexData.push3(a,b,c); }
+GLobject.prototype.addNorms = function(x,y,z) {     
+    this.normData.push(x);
+    this.normData.push(y);
+    this.normData.push(z); }
+GLobject.prototype.addPos = function(x,y,z) {
+    this.posData.push(x);
+    this.posData.push(y);
+    this.posData.push(z); }
+GLobject.prototype.addColors = function(x,y,z) {
+    this.colData.push(x);
+    this.colData.push(y);
+    this.colData.push(z); }
+GLobject.prototype.addTexture = function(x,y) {
+    this.textureData.push(x);
+    this.textureData.push(y); }
+GLobject.prototype.addIndexes = function(x,y,z) {
+    this.indexData.push(x);
+    this.indexData.push(y);
+    this.indexData.push(z); }
 
 /**
  * Or, pass a vec3 
@@ -62,7 +74,7 @@ GLobject.prototype.addQuadIndexes = function(a,b,c,d) {
 
 /**
    Buffers a quadrilateral.
- */
+*/
 GLobject.prototype.Quad = function(a, b, c, d) { 
     this.addPosVec(a);
     this.addPosVec(b);   
@@ -96,26 +108,36 @@ GLobject.prototype.initBuffers = function(gl_) {
     this.indexBuff = gl_.createBuffer();
     this.textureBuff = gl_.createBuffer();
 
+    if(this.textureData.length >= 1) {
+	this.enableTextures = true;
+    } else {
+	var i = 0;
+	var max = this.normData.length / 3;
+	for(; i < max; ++i) {
+	    this.textureData.push2(0, 0);
+	}
+    }
+
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
-		  new Float32Array(this.normData), 
-		  gl_.STATIC_DRAW);
+		   new Float32Array(this.normData), 
+		   gl_.STATIC_DRAW);
     this.normBuff.itemSize = 3;
     this.normBuff.numItems = 
 	this.normData.length / 3;
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
-		  new Float32Array(this.posData), 
-		  gl_.STATIC_DRAW);
+		   new Float32Array(this.posData), 
+		   gl_.STATIC_DRAW);
     this.posBuff.itemSize = 3;
     this.posBuff.numItems = 
 	this.posData.length / 3;
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
-		  new Float32Array(this.colData), 
-		  gl_.STATIC_DRAW);
+		   new Float32Array(this.colData), 
+		   gl_.STATIC_DRAW);
     this.colBuff.itemSize = 3;
     this.colBuff.numItems = this.colData.length / 3;
 
@@ -126,8 +148,8 @@ GLobject.prototype.initBuffers = function(gl_) {
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
-		  new Uint16Array(this.indexData), 
-		  gl_.STATIC_DRAW);
+		   new Uint16Array(this.indexData), 
+		   gl_.STATIC_DRAW);
     this.indexBuff.itemSize = 1;
     this.indexBuff.numItems = this.indexData.length;
 }
@@ -142,16 +164,16 @@ GLobject.prototype.rotate = function(vec) {
 GLobject.prototype.scale = function(number) {
     this.scale *= number; 
 }
-
-GLobject.prototype.translate = function(vec) {
-    for(var i = 0; i < this.posData.length; i += 3) {
-	this.posData[i] += vec[0]; 
-	this.posData[i+1] += vec[1]; 
-	this.posData[i+2] += vec[2]; 
-    }
-    this.initBuffers();
-}
-
+/*
+  GLobject.prototype.translate = function(vec) {
+  for(var i = 0; i < this.posData.length; i += 3) {
+  this.posData[i] += vec[0]; 
+  this.posData[i+1] += vec[1]; 
+  this.posData[i+2] += vec[2]; 
+  }
+  this.initBuffers();
+  }
+*/
 /**
  * Point to, and draw, the buffered triangles
  */
@@ -170,27 +192,30 @@ GLobject.prototype.drawBuffers = function(gl_, shader_) {
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.vNormA, 
-			   this.normBuff.itemSize, 
-			   gl_.FLOAT, false, 0, 0);
+			    this.normBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
     
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
     gl_.vertexAttribPointer(shader_.vPosA, 
-			   this.posBuff.itemSize, 
-			   gl_.FLOAT, false, 0, 0);
+			    this.posBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
     
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.vertexAttribPointer(shader_.vColA, 
-			   this.colBuff.itemSize,
-			   gl_.FLOAT, false, 0, 0);
+			    this.colBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(shader_.textureCoordAttribute, 
-			   this.textureBuff.itemSize,
-			   gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.textureA, 
+			    this.textureBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     theMatrix.setUniforms(gl_, shader_);
     gl_.drawElements(gl_.TRIANGLES, 
-		    this.indexBuff.numItems, 
-		    gl_.UNSIGNED_SHORT, 0);
+		     this.indexBuff.numItems, 
+		     gl_.UNSIGNED_SHORT, 0);
+
+
+
 };

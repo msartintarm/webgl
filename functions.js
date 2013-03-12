@@ -108,6 +108,11 @@ function drawDashboard() {
     zoom.inc();
 }
 
+Array.prototype.push2 = function(a, b) {
+    this.push(a);
+    this.push(b);
+}
+
 Array.prototype.push3 = function(a, b, c) {
     this.push(a);
     this.push(b);
@@ -176,5 +181,75 @@ function getShader(gl_, id) {
 	return null;
     }    
     return shader;
+}
+
+var wrongKey = false;
+
+function handleKeyDown(theEvent) {
+
+    if(wrongKey) {
+	wrongKey = false;
+	document.getElementById("keyboard").innerHTML = "";
+    }
+
+    switch(theEvent.keyCode) {
+	
+    case 39:
+	theMatrix.moveLeft();
+	break;
+    case 37:
+	theMatrix.moveRight();
+	break;
+    case 38:
+	theMatrix.moveUp();
+	break;
+    case 40:
+	theMatrix.moveDown();
+	break;
+    case 65: // a
+	theMatrix.moveForward();
+	break;
+    case 90: // z
+	theMatrix.moveBack();
+	break;
+    case 74: // j
+	theMatrix.lookLeft();
+	break;
+    case 76: // l
+	theMatrix.lookRight();
+	break;
+    case 73: // i
+	theMatrix.lookUp();
+	break;
+    case 75: // k
+	theMatrix.lookDown();
+	break;
+    default:
+	wrongKey = true;
+	document.getElementById("keyboard").innerHTML = 
+	    "Key " + theEvent.keyCode + " is undefined.";
+	break;
+    }
+}
+
+function tick() {
+	requestAnimFrame(tick);
+	theCanvas.drawScene();
+}
+
+function handleTextureLoaded(gl_, image, texture) {
+
+    gl_.bindTexture(gl_.TEXTURE_2D, texture);
+    gl_.texImage2D(gl_.TEXTURE_2D, 0, 
+		       gl_.RGBA, gl_.RGBA, 
+		       gl_.UNSIGNED_BYTE, image);
+    gl_.texParameteri(gl_.TEXTURE_2D, 
+			  gl_.TEXTURE_MAG_FILTER, 
+			  gl_.LINEAR);
+    gl_.texParameteri(gl_.TEXTURE_2D, 
+			  gl_.TEXTURE_MIN_FILTER, 
+			  gl_.LINEAR_MIPMAP_NEAREST);
+    gl_.generateMipmap(gl_.TEXTURE_2D);
+    gl_.bindTexture(gl_.TEXTURE_2D, null);
 }
 

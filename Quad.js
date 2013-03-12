@@ -1,20 +1,10 @@
 /*
+a c 
 b d
-a c
 */
-function Quad(a, b, c, d, at, bt, ct, dt) { 
+function Quad(a, b, c, d) { 
     this.o = new GLobject();
     this.indexPos = 0;
-
-    this.a = a;
-    this.b = b;
-    this.c = c;
-    this.d = d;
-
-    this.at = at;
-    this.bt = bt;
-    this.ct = ct;
-    this.dt = dt;
 
     this.o.addPosVec(a);
     this.o.addPosVec(b);   
@@ -28,18 +18,25 @@ function Quad(a, b, c, d, at, bt, ct, dt) {
 	this.o.addColors(1, 0, 0);
     }
 
-    this.o.addQuadIndexes(this.indexPos++,this.indexPos++,this.indexPos++,this.indexPos++);
+    this.o.addQuadIndexes(
+	this.indexPos++,
+	this.indexPos++,
+	this.indexPos++,
+	this.indexPos++);
   
-    this.o.addTexture(this.at.x, this.at.y);  
-    this.o.addTexture(this.bt.x, this.bt.y); 
-    this.o.addTexture(this.ct.x, this.ct.y);  
-    this.o.addTexture(this.dt.x, this.dt.y); 
+}
 
-    this.o.initBuffers();
+Quad.prototype.initTextures = function(at, bt, ct, dt) { 
+    this.o.addTexture(at.x, at.y);
+    this.o.addTexture(bt.x, bt.y);
+    this.o.addTexture(ct.x, ct.y); 
+    this.o.addTexture(dt.x, dt.y);
+}
+
+Quad.prototype.initBuffers = function(gl_) {
+    this.o.initBuffers(gl_);
 };
 
-Quad.prototype.draw = function() {
-    this.o.drawBuffers();
+Quad.prototype.draw = function(gl_, buffers_) {
+    this.o.drawBuffers(gl_, buffers_);
 };
-
-

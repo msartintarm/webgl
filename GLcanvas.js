@@ -18,7 +18,7 @@ function GLcanvas() {
 
 GLcanvas.prototype.add = function(objToDraw) {
     if(objToDraw == "cylinder") {
-	this.objects.push(new Cylinder(1, 4, 5, 300, 300));
+	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
     } else if(objToDraw == "sphere") {
 	this.objects.push(new Sphere(2));
     } else if(objToDraw == "stool") {
@@ -39,12 +39,8 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
-	var uUseTextureLocation;
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
-	uUseTextureLocation = 
-	    this.gl.getUniformLocation(this.shaders,"uUseTexture");
-	this.gl.uniform1f(uUseTextureLocation, 0);
 	this.objects[i].draw(this.gl, this.shaders); 
     } 
 }
@@ -73,6 +69,7 @@ GLcanvas.prototype.start = function(objToDraw) {
     // Initialize the shaders; this is where all the lighting for the
     // vertices and so forth is established.
     this.initShaders();
+    this.initTextures();
     
     // Instantiate models
     this.add(objToDraw);
@@ -103,7 +100,7 @@ GLcanvas.prototype.start2 = function(objToDraw) {
     // Initialize the shaders; this is where all the lighting for the
     // vertices and so forth is established.
     this.initShaders();
-	this.initTextures();
+    this.initTextures();
     
     // Instantiate models
     this.add(objToDraw);
@@ -117,43 +114,6 @@ GLcanvas.prototype.start2 = function(objToDraw) {
     
     // Set up to draw the scene periodically.
     tick2();  
-}
-
-function handleKeyDown(theEvent) {
-
-    switch(theEvent.keyCode) {
-	
-    case 39:
-	theMatrix.moveLeft();
-	break;
-    case 37:
-	theMatrix.moveRight();
-	break;
-    case 38:
-	theMatrix.moveUp();
-	break;
-    case 40:
-	theMatrix.moveDown();
-	break;
-    case 65: // a
-	theMatrix.moveForward();
-	break;
-    case 90: // z
-	theMatrix.moveBack();
-	break;
-    case 74: // j
-	theMatrix.lookLeft();
-	break;
-    case 76: // l
-	theMatrix.lookRight();
-	break;
-    case 73: // i
-	theMatrix.lookUp();
-	break;
-    case 75: // k
-	theMatrix.lookDown();
-	break;
-    }
 }
 
 /*
@@ -197,40 +157,34 @@ GLcanvas.prototype.drawScene = function() {
     // Update side display as well
     drawDashboard();
 }
-function tick() {
-	requestAnimFrame(tick);
-	theCanvas.drawScene();
-}
+
 GLcanvas.prototype.initTextures = function() {
     woodTexture = this.gl.createTexture();
     woodImage = new Image();
-    woodImage.crossOrigin = "anonymous";
-    woodImage.onload = function() {handleTextureLoaded(woodImage, woodTexture);}
+    woodImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	woodImage, 
+	woodTexture);
     woodImage.src = "textures/opera.png";
-    
+/*    
     brickTexture = this.gl.createTexture();
     brickImage = new Image();
-    brickImage.onload = function() {handleTextureLoaded(brickImage, brickTexture);}
+    brickImage.onload = handleTextureLoaded.bind(
+	this,
+	this.gl,
+	brickImage, 
+	brickTexture);
     brickImage.src = "textures/brick.jpg";
-
+*/
     tileTexture = this.gl.createTexture();
     tileImage = new Image();
-    tileImage.onload = function() {handleTextureLoaded(tileImage, tileTexture);}
+    tileImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	tileImage, 
+	tileTexture);
     tileImage.src = "textures/tiles.jpg";
-
-    //default to not use texture
-    var uUseTextureLocation = this.gl.getUniformLocation(shaderProgram,"uUseTexture");
-    this.gl.uniform1f(uUseTextureLocation, 0.0);
-    this.gl.activeTexture(gl.TEXTURE0);
-}
-
-function handleTextureLoaded(image, texture){
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 GLcanvas.prototype.initShaders = function() {
@@ -268,6 +222,12 @@ GLcanvas.prototype.initShaders = function() {
     this.shaders.textureA = 
 	this.gl.getAttribLocation(this.shaders, "textureA");
     this.gl.enableVertexAttribArray(this.shaders.textureA);
+
+    //default to not use texture
+    this.shaders.useTextureU = 
+	this.gl.getUniformLocation(this.shaders,"uUseTexture");
+    this.gl.uniform1f(this.shaders.useTextureU, 0.0);
+    this.gl.activeTexture(this.gl.TEXTURE0);
 
     this.shaders.pMatU = 
 	this.gl.getUniformLocation(this.shaders, "pMatU");
