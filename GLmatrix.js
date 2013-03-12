@@ -7,6 +7,7 @@ function GLmatrix() {
     mat4.identity(this.travelMatrix);
     this.r2 = Math.sqrt(2);
     this.mStack = [];
+    this.inJump = false;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -37,6 +38,8 @@ GLmatrix.prototype.viewInit = function() {
 
 GLmatrix.prototype.translate = function(vector) {
     mat4.translate(this.mMatrix, vector); }
+GLmatrix.prototype.vTranslate = function(vector) {
+    mat4.translate(this.vMatrix, vector); }
 GLmatrix.prototype.translateN = function(vector) {
     mat4.translate(this.mMatrix, 
 		   [-vector[2], 
@@ -85,6 +88,15 @@ GLmatrix.prototype.moveUp = function() {
     this.vMatrix = mat4.translate(
  	this.vMatrix, [0, moveDist, 0]); 
 }
+GLmatrix.prototype.jump = function() {
+    this.up3 = 2;
+    this.up2 = 4;
+    this.up1 = 7;
+    this.dn1 = 7;
+    this.dn2 = 4;
+    this.dn3 = 2;
+    this.inJump = true;
+}
 GLmatrix.prototype.moveDown = function() {
     this.vMatrix = mat4.translate(
 	this.vMatrix, [0, -moveDist, 0]); 
@@ -99,6 +111,26 @@ GLmatrix.prototype.moveBack = function() {
 	this.vMatrix, [0, 0, moveDist]); 
 }
 
+/**
+ * Input: amount of time to go up for x squares.
+ */
+GLmatrix.prototype.update = function() {
+    const x = 0.1;
+    if(this.inJump == false) { return; }
+    if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
+    else {
+    if(this.up2-- >= 0) { this.vTranslate([0, 2*x, 0]); }
+    else {
+    if(this.up1-- >= 0) { this.vTranslate([0, 1*x, 0]); }
+    else {
+    if(this.dn1-- >= 0) { this.vTranslate([0,-1*x, 0]); }
+    else {
+    if(this.dn2-- >= 0) { this.vTranslate([0,-2*x, 0]); }
+    else {
+    if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
+    else { this.inJump = false; }
+}}}}}}
+
 // maybe this translate is faster??
 GLmatrix.prototype.mvTranslate = function(v) {
     this.mult(Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4());
@@ -111,10 +143,12 @@ GLmatrix.prototype.setUniforms = function(gl_, shader_) {
 			false, this.mMatrix);
 //    gl_.uniformMatrix4fv(shader_.vMatU, 
 //			false, this.vMatrix);
+
     var inverseViewMatrix = mat4.create();
     mat4.inverse(this.vMatrix, inverseViewMatrix);
     gl_.uniformMatrix4fv(shader_.vMatU, 
 			false, inverseViewMatrix);
+
     var normalMatrix = mat3.create();
     mat4.toInverseMat3(this.mMatrix, normalMatrix);
     mat3.transpose(normalMatrix, normalMatrix);

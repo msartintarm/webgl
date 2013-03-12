@@ -5,10 +5,10 @@ b  d
  */
 function Floor() {     
     //floor
-    this.a = new vec3(-10,0,-10);
-    this.b = new vec3(-10,0,10);
-    this.c = new vec3(10,0,-10);
-    this.d = new vec3(10,0,10);
+    this.a = new vec3(-10, 0, 10);
+    this.b = new vec3(-10, 0,-10);
+    this.c = new vec3( 10, 0, 10);
+    this.d = new vec3( 10, 0,-10);
     
     this.at = new vec2(0.0,0.0);
     this.bt = new vec2(0.0,1.0);

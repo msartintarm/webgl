@@ -41,17 +41,26 @@ uniform float uUseTexture;
 
 void main(void) {
 
-  vec3 ambColor = colorV * 0.1;
-  vec3 diffColor = colorV * diffuseV;
-  vec3 specColor = vec3(.6,.6,.6) * specularV;
 
-  vec4 vertColor = vec4(ambColor + diffColor + specColor, 1.0) * (1.0 - uUseTexture);
   vec4 textureColor = texture2D(
     uSampler, 
     vec2(textureV.s, textureV.t));
-  textureColor = vec4(textureColor.rgb, textureColor.a) * uUseTexture;
+  vec3 colorV2 = textureColor.rgb;
+  if(uUseTexture == 0.0) { colorV2 = colorV; } 
+  vec3 ambColor = colorV2 * 0.1;
+  vec3 diffColor = colorV2 * diffuseV;
+  vec3 specColor = vec3(.6,.6,.6) * specularV;
 
-  gl_FragColor = textureColor + vertColor;
+  vec4 vertColor = vec4(ambColor + diffColor + specColor, 1.0);
+
+//  vec4 textureColor = texture2D(
+//    uSampler, 
+//    vec2(textureV.s, textureV.t));
+//  textureColor = vec4(textureColor.rgb * uUseTexture * 0.2, textureColor.a);
+
+//  gl_FragColor = textureColor + vertColor;
+  gl_FragColor = vertColor;
+//  if(uUseTexture == 1.0) gl_FragColor.a = textureColor.a;
 }
     </script>
     <script id="frag-shader-bad" type="x-shader/x-fragment">
@@ -66,10 +75,18 @@ uniform sampler2D uSampler;
 uniform float uUseTexture;
 
 void main(void) {
-  vec3 diffColor = vec3(0.4, 0.4, 0.4) * diffuseV;
+  vec3 ambColor = colorV * 0.1;
+  vec3 diffColor = colorV * diffuseV;
   vec3 specColor = vec3(.6,.6,.6) * specularV;
 
-  gl_FragColor = vec4(diffColor + specColor, 1.0);
+  vec4 vertColor = vec4(ambColor + diffColor + specColor, 1.0);
+
+  vec4 textureColor = texture2D(
+    uSampler, 
+    vec2(textureV.s, textureV.t));
+  textureColor = vec4(textureColor.rgb , textureColor.a) * uUseTexture;
+
+  gl_FragColor = textureColor + vertColor;
 }
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
@@ -98,7 +115,6 @@ varying vec2 textureV;
 
 void main(void) {
 
-  vec3 lightNorm = normalize(lightPosU);
   // -- Position -- //
 
   gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
@@ -111,6 +127,7 @@ void main(void) {
   textureV = textureA;
 
   vec3 n = normalize(nMatU * vNormA);
+  vec3 lightNorm = normalize(lightPosU - vPosA);
 
   // Diffuse component
   diffuseV = dot(n, lightNorm);
@@ -120,7 +137,7 @@ void main(void) {
     vec3 reflection = (n * diffuseV *
 		 2.0) - lightNorm;
     vec4 reflectNorm = vec4(normalize(reflection), 0.0);
-    specularV = dot(reflectNorm, vec4(0,0,1,1) * vMatU);
+    specularV = dot(vMatU * reflectNorm, vec4(0,0,1,0));
     if (specularV <= 0. || diffuseV <= 0.) { specularV = 0.0; }
     specularV = specularV * specularV;
     specularV = specularV * specularV;
@@ -157,7 +174,7 @@ void main(void) {
   vec3 lightNorm = normalize(lightPosU);
   // -- Position -- //
 
-  gl_Position = pMatU * mMatU * vMatU * vec4(vPosA, 1.0);
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
 
   // -- Lighting -- //
 
@@ -324,7 +341,7 @@ void main(void) {
               <input type="button" value="ADS model"
 onclick="theCanvas.changeShaders('shader-fs', 'shader-vs')"/>
               <input type="button" value="Bad shading" 
-onclick="theCanvas.changeShaders('frag-shader-bad', 'shader-vs')"/>
+onclick="theCanvas.changeShaders('frag-shader-bad', 'vertex-shader-bad')"/>
               <input type="button" value="Worse shading" 
 onclick="theCanvas.changeShaders('shader-fs', 'vertex-shader-bad')"/>
               <br/><br/>Reset Model:<br/>

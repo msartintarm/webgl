@@ -35,7 +35,9 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 
 	    this.o.addNorms(x_norm, y_norm, z_norm);;
 	    this.o.addPos(radius * x, radius * y, z);
-	    this.o.addColors(colorVec.x,colorVec.y,colorVec.z);
+	    this.o.addColors(colorVec[2],
+			     colorVec[1],
+			     colorVec[0]);
 	}
     }
 

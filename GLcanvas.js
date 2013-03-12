@@ -40,7 +40,7 @@ GLcanvas.prototype.add = function(objToDraw) {
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
-//	this.objects.push(new Light());
+	this.objects.push(new Light());
 }
 
 GLcanvas.prototype.bufferModels = function() {
@@ -164,6 +164,8 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.pop();
     // Update side display as well
     drawDashboard();
+    // Finally, update viewer's matrix
+    theMatrix.update();
 }
 
 GLcanvas.prototype.initTextures = function() {

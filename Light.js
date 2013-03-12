@@ -1,5 +1,5 @@
 function Light() {
-    this.o = new Sphere(0.5);
+    this.o = new Sphere(-0.2);
 }
 
 Light.prototype.initBuffers = function(gl_) {
@@ -8,17 +8,8 @@ Light.prototype.initBuffers = function(gl_) {
 
 Light.prototype.draw = function(gl_, shader_) {
 
-/*
-    theMatrix.translateN(rotatedLightPos);
-    theMatrix.translateN(rotatedLightPos);
-    theMatrix.translateN(rotatedLightPos);
-    theMatrix.translateN(rotatedLightPos);
-    theMatrix.translateN(rotatedLightPos);
+    theMatrix.push();
+    theMatrix.translate(rotatedLightPos);
     this.o.draw(gl_, shader_);
-    theMatrix.translate(rotatedLightPos);
-    theMatrix.translate(rotatedLightPos);
-    theMatrix.translate(rotatedLightPos);
-    theMatrix.translate(rotatedLightPos);
-    theMatrix.translate(rotatedLightPos);
-*/
+    theMatrix.pop();
 }

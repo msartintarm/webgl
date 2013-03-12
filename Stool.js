@@ -25,10 +25,10 @@ function Stool() {
     this.cylinder1 = new Cylinder(0.047,0.05,0.015,30,30);
     this.disk1b = new Disk(0.015,0.05,30,30);
     this.disk1b.invert();
-    colorVec.setvec(new vec3(0.5,0,0));
+    colorVec = [0.5,0,0];
     this.cylinder2 = new Cylinder(0.015,0.015,0.06,30,300); 
 
-    colorVec.setvec(new vec3(0,0.5,0.5));
+    colorVec = [0,0.5,0.5];
     this.disk3t = new Disk(0.015,0.065,30,30);
     this.cylinder3 = new Cylinder(0.065,0.070,0.015,30,30);
     this.disk3b = new Disk(0.015,0.070,30,30);
@@ -36,20 +36,20 @@ function Stool() {
     this.torus1 = new Torus(0.008,0.115);
 
     //moving parts
-    colorVec.setvec(new vec3(0.25,0,.5));
+    colorVec = [0.25,0,.5];
     this.disk4 = new Disk(0,seat_radius,30,30); 
     this.cylinder4 = new Cylinder(seat_radius,seat_radius,0.005,30,30);
     this.cylinder5 = new Cylinder(seat_radius,seat_radius/2,0.0075,30,30);
     this.cylinder5.invertNorms();
 
-    colorVec.setvec(new vec3(.5,.5,.5));
+    colorVec = [.5,.5,.5];
     this.cylinder6 = new Cylinder(seat_radius/2,seat_radius/4,0.0015,30,30);
     this.cylinder6.invertNorms();
-    colorVec.setvec(new vec3(0,.5,.5));
+    colorVec = [0,.5,.5];
     this.cylinder7 = new Cylinder(seat_radius/4,0.01,0.006,30,30);
-    colorVec.setvec(new vec3(0,0,.5));
+    colorVec = [0,0,.5];
     this.cylinder8 = new Cylinder(0.01,0.01,0.16,30,30);
-    colorVec.setvec(new vec3(.5,.5,.5));
+    colorVec = [.5,.5,.5];
     this.disk5 = new Disk(0,0.003,30,30);
 }
 

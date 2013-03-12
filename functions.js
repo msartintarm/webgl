@@ -194,6 +194,9 @@ function handleKeyDown(theEvent) {
 
     switch(theEvent.keyCode) {
 	
+    case 32: // spacebar
+	theMatrix.jump();
+	break;
     case 39:
 	theMatrix.moveLeft();
 	break;
@@ -233,6 +236,11 @@ function handleKeyDown(theEvent) {
 }
 
 function tick() {
+	requestAnimFrame(tick2);
+	theCanvas.drawScene();
+}
+
+function tick2() {
 	requestAnimFrame(tick);
 	theCanvas.drawScene();
 }
