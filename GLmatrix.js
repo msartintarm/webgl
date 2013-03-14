@@ -8,6 +8,7 @@ function GLmatrix() {
     this.r2 = Math.sqrt(2);
     this.mStack = [];
     this.inJump = false;
+    this.viewingPos = new vec4(0,0,0,0);
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -53,7 +54,7 @@ GLmatrix.prototype.mult = function(m) {
     this.mMatrix = this.mMatrix.x(m); }
 
 const lookDist = 1 / 64;
-const moveDist = 1 / 2;
+const moveDist = 2.1;
 
 GLmatrix.prototype.lookUp = function() {
     this.vMatrix = mat4.rotate(this.vMatrix,
@@ -68,21 +69,35 @@ GLmatrix.prototype.lookDown = function() {
 GLmatrix.prototype.lookLeft = function() {
     this.vMatrix = mat4.rotate(this.vMatrix, 
 			       lookDist * 2 * Math.PI, 
-			       [ 0, 1, 0]); 
+			       [ 0, 1, 0]);
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix); 
 }
 GLmatrix.prototype.lookRight = function() {
     this.vMatrix = mat4.rotate(this.vMatrix, 
 			       lookDist * 2 * Math.PI, 
 			       [ 0,-1, 0]); 
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix);
 }
 
 GLmatrix.prototype.moveRight = function() {
+    var copy = mat4.create();
+    mat4.set(this.vMatrix, copy);
     this.vMatrix = mat4.translate(
 	this.vMatrix, [-moveDist, 0, 0]); 
+    getViewPos(this.viewingPos, this.vMatrix);
+    if(checkViewMatrix(this.viewingPos) && !priveledgedMode.val){
+	mat4.set(copy, this.vMatrix);	
+    }
 }
 GLmatrix.prototype.moveLeft = function() {
+    var copy = mat4.create();
+    mat4.set(this.vMatrix, copy);
     this.vMatrix = mat4.translate(
-	this.vMatrix, [ moveDist, 0, 0]); 
+	this.vMatrix, [ moveDist, 0, 0]);
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix);
+    if(checkViewMatrix(this.viewingPos) && !priveledgedMode.val){
+	mat4.set(copy, this.vMatrix);	
+    }
 }
 GLmatrix.prototype.moveUp = function() {
     this.vMatrix = mat4.translate(
@@ -101,14 +116,59 @@ GLmatrix.prototype.moveDown = function() {
     this.vMatrix = mat4.translate(
 	this.vMatrix, [0, -moveDist, 0]); 
 }
+
+function getViewPos(vec, mat){
+    var x = 0, y = 0, z = 1, w = 1;
+    vec.x = mat[0] * x + mat[4] * y + mat[8] * z + mat[12] * w;
+    vec.y = mat[1] * x + mat[5] * y + mat[9] * z + mat[13] * w;
+    vec.z = mat[2] * x + mat[6] * y + mat[10] * z + mat[14] * w;
+    vec.w = mat[3] * x + mat[7] * y + mat[11] * z + mat[15] * w;
+    console.log('view pos= x:%d y:%d   z:%d',vec.x,vec.y,vec.z);
+    return vec;
+}
+
+function checkViewMatrix(pos){    
+    if(pos.z >= 11) return 1;
+    if(pos.x <= -8) return 1;
+    if(pos.x >= 88) return 1;
+    if(pos.z <= -128) return 1;
+    if((pos.x >= 8 && pos.x <= 12) && (pos.z <= -8 && pos.z >= -92)) return 1;
+    if((pos.x >= 28 && pos.x <= 32) && (pos.z <= -8 && pos.z >= -32)) return 1;
+    if((pos.x >= 48 && pos.x <= 52) && (pos.z <= -28 && pos.z >= -72)) return 1;
+    if((pos.x >= 48 && pos.x <= 52) && (pos.z <= -88 && pos.z >= -112)) return 1;
+    if((pos.x >= 68 && pos.x <= 72) && (pos.z <= -68 && pos.z >= -112)) return 1;
+    if((pos.x >= 68 && pos.x <= 72) && (pos.z <= -8 && pos.z >= -52)) return 1;
+    if((pos.x >= 28 && pos.x <= 52) && (pos.z <= -28 && pos.z >= -32)) return 1;
+    if((pos.x >= 8 && pos.x <= 32) && (pos.z <= -48 && pos.z >= -52)) return 1;
+    if((pos.x >= 28 && pos.x <= 72) && (pos.z <= -68 && pos.z >= -72)) return 1;
+    if((pos.x >= 8 && pos.x <= 52) && (pos.z <= -88 && pos.z >= -92)) return 1;
+    if((pos.x >= 68 && pos.x <= 92) && (pos.z <= -88 && pos.z >= -92)) return 1;
+    if((pos.x >= -8 && pos.x <= 52) && (pos.z <= -108 && pos.z >= -112)) return 1;
+    
+    //return value of 1 means we cannot move that way
+    return 0;
+}
+
 GLmatrix.prototype.moveForward = function() {
+    var copy = mat4.create();
+    mat4.set(this.vMatrix, copy);
     this.vMatrix = mat4.translate(
-	this.vMatrix, [0, 0,-moveDist]); 
+	this.vMatrix, [0, 0, -moveDist]); 
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix);
+    if(checkViewMatrix(this.viewingPos) && !priveledgedMode.val){
+	mat4.set(copy, this.vMatrix);	
+    }
 }
 
 GLmatrix.prototype.moveBack = function() {
+    var copy = mat4.create();
+    mat4.set(this.vMatrix, copy);
     this.vMatrix = mat4.translate(
 	this.vMatrix, [0, 0, moveDist]); 
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix);
+    if(checkViewMatrix(this.viewingPos) && !priveledgedMode.val){
+	mat4.set(copy, this.vMatrix);	
+    }
 }
 
 /**
@@ -116,6 +176,7 @@ GLmatrix.prototype.moveBack = function() {
  */
 GLmatrix.prototype.update = function() {
     const x = 0.1;
+    this.viewingPos = getViewPos(this.viewingPos, this.vMatrix);
     if(this.inJump == false) { return; }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
     else {

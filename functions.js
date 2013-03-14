@@ -56,11 +56,11 @@ MatrixData.prototype.isZero = function() {
     return(this.val == 0); }
 
 function booleanData(htmlID){
-    this.val = 0;
+    this.val = 1;
 }
 
 booleanData.prototype.reset = function(){
-    this.val = 0;
+    this.val = 1;
     }
 
 booleanData.prototype.toggle = function(){
@@ -75,6 +75,7 @@ var positionX;
 var positionY;
 var zoom;
 var pause;
+var priveledgedMode;
 
 function resetModel() { 
     rotateY.reset(); 
@@ -84,6 +85,7 @@ function resetModel() {
     zoom.set(45);
     pause.reset();
     stoolHeight.reset();
+    priveledgedMode.reset();
  }
 
 function drawDashboard() {
@@ -105,6 +107,8 @@ function drawDashboard() {
     } else {
 	positionY.html.innerHTML = "";
     }
+    //viewingPos.html.innerHTML = "View Position " + " x: " + viewingPos.x + " z: " + viewingPos.z;
+    //priveledgedMode.html.innerHTML = "Privledged Mode " + priveledgedMode.val;
     zoom.inc();
 }
 
@@ -200,32 +204,50 @@ function handleKeyDown(theEvent) {
     case 39:
 	theMatrix.moveLeft();
 	break;
-    case 37:
+    case 37:	
 	theMatrix.moveRight();
 	break;
     case 38:
-	theMatrix.moveUp();
+	if(priveledgedMode.val)
+	    theMatrix.moveUp();
+	else
+	    theMatrix.moveForward();
 	break;
     case 40:
-	theMatrix.moveDown();
+	if(priveledgedMode.val)
+	    theMatrix.moveDown();
+	else
+	    theMatrix.moveBack();
 	break;
     case 65: // a
-	theMatrix.moveForward();
+	if(priveledgedMode.val)
+	    theMatrix.moveForward();
+	else
+	    theMatrix.lookLeft();
 	break;
+    case 68: // d
+	if(!priveledgedMode.val)
+	    theMatrix.lookRight();
+	break;	
     case 90: // z
-	theMatrix.moveBack();
+	if(priveledgedMode.val)
+	    theMatrix.moveBack();
 	break;
     case 74: // j
-	theMatrix.lookLeft();
+	if(priveledgedMode.val)
+	    theMatrix.lookLeft();
 	break;
     case 76: // l
-	theMatrix.lookRight();
+	if(priveledgedMode.val)
+	    theMatrix.lookRight();
 	break;
     case 73: // i
-	theMatrix.lookUp();
+	if(priveledgedMode.val)
+	    theMatrix.lookUp();
 	break;
     case 75: // k
-	theMatrix.lookDown();
+	if(priveledgedMode.val)
+	    theMatrix.lookDown();
 	break;
     default:
 	wrongKey = true;
