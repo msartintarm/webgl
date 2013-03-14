@@ -1,17 +1,17 @@
-var kLong = 50;
-var kLat = 50;
+var slices = 50;
+var stacks = 50;
 
 function Torus(innerRadius, outerRadius) { 
     this.o = new GLobject();
 
-    for (var i = 0; i <= kLong; i++) {
+    for (var i = 0; i <= slices; i++) {
 	// From 0 to 2pi
-	var theta = i * 2 / kLong * Math.PI;
+	var theta = i * 2 / slices * Math.PI;
 	var sin_theta = Math.sin(theta);
 	var y = Math.cos(theta);
-	for (var j = 0; j <= kLat; j++) {
+	for (var j = 0; j <= stacks; j++) {
 	    // From 0 to 2 pi
-	    var phi = j * 2 / kLat * Math.PI;
+	    var phi = j * 2 / stacks * Math.PI;
 	    var cos_phi = Math.cos(phi);
 	    var sin_phi = Math.sin(phi);
 	    // x = r sin theta cos phi
@@ -28,28 +28,25 @@ function Torus(innerRadius, outerRadius) {
 	    this.o.addPos(xzPlane * cos_phi, 
 			  y * innerRadius, 
 			  xzPlane * sin_phi);
-	    this.o.addColors(x/2, y/2, z/2);
-
-	    //not correct must adjust to add texture
-	    this.o.addTexture(0.0, 0.0);
+	    this.o.addColors(0.4,
+			     0.5,
+			     0.6);
 	}
     }
 
     // We have the vertices now - stitch them 
     //  into triangles
-    // A  C 
+    // C  D 
     //        Two triangles: ABC and BDC
-    // B  D   Longitude lines run through AB and  CD
+    // A  B   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
     var indexData = [];
-    for (var latitude = 0; latitude < kLat; latitude++) {
-	for (var longitude = 0; longitude < kLong; longitude++) {
-	    var A = (latitude * (kLong + 1)) + longitude;
-	    var B = A + kLong + 1;
-	    var C = A + 1;
-	    var D = B + 1;
-	    this.o.addQuadIndexes(A, B, C, D);
+    for (var i = 0; i < slices; i++) {
+	for (var j = 0; j < stacks; j++) {
+	    var A = (i * (stacks + 1)) + j;
+	    var C = A + stacks + 1;
+	    this.o.addQuadIndexes(A, C);
 	}
     }
     

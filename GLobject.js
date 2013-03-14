@@ -56,11 +56,17 @@ GLobject.prototype.addIndexes = function(x,y,z) {
  * (only with arrays that it makes sense for)
  */
 GLobject.prototype.addNormVec = 
-    function(vec) { this.normData.pushV(vec); }
+    function(vec) { this.normData.push(vec[0]);
+		    this.normData.push(vec[1]);
+		    this.normData.push(vec[2]); }
 GLobject.prototype.addPosVec = 
-    function(vec) { this.posData.pushV(vec); }
+    function(vec) { this.posData.push(vec[0]);
+		    this.posData.push(vec[1]);
+		    this.posData.push(vec[2]); }
 GLobject.prototype.addColorVec = 
-    function(vec) { this.colData.pushV(vec); }
+    function(vec) { this.colData.push(vec[0]);
+		    this.colData.push(vec[1]);
+		    this.colData.push(vec[2]); }
 
 /** 
  *  A---C 
@@ -68,9 +74,14 @@ GLobject.prototype.addColorVec =
  *  |/  |     
  *  B---D
  */
-GLobject.prototype.addQuadIndexes = function(a,b,c,d) {
-    this.indexData.push3(a,b,c); 
-    this.indexData.push3(b,d,c); }
+GLobject.prototype.addQuadIndexes = function(a, c) {
+    this.indexData.push(a);
+    this.indexData.push(a+1);
+    this.indexData.push(c);
+    this.indexData.push(a+1);
+    this.indexData.push(c+1);
+    this.indexData.push(c);
+}
 
 /**
    Buffers a quadrilateral.
@@ -81,16 +92,26 @@ GLobject.prototype.Quad = function(a, b, c, d) {
     this.addPosVec(c);   
     this.addPosVec(d);
 
-    var normalVec = crossVec3(subVec3(b,a), 
-			      subVec3(c,a));
+    var temp1 = vec3.create();
+    var temp2 = vec3.create();
+    var normV = vec3.create();
+
+    vec3.cross(normV, vec3.sub(temp1,b,a), vec3.sub(temp2,c,a));
+
     for (var i = 0; i < 4; ++i) {
-	this.addNormVec(normalVec);
+	this.addNormVec(normV);
 	this.addColors(.3, .5, .7);
     }
-    this.addQuadIndexes(this.indexPos++,
-			this.indexPos++,
-			this.indexPos++,
-			this.indexPos++);
+    this.addQuadIndexes(this.indexPos,
+			this.indexPos + 2);
+    this.indexPos += 4;
+}
+
+GLobject.prototype.initTextures = function(at, bt, ct, dt) { 
+    this.addTexture(at.x, at.y);
+    this.addTexture(bt.x, bt.y);
+    this.addTexture(ct.x, ct.y); 
+    this.addTexture(dt.x, dt.y);
 }
 
 /**
@@ -114,7 +135,8 @@ GLobject.prototype.initBuffers = function(gl_) {
 	var i = 0;
 	var max = this.normData.length / 3;
 	for(; i < max; ++i) {
-	    this.textureData.push2(0, 0);
+	    this.textureData.push(0);
+	    this.textureData.push(0);
 	}
     }
 
@@ -164,16 +186,15 @@ GLobject.prototype.rotate = function(vec) {
 GLobject.prototype.scale = function(number) {
     this.scale *= number; 
 }
-/*
-  GLobject.prototype.translate = function(vec) {
-  for(var i = 0; i < this.posData.length; i += 3) {
-  this.posData[i] += vec[0]; 
-  this.posData[i+1] += vec[1]; 
-  this.posData[i+2] += vec[2]; 
-  }
-  this.initBuffers();
-  }
-*/
+
+GLobject.prototype.translate = function(vec) {
+    for(var i = 0; i < this.posData.length; i += 3) {
+	this.posData[i] += vec[0]; 
+	this.posData[i+1] += vec[1]; 
+	this.posData[i+2] += vec[2]; 
+    }
+}
+
 /**
  * Point to, and draw, the buffered triangles
  */
@@ -200,7 +221,7 @@ GLobject.prototype.drawBuffers = function(gl_, shader_) {
 			    gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
-    theMatrix.setUniforms(gl_, shader_);
+    theMatrix.setVertexUniforms(gl_, shader_);
     gl_.drawElements(gl_.TRIANGLES, 
 		     this.indexBuff.numItems, 
 		     gl_.UNSIGNED_SHORT, 0);

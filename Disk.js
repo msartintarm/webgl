@@ -32,10 +32,9 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 
 	    this.o.addNorms(0, 0, 1);
 	    this.o.addPos(radius * x, radius * y, z);
-
-	    //not correct to add textures must adjust
-	    this.o.addTexture(0.0, 0.0);  
-	    this.o.addColors(colorVec.x,colorVec.y,colorVec.z);
+	    this.o.addColors(colorVec[0],
+			     colorVec[1],
+			     colorVec[2]);
 	}
     }
 
@@ -62,11 +61,11 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 /**
  * Flip the z-coordinate of normals to -1
  */
-Disk.prototype.invert = function() {
-    for(var i = 2; i < this.o.normData.length; i += 3) {
-	this.o.normData[i] = -1;
-    }
-}
+//Disk.prototype.invert = function() {
+//    for(var i = 2; i < this.o.normData.length; i += 3) {
+//	this.o.normData[i] = -1;
+//    }
+//}
 
 Disk.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);

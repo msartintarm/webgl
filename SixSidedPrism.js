@@ -25,33 +25,6 @@ function SixSidedPrism(a, b, c, d, e, f, g, h) {
     this.o.Quad(h, e, d, a);
 };
 
-/**
-   Buffers a quadrilateral.
- */
-SixSidedPrism.prototype.Quad = function(a, b, c, d) { 
-    this.o.addPosVec(a);
-    this.o.addPosVec(b);   
-    this.o.addPosVec(c);   
-    this.o.addPosVec(d);
-
-    var normalVec = crossVec3(subVec3(b,a), 
-			      subVec3(c,a));
-    for (var i = 0; i < 4; ++i) {
-	this.o.addNormVec(normalVec);
-	this.o.addColors(.3, .5, .7);
-    }
-    this.o.addQuadIndexes(this.indexPos++,
-			  this.indexPos++,
-			  this.indexPos++,
-			  this.indexPos++);
-
-    //not correct, to add texture this should be adjusted
-    this.o.addTexture(0.0, 0.0);  
-    this.o.addTexture(1.0, 1.0); 
-    this.o.addTexture(0.0, 0.0);  
-    this.o.addTexture(1.0, 1.0);
-}
-
 SixSidedPrism.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 };

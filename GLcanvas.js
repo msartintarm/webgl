@@ -16,7 +16,7 @@ function GLcanvas() {
     this.gl = null;
     theMatrix = new GLmatrix();
 
-    colorVec = new vec3(1,1,0);
+    colorVec = vec3.fromValues(1,1,0);
     positionX = new MatrixData("positionXStats");
     positionY = new MatrixData("positionYStats");
     rotateY = new MatrixData("rotateStats");
@@ -51,6 +51,7 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
+    theMatrix.setConstUniforms(this.gl,this.shaders);
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
 	this.objects[i].draw(this.gl, this.shaders); 
@@ -82,8 +83,11 @@ GLcanvas.prototype.start = function(objToDraw) {
 	this.gl.enable(this.gl.DEPTH_TEST);
 	
 	// Set up to draw the scene periodically.
-	tick();  
+	document.onmousedown = handleMouseDown;
+	document.onmouseup = handleMouseUp;
+	document.onmousemove = handleMouseMove;
 	document.onkeydown = handleKeyDown;
+	tick();
     } else {
 	// If we have started GL already, 
 	//  just add the new model.
@@ -245,14 +249,22 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.gl.uniform1f(this.shaders.useTextureU, 0.0);
     this.gl.activeTexture(this.gl.TEXTURE0);
 
+    // Perspecctive matrix
     this.shaders.pMatU = 
 	this.gl.getUniformLocation(this.shaders, "pMatU");
+    // Model matrix
     this.shaders.mMatU = 
 	this.gl.getUniformLocation(this.shaders, "mMatU");
+    // Viewing matrix
     this.shaders.vMatU = 
 	this.gl.getUniformLocation(this.shaders, "vMatU");
+    // Model's normal matrix
     this.shaders.nMatU = 
 	this.gl.getUniformLocation(this.shaders, "nMatU");
+    // Lighting matrix
+    this.shaders.lMatU = 
+	this.gl.getUniformLocation(this.shaders, "lMatU");
+    // Initial light's position
     this.shaders.lightPosU = 
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
 }

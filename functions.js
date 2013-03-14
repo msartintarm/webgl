@@ -7,10 +7,6 @@ var colorVec;
 var lightPos =  [0.57735, 0.57735, 0.57735];
 var viewPos = [0, 0, 1];
 
-// 'positions' after matrix manipulations, passed to shaders
-var rotatedLightPos = [0.57735, 0.57735, 0.57735];
-var rotatedViewPos;
-
 function MatrixData(htmlID) { 
     this.val = 0; 
     this.inc_ = 0; 
@@ -120,9 +116,9 @@ Array.prototype.push3 = function(a, b, c) {
 }
 
 Array.prototype.pushV = function(vector) {
-    this.push(vector.x);
-    this.push(vector.y);
-    this.push(vector.z); 
+    this.push(vector[0]);
+    this.push(vector[1]);
+    this.push(vector[2]); 
 }
 
 //
@@ -183,7 +179,60 @@ function getShader(gl_, id) {
     return shader;
 }
 
+var mouseIsDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+
+var lightMatrix = mat4.create();
+mat4.identity(lightMatrix);
+
+function handleMouseDown(event) {
+    mouseIsDown = true;
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+}
+
+function handleMouseUp(event) {
+    mouseIsDown = false;
+}
+
+function handleMouseMove(event) {
+    if (!mouseIsDown) { return; }
+
+    var newX = event.clientX;
+    var newY = event.clientY;
+
+    if(lightWillRotate) {
+	var transLightMatrix = mat4.create();
+	mat4.identity(transLightMatrix);
+	mat4.rotate(
+	    transLightMatrix,
+	    transLightMatrix,
+	    Math.PI / 180 * 2 * (
+		(newX - mouseX) / 10),
+	    [0, 1, 0]);
+	mat4.rotate(transLightMatrix,
+		    transLightMatrix,
+		    Math.PI / 180 * 2 * (
+			(newY - mouseY) / 10),
+		    [1, 0, 0]);
+	mat4.multiply(lightMatrix, 
+		      transLightMatrix,
+		      lightMatrix);
+    } else {
+	mat4.translate(lightMatrix,
+		       lightMatrix,
+		       [(newX - mouseX) / 30, 0, 0]);
+	mat4.translate(lightMatrix,
+		       lightMatrix,
+		       [0, (mouseY - newY) / 30, 0]);
+    }
+    mouseX = newX;
+    mouseY = newY;
+}
+
 var wrongKey = false;
+var lightWillRotate = false;
 
 function handleKeyDown(theEvent) {
 
@@ -194,8 +243,20 @@ function handleKeyDown(theEvent) {
 
     switch(theEvent.keyCode) {
 	
+    case 16: // shift
+	lightWillRotate = !lightWillRotate;
+	if(lightWillRotate) {
+	    document.getElementById("keyboard").innerHTML = 
+		"Light movement: TRANSLATION --> ROTATION";
+	} else {
+	    document.getElementById("keyboard").innerHTML = 
+		"Light movement: TRANSLATION <-- ROTATION";
+	}
+	break;
     case 32: // spacebar
 	theMatrix.jump();
+	document.getElementById("keyboard").innerHTML = 
+	    "Key " + theEvent.keyCode + " is undefined.";
 	break;
     case 39:
 	theMatrix.moveLeft();

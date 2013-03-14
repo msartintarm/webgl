@@ -64,12 +64,12 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
  * Flip the z-coordinate of normals to -1
  */
 Cylinder.prototype.invertNorms = function() {
-    for(var i = 0; i < this.o.normData.length; i += 1) {
+    for(var i = 0; i < this.o.normData.length; ++i) {
 	this.o.normData[i] = -this.o.normData[i];
     }
 }
 
-Cylinder.prototype.drawScrew = function(gl_) {
+Cylinder.prototype.drawScrew = function() {
 
     var radius_change = this.top_radius - this.base_radius;
     var radius_step_size = radius_change/this.stacks;
@@ -98,13 +98,6 @@ Cylinder.prototype.drawScrew = function(gl_) {
 	    // x = r sin theta cos phi
 
 	    if(minAngle < phi && phi < maxAngle) {
-//		alert("Index: " + 
-//		      index + 
-//		      ", position: " + 
-//		      this.o.posData[index] +
-//		      " -> " + 
-//		      radius * 0.5 * x + 
-//		      ".");
 	    var x = 1 * Math.cos(phi);
 	    var y = 1 * Math.sin(phi);
 		this.o.posData[index] /= 0.9;
@@ -113,9 +106,9 @@ Cylinder.prototype.drawScrew = function(gl_) {
 		this.o.posData[index+1+(3*this.slices)] *= 0.9;
 		this.o.posData[index-(3*this.slices)] *= 0.9;
 		this.o.posData[index+1-(3*this.slices)] *= 0.9;
-		this.o.colData[index] /= 0.3;
-		this.o.colData[index+1] /= 0.3;
-		this.o.colData[index+2] /= 0.3;
+		this.o.colData[index] = 1.0;
+		this.o.colData[index+1] = 1.0;
+		this.o.colData[index+2] = 1.0;
 //		this.o.colData[index+this.slices] = 0.0;
 //		this.o.colData[index+1+this.slices] = 0.0;
 //		this.o.colData[index+2+this.slices] = 0.0;
@@ -129,10 +122,9 @@ Cylinder.prototype.drawScrew = function(gl_) {
 	maxAngle %= Math.PI * 2;
     }
 
-    this.o.initBuffers(gl_);
 };
 
-Cylinder.prototype.drawBlackStreak = function(gl_) {
+Cylinder.prototype.drawBlackStreak = function() {
 
     var radius_change = this.top_radius - this.base_radius;
     var radius_step_size = radius_change/this.stacks;
@@ -176,7 +168,6 @@ Cylinder.prototype.drawBlackStreak = function(gl_) {
 	minAngle %= Math.PI * 2; 
 	maxAngle %= Math.PI * 2;
     }
-    this.o.initBuffers(gl_);
 }    
 
 Cylinder.prototype.initBuffers = function(gl_) {
