@@ -7,8 +7,8 @@
  * Object holding modelview and perspective matrices.
  */
 var theMatrix;
-
 var canvas2, gl2;
+var mazeMode;
 
 function GLcanvas() {
     this.objects = [];
@@ -25,20 +25,27 @@ function GLcanvas() {
     zoom.set(45);
     pause = new booleanData("pause");
     stoolHeight = new MatrixData("stoolHeight");
+    priveledgedMode = new booleanData("priveledgedMode");
 }
 
 GLcanvas.prototype.add = function(objToDraw) {
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
+	mazeMode = 0;
     } else if(objToDraw == "sphere") {
 	this.objects.push(new Sphere(2));
+	mazeMode = 0;
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
-    } else if(objToDraw == "room") {
-	this.objects.push(new Floor());
-	this.objects.push(new Wall());
+	mazeMode = 0;
+    } else if(objToDraw == "maze") {
+	theMatrix.vTranslate([20,2,10]);
+	this.objects.push(new Maze());
+	mazeMode = 1;
+	priveledgedMode.toggle();
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
+	mazeMode = 0;
     }
 	this.objects.push(new Light());
 }
@@ -62,7 +69,6 @@ GLcanvas.prototype.drawModels = function() {
  * Begins the canvas.
  */
 GLcanvas.prototype.start = function(objToDraw) {
-
     if (this.gl == null) {
 	// One-time display methods
 	this.canvas.style.display = "block";
@@ -156,7 +162,7 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.perspective(zoom.val,
 			  this.gl.viewportWidth / 
 			  this.gl.viewportHeight,
-			  0.1, 100.0);
+			  0.1, 900.0);
 
 
     theMatrix.modelInit();
@@ -180,8 +186,44 @@ GLcanvas.prototype.initTextures = function() {
 	this.gl,
 	woodImage, 
 	woodTexture);
-    woodImage.src = "textures/opera.png";
-/*    
+    woodImage.src = "textures/wood.jpg";
+
+    heavenTexture = this.gl.createTexture();
+    heavenImage = new Image();
+    heavenImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	heavenImage, 
+	heavenTexture);
+    heavenImage.src = "textures/heaven.jpg";
+
+    hellTexture = this.gl.createTexture();
+    hellImage = new Image();
+    hellImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	hellImage, 
+	hellTexture);
+    hellImage.src = "textures/hell.png";
+
+    floorTexture = this.gl.createTexture();
+    floorImage = new Image();
+    floorImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	floorImage, 
+	floorTexture);
+    floorImage.src = "textures/floor.jpg";
+
+    operaTexture = this.gl.createTexture();
+    operaImage = new Image();
+    operaImage.onload = handleTextureLoaded.bind(
+	undefined,
+	this.gl,
+	operaImage, 
+	operaTexture);
+    operaImage.src = "textures/opera.png";
+   
     brickTexture = this.gl.createTexture();
     brickImage = new Image();
     brickImage.onload = handleTextureLoaded.bind(
@@ -190,11 +232,11 @@ GLcanvas.prototype.initTextures = function() {
 	brickImage, 
 	brickTexture);
     brickImage.src = "textures/brick.jpg";
-*/
+
     tileTexture = this.gl.createTexture();
     tileImage = new Image();
     tileImage.onload = handleTextureLoaded.bind(
-	undefined,
+	this,
 	this.gl,
 	tileImage, 
 	tileTexture);

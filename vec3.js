@@ -43,6 +43,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     this.y = y;
 }
 
+    function vec4(x, y, z, w)
+{
+    // the data
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
+}
+
 vec3.prototype.scale = function(s)
 {
     this.x*=s;

@@ -13,7 +13,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
     var radius_step_size = radius_change/stacks;
     var radius = base_radius;
 
-    var theta = Math.atan(Math.abs(top_radius-base_radius)/height);
+    var theta = Math.atan((base_radius-top_radius)/height);
     var z_norm = Math.sin(theta);
     var xy =  Math.cos(theta);
 
