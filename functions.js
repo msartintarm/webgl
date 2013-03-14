@@ -32,13 +32,13 @@ MatrixData.prototype.setIncZoom = function(num) {
     this.val = this.val + num; 
     if(this.val > 180) this.val = 180;
     if(this.val < 0) this.val = 0;
- }
+}
 
 MatrixData.prototype.setStoolHeight = function(num) { 
     this.val = this.val + num; 
     if(this.val > 4.375) this.val = 4.375;
     if(this.val < 0) this.val = 0;
- }
+}
 
 MatrixData.prototype.dec = function() { 
     this.val = (this.val - this.inc_) % 360; }
@@ -53,15 +53,17 @@ MatrixData.prototype.isZero = function() {
 
 function booleanData(htmlID){
     this.val = 1;
+    this.html = document.getElementById(htmlID); 
 }
 
 booleanData.prototype.reset = function(){
     this.val = 1;
-    }
+}
 
 booleanData.prototype.toggle = function(){
     if(this.val == 0) this.val = 1;
     else this.val = 0;
+    this.html.style.display = "inline-block";
 }
 
 var stoolHeight;
@@ -82,7 +84,7 @@ function resetModel() {
     pause.reset();
     stoolHeight.reset();
     priveledgedMode.reset();
- }
+}
 
 function drawDashboard() {
     if(rotateCam.html.style.display == "inline-block") {
@@ -103,8 +105,11 @@ function drawDashboard() {
     } else {
 	positionY.html.innerHTML = "";
     }
-    //viewingPos.html.innerHTML = "View Position " + " x: " + viewingPos.x + " z: " + viewingPos.z;
-    //priveledgedMode.html.innerHTML = "Privledged Mode " + priveledgedMode.val;
+    if(priveledgedMode.html.style.display == "inline-block") {
+	priveledgedMode.html.innerHTML = "Privledged Mode " + priveledgedMode.val;
+    priveledgedMode.html.innerHTML += "<br/>View Position " + " x: " + 
+	    theMatrix.viewingPos[0] + " z: " + theMatrix.viewingPos[2];
+    }
     zoom.inc();
 }
 
@@ -319,27 +324,27 @@ function handleKeyDown(theEvent) {
 }
 
 function tick() {
-	requestAnimFrame(tick2);
-	theCanvas.drawScene();
+    requestAnimFrame(tick2);
+    theCanvas.drawScene();
 }
 
 function tick2() {
-	requestAnimFrame(tick);
-	theCanvas.drawScene();
+    requestAnimFrame(tick);
+    theCanvas.drawScene();
 }
 
 function handleTextureLoaded(gl_, image, texture) {
 
     gl_.bindTexture(gl_.TEXTURE_2D, texture);
     gl_.texImage2D(gl_.TEXTURE_2D, 0, 
-		       gl_.RGBA, gl_.RGBA, 
-		       gl_.UNSIGNED_BYTE, image);
+		   gl_.RGBA, gl_.RGBA, 
+		   gl_.UNSIGNED_BYTE, image);
     gl_.texParameteri(gl_.TEXTURE_2D, 
-			  gl_.TEXTURE_MAG_FILTER, 
-			  gl_.LINEAR);
+		      gl_.TEXTURE_MAG_FILTER, 
+		      gl_.LINEAR);
     gl_.texParameteri(gl_.TEXTURE_2D, 
-			  gl_.TEXTURE_MIN_FILTER, 
-			  gl_.LINEAR_MIPMAP_NEAREST);
+		      gl_.TEXTURE_MIN_FILTER, 
+		      gl_.LINEAR_MIPMAP_NEAREST);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 }

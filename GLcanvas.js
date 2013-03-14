@@ -25,7 +25,7 @@ function GLcanvas() {
     zoom.set(45);
     pause = new booleanData("pause");
     stoolHeight = new MatrixData("stoolHeight");
-    priveledgedMode = new booleanData("priveledgedMode");
+    priveledgedMode = new booleanData("priveledgedStats");
 }
 
 GLcanvas.prototype.add = function(objToDraw) {
@@ -47,7 +47,7 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Torus(0.2, 2));
 	mazeMode = 0;
     }
-	this.objects.push(new Light());
+    this.objects.push(new Light());
 }
 
 GLcanvas.prototype.bufferModels = function() {
@@ -172,10 +172,10 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.push();
     this.drawModels();
     theMatrix.pop();
+    // Update viewer's matrix
+    theMatrix.update();
     // Update side display as well
     drawDashboard();
-    // Finally, update viewer's matrix
-    theMatrix.update();
 }
 
 GLcanvas.prototype.initTextures = function() {
@@ -223,7 +223,7 @@ GLcanvas.prototype.initTextures = function() {
 	operaImage, 
 	operaTexture);
     operaImage.src = "textures/opera.png";
-   
+    
     brickTexture = this.gl.createTexture();
     brickImage = new Image();
     brickImage.onload = handleTextureLoaded.bind(
@@ -310,6 +310,6 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.shaders.lightPosU = 
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
 }
- 
+
 var theCanvas;
 
