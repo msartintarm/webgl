@@ -114,9 +114,9 @@ GLmatrix.prototype.moveDown = function() {
 		   this.vMatrix, [0, -moveDist, 0]); 
 }
 
-GLmatrix.prototype.getPosition = function(mat) {
+GLmatrix.prototype.getPosition = function() {
     var thePos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(thePos, thePos, mat);
+    vec4.transformMat4(thePos, thePos, this.vMatrixNew);
     console.log('view pos= x:%d y:%d   z:%d',
 		thePos[0], thePos[1], thePos[2]);
     return thePos;
