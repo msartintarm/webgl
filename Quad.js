@@ -23,10 +23,9 @@ function Quad(a, b, c, d) {
     }
 
     this.o.addQuadIndexes(
-	this.indexPos++,
-	this.indexPos++,
-	this.indexPos++,
-	this.indexPos++);
+	this.indexPos,
+	this.indexPos + 2);
+    this.indexPos += 4;
   
 }
 
