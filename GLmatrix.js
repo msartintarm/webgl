@@ -22,10 +22,24 @@ GLmatrix.prototype.modelInit = function() {
     mat4.identity(this.mMatrix);
 }
 
+GLmatrix.prototype.modelUpdate = function() {
+    mat4.identity(this.mMatrix);
+    mat4.translate(this.mMatrix,
+		   this.mMatrix,
+		   [positionX.val,-positionY.val,0]);
+    mat4.rotate(
+	this.mMatrix,
+	this.mMatrix,
+	rotateY.val * Math.PI/180,
+	[this.r2, this.r2, 0]);
+}
+
 GLmatrix.prototype.viewInit = function() {
     mat4.identity(this.vMatrix);
     mat4.identity(this.vMatrixNew);
 }
+
+
 
 GLmatrix.prototype.viewMaze = function() {
     mat4.translate(this.vMatrixNew,

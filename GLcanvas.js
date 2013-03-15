@@ -156,7 +156,6 @@ GLcanvas.prototype.initGL = function() {
  *  Draw the scene.
  */
 GLcanvas.prototype.drawScene = function() {
-
     // Clear the canvas before we start drawing on it.
     this.gl.viewport(0, 0, 800, 800);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
@@ -169,6 +168,8 @@ GLcanvas.prototype.drawScene = function() {
 
 
     theMatrix.modelInit();
+    if(!mazeMode)
+	theMatrix.modelUpdate();
 
     // Draw all our objects
     theMatrix.push();
