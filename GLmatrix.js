@@ -165,12 +165,14 @@ GLmatrix.prototype.moveBack = function() {
  */
 GLmatrix.prototype.update = function() {
     const x = 0.1;
-    if( priveledgedMode.val || !this.newViewIllegal()){
-	mat4.copy(this.vMatrix, this.vMatrixNew);
+    if(this.inJump == false) {
+	if( priveledgedMode.val || !this.newViewIllegal()){
+	    mat4.copy(this.vMatrix, this.vMatrixNew);
+	}
+	mat4.copy(this.vMatrixNew, this.vMatrix);
+	this.viewingPos = this.getPosition();
+	return; 
     }
-    mat4.copy(this.vMatrixNew, this.vMatrix);
-    this.viewingPos = this.getPosition();
-    if(this.inJump == false) { return; }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
     else {
     if(this.up2-- >= 0) { this.vTranslate([0, 2*x, 0]); }
@@ -202,8 +204,10 @@ GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
 			 false, this.pMatrix);
     gl_.uniformMatrix4fv(shader_.vMatU, 
 			 false, this.ivMatrix);
+
+    mat4.mul(ilMatrix, this.vMatrix, lightMatrix);
     gl_.uniformMatrix4fv(shader_.lMatU, 
-			 false, lightMatrix);
+			 false, ilMatrix);
     gl_.uniform3fv(shader_.lightPosU, 
 		   lightPos);
 }

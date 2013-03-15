@@ -39,7 +39,7 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Stool());
 	mazeMode = 0;
     } else if(objToDraw == "maze") {
-	theMatrix.vTranslate([20,2,10]);
+//	theMatrix.vTranslate([20,2,10]);
 	this.objects.push(new Maze());
 	mazeMode = 1;
 	priveledgedMode.toggle();

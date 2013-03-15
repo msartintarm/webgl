@@ -4,7 +4,7 @@
 var colorVec;
 
 // Default lighting and viewer positions
-var lightPos =  [0.57735, 0.57735, 0.57735];
+var lightPos =  [0.5, 0.4, -2];
 var viewPos = [0, 0, 1];
 
 function MatrixData(htmlID) { 

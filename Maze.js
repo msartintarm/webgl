@@ -55,7 +55,7 @@ Maze.prototype.initBuffers = function(gl_) {
 }
 
 Maze.prototype.draw = function(gl_,buffer_) {
-    //theMatrix.push();
+    theMatrix.push();
     for(var i=0; i<this.height; i++){
 	for(var j=0; j<this.width; j++){
 	    this.pieces[i*this.width+j].draw(gl_, buffer_);
@@ -63,5 +63,5 @@ Maze.prototype.draw = function(gl_,buffer_) {
 	}
 	theMatrix.translate([-20*(this.width),0,-20]);
     }
-    //theMatrix.pop();
+    theMatrix.pop();
 }
