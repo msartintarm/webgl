@@ -47,7 +47,7 @@ void main(void) {
   vec4 textureColor = texture2D(
     uSampler, 
     vec2(textureV.s, textureV.t));
-  vec3 colorV2 = textureColor.rgb;
+  vec3 colorV2 = textureColor.rgb / 2.0;
   if(uUseTexture == 0.0) { colorV2 = colorV; } 
   vec3 ambColor = colorV2 * 0.1;
   vec3 diffColor = colorV2 * diffuseV * 0.7;
@@ -114,8 +114,6 @@ void main(void) {
 // Pre-viewing space coordinates of light / vertex
 vec4 vModel = vMatU * mMatU  * vec4(vPosA, 1.0);
 vec4 lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
-
-//lModel = vMatU * vec4(0.,-3.,0., 1.0);
 
   // -- Position -- //
 
