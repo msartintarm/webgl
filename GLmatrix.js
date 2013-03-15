@@ -213,8 +213,10 @@ GLmatrix.prototype.update = function() {
 		    if(this.dn2-- >= 0) { this.vTranslate([0,-2*x, 0]); }
 		    else {
 			if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
-			else { this.inJump = false; }
-		    }}}}}}
+			else { this.inJump = false; return; }
+		    }}}}}   
+    mat4.copy(this.vMatrix, this.vMatrixNew);
+}
 
 /**
  * Uniforms that are const over the lifetime
