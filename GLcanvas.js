@@ -29,6 +29,9 @@ function GLcanvas() {
 }
 
 GLcanvas.prototype.add = function(objToDraw) {
+    theMatrix.viewInit();
+    this.objects = [];
+    priveledgedMode.reset();
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
 	mazeMode = 0;
@@ -39,10 +42,11 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Stool());
 	mazeMode = 0;
     } else if(objToDraw == "maze") {
-//	theMatrix.vTranslate([20,2,10]);
 	this.objects.push(new Maze());
 	mazeMode = 1;
 	priveledgedMode.toggle();
+	theMatrix.vTranslate([20,2,9.0]);
+	//theMatrix.viewMaze();
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
 	mazeMode = 0;
@@ -106,7 +110,6 @@ GLcanvas.prototype.start = function(objToDraw) {
  * Begins the canvas.
  */
 GLcanvas.prototype.start2 = function(objToDraw) {
-
     this.canvas = document.getElementById("glcanvas2");
     this.canvas.style.display = "block";
     this.canvas.style.width = "100%";
@@ -153,7 +156,6 @@ GLcanvas.prototype.initGL = function() {
  *  Draw the scene.
  */
 GLcanvas.prototype.drawScene = function() {
-
     // Clear the canvas before we start drawing on it.
     this.gl.viewport(0, 0, 800, 800);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
@@ -166,7 +168,8 @@ GLcanvas.prototype.drawScene = function() {
 
 
     theMatrix.modelInit();
-    theMatrix.viewInit();
+    if(!mazeMode)
+	theMatrix.modelUpdate();
 
     // Draw all our objects
     theMatrix.push();

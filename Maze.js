@@ -1,4 +1,4 @@
-function Maze() { 
+function Maze() {  
     //f b r l
     this.pieces = [];
  
