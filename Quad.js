@@ -19,7 +19,7 @@ function Quad(a, b, c, d) {
     vec3.normalize(normV, normV);
     for (var i = 0; i < 4; ++i) {
 	this.o.addNormVec(normV);
-	this.o.addColors(1, 0, 0);
+	this.o.addColors(0.2, 0.5, 0.7);
     }
 
     this.o.addQuadIndexes(

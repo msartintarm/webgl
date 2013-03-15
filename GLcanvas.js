@@ -9,6 +9,7 @@
 var theMatrix;
 var canvas2, gl2;
 var mazeMode;
+var myMaze;
 
 function GLcanvas() {
     this.objects = [];
@@ -43,10 +44,10 @@ GLcanvas.prototype.add = function(objToDraw) {
 	mazeMode = 0;
     } else if(objToDraw == "maze") {
 	this.objects.push(new Maze());
+	myMaze = this.objects[0]; //new Maze();
 	mazeMode = 1;
 	priveledgedMode.toggle();
-	theMatrix.vTranslate([20,2,9.0]);
-	//theMatrix.viewMaze();
+	theMatrix.viewMaze();
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
 	mazeMode = 0;
@@ -178,8 +179,7 @@ GLcanvas.prototype.drawScene = function() {
     // Update viewer's matrix
     theMatrix.update();
     // Update side display as well
-    drawDashboard();
-}
+    drawDashboard();}
 
 GLcanvas.prototype.initTextures = function() {
     woodTexture = this.gl.createTexture();
