@@ -6,6 +6,7 @@ const seat_radius = (11.75/2)/60;
 var colorVec;
 
 function Stool() { 
+    this.objs = [];
     var x_ = base_leg_width;
     var y_ = min_stool_height;
     var z_offset = base_leg_distance;
@@ -18,57 +19,46 @@ function Stool() {
     var f_ = vec3.fromValues(-x_,   0,  z_ + z_offset);
     var g_ = vec3.fromValues(-x_,   0, -z_ + z_offset);
     var h_ = vec3.fromValues(-x_,  y_, -z_ + z_offset + tilt);
-    this.stoolLeg = new SixSidedPrism(a_, b_, c_, d_, e_, f_, g_, h_);
 
-    this.disk1t = new Disk(0.01,0.047,30,30);
-    this.cylinder1 = new Cylinder(0.047,0.05,0.015,30,30);
-    this.disk1b = new Disk(0.015,0.05,30,30);
+    this.stoolLeg = this.Prism(a_, b_, c_, d_, e_, f_, g_, h_);
+
+    this.disk1t = this.Disk(0.01,0.047,30,30);
+    this.cylinder1 = this.Cyl(0.047,0.05,0.015,30,30);
+    this.disk1b = this.Disk(0.015,0.05,30,30);
 //    this.disk1b.invert();
     colorVec = [0.5,0,0];
-    this.cylinder2 = new Cylinder(0.015,0.015,0.06,30,300); 
+    this.cylinder2 = this.Cyl(0.015,0.015,0.06,30,300); 
     this.cylinder2.drawScrew();
     colorVec = [0,0.5,0.5];
-    this.disk3t = new Disk(0.015,0.065,30,30);
-    this.cylinder3 = new Cylinder(0.065,0.070,0.015,30,30);
-    this.disk3b = new Disk(0.015,0.070,30,30);
+    this.disk3t = this.Disk(0.015,0.065,30,30);
+    this.cylinder3 = this.Cyl(0.065,0.070,0.015,30,30);
+    this.disk3b = this.Disk(0.015,0.070,30,30);
 //    this.disk3b.invert();
-    this.torus1 = new Torus(0.008,0.115);
+    this.torus1 = this.Torus(0.008,0.115);
 
     //moving parts
     colorVec = [0.25,0,.5];
-    this.disk4 = new Disk(0,seat_radius,30,30); 
-    this.cylinder4 = new Cylinder(seat_radius,seat_radius,0.005,30,30);
-    this.cylinder5 = new Cylinder(seat_radius,seat_radius/2,0.0075,30,30);
+    this.disk4 = this.Disk(0,seat_radius,30,30); 
+    this.cylinder4 = this.Cyl(seat_radius,seat_radius,0.005,30,30);
+    this.cylinder5 = this.Cyl(seat_radius,seat_radius/2,0.0075,30,30);
 
     colorVec = [.5,.5,.5];
-    this.cylinder6 = new Cylinder(seat_radius/2,seat_radius/4,0.0015,30,30);
+    this.cylinder6 = this.Cyl(seat_radius/2,seat_radius/4,0.0015,30,30);
     this.cylinder6.invertNorms();
     colorVec = [0,.5,.5];
-    this.cylinder7 = new Cylinder(seat_radius/4,0.01,0.006,30,30);
+    this.cylinder7 = this.Cyl(seat_radius/4,0.01,0.006,30,30);
     colorVec = [0,0,.5];
-    this.cylinder8 = new Cylinder(0.01,0.01,0.16,30,30);
+    this.cylinder8 = this.Cyl(0.01,0.01,0.16,30,30);
     colorVec = [.5,.5,.5];
-    this.disk5 = new Disk(0,0.003,30,30);
+    this.disk5 = this.Disk(0,0.003,30,30);
 }
 
-Stool.prototype.initBuffers = function(gl_) {
-    this.stoolLeg.initBuffers(gl_);
-    this.disk1t.initBuffers(gl_);
-    this.cylinder1.initBuffers(gl_);
-    this.disk1b.initBuffers(gl_);
-    this.cylinder2.initBuffers(gl_);
-    this.disk3t.initBuffers(gl_);
-    this.cylinder3.initBuffers(gl_);
-    this.disk3b.initBuffers(gl_);
-    this.torus1.initBuffers(gl_);
-    this.disk4.initBuffers(gl_);
-    this.cylinder4.initBuffers(gl_);
-    this.cylinder5.initBuffers(gl_);
-    this.cylinder6.initBuffers(gl_);
-    this.cylinder7.initBuffers(gl_);
-    this.cylinder8.initBuffers(gl_);
-    this.disk5.initBuffers(gl_);
-}
+Stool.prototype.Prism = _Prism;
+Stool.prototype.Disk = _Disk;
+Stool.prototype.Cyl = _Cyl;
+Stool.prototype.Torus = _Torus;
+
+Stool.prototype.initBuffers = _objsInitBuffers;
 
 Stool.prototype.draw = function(gl_, buffer_) {
 

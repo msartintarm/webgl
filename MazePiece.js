@@ -1,3 +1,21 @@
+// Locations of Wall
+
+const FRONT = 0x1; // 0001
+const BACK = 0x2; // 0010
+const RIGHT = 0x4; // 0100
+const LEFT = 0x8; // 1000
+
+const NO_FRONT = BACK | RIGHT | LEFT;
+const BACK_LEFT = BACK | LEFT;
+const NONE = 0x0;
+const NONE = 0x0;
+const FRONT_BACK = FRONT | BACK;
+const BACK_RIGHT = RIGHT | BACK;
+const LEFT_RIGHT = RIGHT | LEFT;
+const FRONT_LEFT = FRONT | LEFT;
+
+
+
 /* 
 this function stamps out the walls for one maze piece
 
@@ -18,6 +36,8 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
     this.rt = rt;
     this.lt = lt;
 
+    this.objs = [];
+
     var a,b,c,d,at,bt,ct,dt;
     at = vec2.fromValues(0.0,0.0);
     bt = vec2.fromValues(1.0,0.0);
@@ -29,8 +49,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
     b = vec3.fromValues(-10, 0,-10);
     c = vec3.fromValues( 10, 0, 10);
     d = vec3.fromValues( 10, 0,-10);
-    this.qFloor = new Quad(a, b, c, d);
-    this.qFloor.initTextures(at, bt, ct, dt);
+    this.qFloor = this.Quad(a, b, c, d).initTextures(at, bt, ct, dt);
 
     //define the bounds for walls
     //A VALUE OF -100 MEANS NO BOUNDS
@@ -62,7 +81,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(11.4,10,-8.5);
 
 	this.nZ_bound = position[2] - 8;
-	this.qFront = new SixSidedPrism(a,b,c,d,e,f,g,h);
+	this.qFront = this.Prism(a,b,c,d,e,f,g,h);
     }
     if(this.l){
 	//left wall
@@ -76,7 +95,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h =  vec3.fromValues(-8.5,10,-11.4);
 
 	this.nX_bound = position[0] - 8;
-	this.qLeft = new SixSidedPrism(a, b, c, d, e, f, g, h);
+	this.qLeft = this.Prism(a, b, c, d, e, f, g, h);
     }
     if(this.r){
 	//right wall
@@ -90,7 +109,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(8.5,10,11.4);
 
 	this.pX_bound = 8 + position[0];
-	this.qRight = new SixSidedPrism(a, b, c, d, e, f, g, h);
+	this.qRight = this.Prism(a, b, c, d, e, f, g, h);
     }
     if(this.b){
 	//behind wall
@@ -104,17 +123,14 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(-11.4,10,8.5);
 
 	this.pZ_bound = position[2] + 8;
-	this.qBack = new SixSidedPrism(a, b, c, d, e, f, g, h);
+	this.qBack = this.Prism(a, b, c, d, e, f, g, h);
     }
 };
 
-MazePiece.prototype.initBuffers = function(gl_) {
-    this.qFloor.initBuffers(gl_);
-    if(this.f) this.qFront.initBuffers(gl_);
-    if(this.b) this.qBack.initBuffers(gl_);
-    if(this.r) this.qRight.initBuffers(gl_);
-    if(this.l) this.qLeft.initBuffers(gl_);
-}
+MazePiece.prototype.initBuffers = _objsInitBuffers;
+MazePiece.prototype.translate = _objsTranslate;
+MazePiece.prototype.Quad = _Quad;
+MazePiece.prototype.Prism = _Prism;
 
 MazePiece.prototype.draw = function(gl_, shaders_) {
     gl_.uniform1f(shaders_.useTextureU, 1);
@@ -134,7 +150,7 @@ MazePiece.prototype.draw = function(gl_, shaders_) {
     if(this.b==1){
 	//draw back
 	gl_.uniform1f(shaders_.useTextureU, 1);
-	gl_.bindTexture(gl_.TEXTURE_2D, this.ft);
+	gl_.bindTexture(gl_.TEXTURE_2D, this.bt);
 	gl_.uniform1i(shaders_.samplerUniform, 0);
 	this.qBack.draw(gl_, shaders_);
 	gl_.bindTexture(gl_.TEXTURE_2D, null);

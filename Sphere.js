@@ -36,19 +36,12 @@ function Sphere(radius) {
     //        Array indices of C and D are A / B + 1
     for (var i = 0; i < kLat; i++) {
 	var A = (i * (kLong + 1));
-	var B = A + kLong + 1;
-	var C = A + 1;
-	var D = B + 1;
+	var C = A + kLong + 1;
 	for (var j = 0; j < kLong; j++) {
-	    this.o.addQuadIndexes(A++,B++,C++,D++);
+	    this.o.addQuadIndexes(A++,C++);
 	}
     }
 };
 
-Sphere.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
-}
-
-Sphere.prototype.draw = function(gl_, shader_) {
-    this.o.drawBuffers(gl_, shader_);
-};
+Sphere.prototype.initBuffers = _oInitBuffers;
+Sphere.prototype.draw = _oDraw;

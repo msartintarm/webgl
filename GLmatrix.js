@@ -143,8 +143,8 @@ GLmatrix.prototype.moveDown = function() {
 GLmatrix.prototype.getPosition = function() {
     var thePos = vec4.fromValues(0,0,1,1);
     vec4.transformMat4(thePos, thePos, this.vMatrixNew);
-    console.log('view pos= x:%d y:%d   z:%d',
-		thePos[0], thePos[1], thePos[2]);
+//    console.log('view pos= x:%d y:%d   z:%d',
+//		thePos[0], thePos[1], thePos[2]);
     return thePos;
 }
 
@@ -243,6 +243,10 @@ GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
 		   lightPos);
 }
 
+
+var nMatrix = mat4.create();   // normal
+var mvMatrix = mat4.create();  // modelview
+
 /**
  * Per-vertex uniforms must be set each time.
  */
@@ -250,10 +254,6 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
     gl_.uniformMatrix4fv(shader_.mMatU, 
 			 false, this.mMatrix);
 
-
-    var nMatrix = mat4.create();   // normal
-    var mvMatrix = mat4.create();  // modelview
-    var imvMatrix = mat4.create(); // inverted modelview
 
     // perceived normals: (inverse of modelview
     //  transposed) * object normals

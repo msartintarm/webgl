@@ -29,17 +29,16 @@ function Quad(a, b, c, d) {
   
 }
 
+Quad.prototype.invertNorms = _oInvertNorms;
 Quad.prototype.initTextures = function(at, bt, ct, dt) { 
     this.o.addTexture(at[0], at[1]);
     this.o.addTexture(bt[0], bt[1]);
     this.o.addTexture(ct[0], ct[1]); 
     this.o.addTexture(dt[0], dt[1]);
+    return this;
 }
 
-Quad.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
-};
+Quad.prototype.initBuffers = _oInitBuffers;
+Quad.prototype.translate = _oTranslate;
 
-Quad.prototype.draw = function(gl_, buffers_) {
-    this.o.drawBuffers(gl_, buffers_);
-};
+Quad.prototype.draw = _oDraw;

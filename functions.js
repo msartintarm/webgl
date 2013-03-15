@@ -13,6 +13,88 @@ function MatrixData(htmlID) {
     this.html = document.getElementById(htmlID); 
 }
 
+// Quad constructor that pushes
+// it to an internal 'objs' array,
+// making it easier to draw
+function _Quad(a,b,c,d) {
+    var newQuad = new Quad(a,b,c,d);
+    this.objs.push(newQuad);
+    return newQuad;
+}
+
+function _Prism(a,b,c,d,e,f,g,h) {
+    var newPrism = new SixSidedPrism(a,b,c,d,e,f,g,h);
+    this.objs.push(newPrism);
+    return newPrism;
+}
+
+function _Disk(a,b,c,d) {
+    var newDisk = new Disk(a,b,c,d);
+    this.objs.push(newDisk);
+    return newDisk;
+}
+
+function _Cyl(a,b,c,d,e) {
+    var newCyl = new Cylinder(a,b,c,d,e);
+    this.objs.push(newCyl);
+    return newCyl;
+}
+
+//Maze.prototype.function Piece(a,b,c,d,e,f,g,h) {
+//    var newPiece = new MazePiece(a,b,c,d,e,f,g,h);
+//    this.pieces.push(newPiece);
+//    return newCyl;
+//}
+
+function _Torus(a,b) {
+    var newTorus = new Torus(a,b);
+    this.objs.push(newTorus);
+    return newTorus;
+}
+
+/**
+ *  Functions for high-level objects
+ *  that contain arrays of shapes
+ */
+function _objsInitBuffers(gl_) {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].initBuffers(gl_);
+    }
+    return this;
+}
+
+function _objsTranslate(vec_) {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].translate(vec_);
+    }
+    return this;
+}
+
+/** 
+ *  Functions for low-level objects
+ *  that contain single shapes
+ */
+function _oInitBuffers(gl_) {
+    this.o.initBuffers(gl_);
+    return this;
+}
+
+function _oDraw(gl_, shader_) {
+    this.o.drawBuffers(gl_, shader_);
+}
+
+function _oTranslate(vec_) {
+    this.o.translate(vec_);
+    return this;
+}
+
+function _oInvertNorms() {
+    for(var i = 0; i < this.o.normData.length; ++i) {
+	this.o.normData[i] = -this.o.normData[i];
+    }
+    return this;
+}
+
 MatrixData.prototype.pause = function() { this.inc_ = 0; }
 MatrixData.prototype.set = function(num) { this.val = num; }
 MatrixData.prototype.setInc = function(num) {     

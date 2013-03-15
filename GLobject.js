@@ -68,6 +68,12 @@ GLobject.prototype.addColorVec =
 		    this.colData.push(vec[1]);
 		    this.colData.push(vec[2]); }
 
+/**
+ * Sometimes, we'll have to invert the norms 
+ *  of flat objects
+ */
+GLobject.prototype.invertNorms = function() {}
+
 /** 
  *  A---C 
  *  |  /|    Two triangles: ABC and BDC
@@ -193,6 +199,7 @@ GLobject.prototype.translate = function(vec) {
 	this.posData[i+1] += vec[1]; 
 	this.posData[i+2] += vec[2]; 
     }
+    return this;
 }
 
 /**

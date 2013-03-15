@@ -9,6 +9,7 @@
              B----C             
  */
 function SixSidedPrism(a, b, c, d, e, f, g, h) { 
+    this.objs = []
     var at,bt,ct,dt;
     at = vec2.fromValues(0.0,0.0);
     bt = vec2.fromValues(1.0,0.0);
@@ -16,24 +17,21 @@ function SixSidedPrism(a, b, c, d, e, f, g, h) {
     dt = vec2.fromValues(1.0,1.0);
 
     // Front and back faces.
-    this.q1 = new Quad(a,b,d,c);
-    this.q1.initTextures(bt,dt,at,ct);
-    this.q2 = new Quad(h,g,e,f);
-    this.q2.initTextures(bt,dt,at,ct);
+    this.q1 = this.Quad(a,b,d,c).initTextures(bt,dt,at,ct);
+    this.q2 = this.Quad(h,g,e,f).initTextures(bt,dt,at,ct);
 
     // Side faces.
-    this.q3 = new Quad(d,c,h,g);
-    this.q3.initTextures(bt,dt,at,ct);
-    this.q4 = new Quad(e,f,a,b);
-    this.q4.initTextures(bt,dt,at,ct);
+    this.q3 = this.Quad(d,c,h,g).initTextures(bt,dt,at,ct);
+    this.q4 = this.Quad(e,f,a,b).initTextures(bt,dt,at,ct);
 
     // Top and bottom faces.
-    this.q5 = new Quad(c,b,g,f);
-    this.q5.initTextures(bt,dt,at,ct);
-    this.q6 = new Quad(h,e,d,a);
-    this.q6.initTextures(bt,dt,at,ct);
+    this.q5 = this.Quad(c,b,g,f).initTextures(bt,dt,at,ct);
+    this.q6 = this.Quad(h,e,d,a).initTextures(bt,dt,at,ct);
 
 };
+
+SixSidedPrism.prototype.Quad = _Quad;
+SixSidedPrism.prototype.translate = _objsTranslate;
 
 SixSidedPrism.prototype.initBuffers = function(gl_) {
     this.q1.initBuffers(gl_);

@@ -60,14 +60,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
     }
 }
 
-/**
- * Flip the z-coordinate of normals to -1
- */
-Cylinder.prototype.invertNorms = function() {
-    for(var i = 0; i < this.o.normData.length; ++i) {
-	this.o.normData[i] = -this.o.normData[i];
-    }
-}
+Cylinder.prototype.invertNorms = _oInvertNorms;
 
 Cylinder.prototype.drawScrew = function() {
 
