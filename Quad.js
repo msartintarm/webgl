@@ -16,7 +16,7 @@ function Quad(a, b, c, d) {
     var normV = vec3.create();
 
     vec3.cross(normV, vec3.sub(temp1,b,a), vec3.sub(temp2,c,a));
-
+    vec3.normalize(normV, normV);
     for (var i = 0; i < 4; ++i) {
 	this.o.addNormVec(normV);
 	this.o.addColors(1, 0, 0);
@@ -31,10 +31,10 @@ function Quad(a, b, c, d) {
 }
 
 Quad.prototype.initTextures = function(at, bt, ct, dt) { 
-    this.o.addTexture(at.x, at.y);
-    this.o.addTexture(bt.x, bt.y);
-    this.o.addTexture(ct.x, ct.y); 
-    this.o.addTexture(dt.x, dt.y);
+    this.o.addTexture(at[0], at[1]);
+    this.o.addTexture(bt[0], bt[1]);
+    this.o.addTexture(ct[0], ct[1]); 
+    this.o.addTexture(dt[0], dt[1]);
 }
 
 Quad.prototype.initBuffers = function(gl_) {
