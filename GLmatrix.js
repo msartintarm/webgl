@@ -24,12 +24,13 @@ GLmatrix.prototype.modelInit = function() {
 
 GLmatrix.prototype.viewInit = function() {
     mat4.identity(this.vMatrix);
+    mat4.identity(this.vMatrixNew);
 }
 
 GLmatrix.prototype.viewMaze = function() {
-    mat4.translate(this.vMatrix, 
+    mat4.translate(this.vMatrixNew,
 		   this.vMatrix, 
-		   [20,2,10]); 
+		   [20,2,9.0]); 
 }
 
 GLmatrix.prototype.translate = function(vector) {
