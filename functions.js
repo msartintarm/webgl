@@ -250,6 +250,8 @@ function handleKeyDown(theEvent) {
 	document.getElementById("keyboard").innerHTML = "";
     }
 
+	document.getElementById("keyboard").innerHTML = 
+	    "Key " + theEvent.keyCode + " is defined.";
     switch(theEvent.keyCode) {
 	
     case 16: // shift
@@ -265,48 +267,28 @@ function handleKeyDown(theEvent) {
     case 32: // spacebar
 	theMatrix.jump();
 	document.getElementById("keyboard").innerHTML = 
-	    "Key " + theEvent.keyCode + " is undefined.";
+	    "Jump!";
 	break;
-    case 39:
+    case 39: // ->
 	theMatrix.moveLeft();
+	document.getElementById("keyboard").innerHTML = 
+	    "Jump!";
 	break;
-    case 37:	
+    case 37: // left
 	theMatrix.moveRight();
 	break;
-    case 38:
-	if(priveledgedMode.val)
-	    theMatrix.moveUp();
-	else
-	    theMatrix.moveForward();
+    case 38: // up
+	theMatrix.moveForward();
 	break;
-    case 40:
-	if(priveledgedMode.val)
-	    theMatrix.moveDown();
-	else
-	    theMatrix.moveBack();
+    case 40: // down
+	theMatrix.moveBack();
 	break;
     case 65: // a
-	if(priveledgedMode.val)
-	    theMatrix.moveForward();
-	else
-	    theMatrix.lookLeft();
+	theMatrix.lookLeft();
 	break;
     case 68: // d
-	if(!priveledgedMode.val)
-	    theMatrix.lookRight();
+	theMatrix.lookRight();
 	break;	
-    case 90: // z
-	if(priveledgedMode.val)
-	    theMatrix.moveBack();
-	break;
-    case 74: // j
-	if(priveledgedMode.val)
-	    theMatrix.lookLeft();
-	break;
-    case 76: // l
-	if(priveledgedMode.val)
-	    theMatrix.lookRight();
-	break;
     case 73: // i
 	if(priveledgedMode.val)
 	    theMatrix.lookUp();
@@ -314,6 +296,14 @@ function handleKeyDown(theEvent) {
     case 75: // k
 	if(priveledgedMode.val)
 	    theMatrix.lookDown();
+	break;
+    case 87: // w
+	if(priveledgedMode.val)
+	    theMatrix.moveUp();
+	break;
+    case 83: // s
+	if(priveledgedMode.val)
+	    theMatrix.moveDown();
 	break;
     default:
 	wrongKey = true;

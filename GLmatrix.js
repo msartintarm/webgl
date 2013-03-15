@@ -114,15 +114,15 @@ GLmatrix.prototype.moveDown = function() {
 		   this.vMatrix, [0, -moveDist, 0]); 
 }
 
-GLmatrix.prototype.getNewPos = function(mat) {
+GLmatrix.prototype.getPosition = function(mat) {
     var thePos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(thePos, thePos, this.vMatrix);
+    vec4.transformMat4(thePos, thePos, mat);
     console.log('view pos= x:%d y:%d   z:%d',
 		thePos[0], thePos[1], thePos[2]);
     return thePos;
 }
 
-GLmatrix.prototype.checkNewView = function() {
+GLmatrix.prototype.newViewIllegal = function() {
     var pos = vec4.fromValues(0,0,1,1);
     vec4.transformMat4(pos, pos, this.vMatrixNew);
     if(pos[2] >= 11) return 1;
@@ -165,11 +165,11 @@ GLmatrix.prototype.moveBack = function() {
  */
 GLmatrix.prototype.update = function() {
     const x = 0.1;
-    if(this.checkNewView() && !priveledgedMode.val){
+    if( priveledgedMode.val || !this.newViewIllegal()){
 	mat4.copy(this.vMatrix, this.vMatrixNew);
     }
     mat4.copy(this.vMatrixNew, this.vMatrix);
-    this.viewingPos = this.getNewPos();
+    this.viewingPos = this.getPosition();
     if(this.inJump == false) { return; }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
     else {
