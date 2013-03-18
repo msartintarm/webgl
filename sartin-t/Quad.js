@@ -38,6 +38,12 @@ Quad.prototype.initTextures = function(at, bt, ct, dt) {
     return this;
 }
 
+Quad.prototype.setTexture = function(texture) { 
+    this.o.setTexture(texture);
+    this.initTextures([0,0], [1,0], [0,1], [1,1]);
+    return this;
+}
+
 Quad.prototype.initBuffers = _oInitBuffers;
 Quad.prototype.translate = _oTranslate;
 

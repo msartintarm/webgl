@@ -163,10 +163,5 @@ Cylinder.prototype.drawBlackStreak = function() {
     }
 }    
 
-Cylinder.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
-}
-
-Cylinder.prototype.draw = function(gl_, buffer_) {
-    this.o.drawBuffers(gl_, buffer_);
-};
+Cylinder.prototype.initBuffers = _oInitBuffers;
+Cylinder.prototype.draw = _oDraw;

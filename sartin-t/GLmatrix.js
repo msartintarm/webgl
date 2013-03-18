@@ -11,6 +11,8 @@ function GLmatrix() {
     this.inJump = false;
     this.viewingPos = vec4.create();
     this.uncheckedPos = vec4.create();
+
+    this.mMatrixChanged = false;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -59,7 +61,9 @@ GLmatrix.prototype.viewMaze = function() {
 }
 
 GLmatrix.prototype.translate = function(vector) {
-    mat4.translate(this.mMatrix, this.mMatrix, vector); }
+    mat4.translate(this.mMatrix, this.mMatrix, vector); 
+    this.mMatrixChanged = true;
+}
 GLmatrix.prototype.vTranslate = function(vector) {
     mat4.translate(this.vMatrixNew, this.vMatrix, vector); }
 GLmatrix.prototype.translateN = function(vector) {
@@ -67,13 +71,21 @@ GLmatrix.prototype.translateN = function(vector) {
 		   this.mMatrix,
 		   [-vector[0], 
 		    -vector[1], 
-		    -vector[2]]); }
+		    -vector[2]]); 
+    this.mMatrixChanged = true;
+}
 GLmatrix.prototype.rotate = function(rads, vector) {
-    mat4.rotate(this.mMatrix, this.mMatrix, rads, vector); }
+    mat4.rotate(this.mMatrix, this.mMatrix, rads, vector);
+    this.mMatrixChanged = true;
+}
 GLmatrix.prototype.scale = function(vector) {
-    mat4.scale(this.mMatrix, this.mMatrix, vector); }
+    mat4.scale(this.mMatrix, this.mMatrix, vector); 
+    this.mMatrixChanged = true;
+}
 GLmatrix.prototype.mul = function(m) {
-    mat4.multiply(this.mMatrix, this.mMatrix, m); }
+    mat4.multiply(this.mMatrix, this.mMatrix, m); 
+    this.mMatrixChanged = true;
+}
 
 const lookDist = 1 / 64;
 const moveDist = 2.1;
@@ -221,11 +233,42 @@ GLmatrix.prototype.update = function() {
 /**
  * Uniforms that are const over the lifetime
  *  of a shader only need to be set once.
- *
+*/
+GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
+
+    gl_.uniform1i(shader_.woodU, WOOD_TEXTURE);
+    gl_.uniform1i(shader_.heavenU, HEAVEN_TEXTURE);
+    gl_.uniform1i(shader_.hellU, HELL_TEXTURE);
+    gl_.uniform1i(shader_.floorU, FLOOR_TEXTURE);
+    gl_.uniform1i(shader_.operaU, OPERA_TEXTURE);
+    gl_.uniform1i(shader_.brickU, BRICK_TEXTURE);
+    gl_.uniform1i(shader_.tileU, TILE_TEXTURE);
+    gl_.uniform1i(shader_.noU, NO_TEXTURE);
+/*    gl_.activeTexture(gl_.TEXTURE0);
+    gl_.bindTexture(gl_.TEXTURE_2D, woodTexture);
+    gl_.activeTexture(gl_.TEXTURE1);
+    gl_.bindTexture(gl_.TEXTURE_2D, heavenTexture);
+    gl_.activeTexture(gl_.TEXTURE2);
+    gl_.bindTexture(gl_.TEXTURE_2D, hellTexture);
+    gl_.activeTexture(gl_.TEXTURE3);
+    gl_.bindTexture(gl_.TEXTURE_2D, floorTexture);
+    gl_.activeTexture(gl_.TEXTURE4);
+    gl_.bindTexture(gl_.TEXTURE_2D, operaTexture);
+    gl_.activeTexture(gl_.TEXTURE5);
+    gl_.bindTexture(gl_.TEXTURE_2D, brickTexture);
+    gl_.activeTexture(gl_.TEXTURE6);
+    gl_.bindTexture(gl_.TEXTURE_2D, tileTexture);
+
+    // Default to wood
+    gl_.uniform1i(shader_.samplerUniform, 0);
+*/
+}
+
+/**
  * View / model / normal ops I got from:
  http://www.songho.ca/opengl/gl_transform.html
 */
-GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
+GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
     // models and lights are transformed by 
     //  inverse of viewing matrix
     var ilMatrix = mat4.create();
@@ -251,10 +294,9 @@ var mvMatrix = mat4.create();  // modelview
  * Per-vertex uniforms must be set each time.
  */
 GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
+    if (!this.mMatrixChanged) { return; }
     gl_.uniformMatrix4fv(shader_.mMatU, 
 			 false, this.mMatrix);
-
-
     // perceived normals: (inverse of modelview
     //  transposed) * object normals
     mat4.mul(mvMatrix, this.ivMatrix, this.mMatrix);
@@ -263,6 +305,7 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
     mat4.transpose(nMatrix, nMatrix);
     gl_.uniformMatrix4fv(shader_.nMatU, 
 			 false, nMatrix);
+    this.mMatrixChanged = false;
 }
 
 GLmatrix.prototype.push = function() {

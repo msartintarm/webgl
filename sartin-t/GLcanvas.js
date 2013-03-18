@@ -63,7 +63,7 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
-    theMatrix.setConstUniforms(this.gl,this.shaders);
+    theMatrix.setViewUniforms(this.gl,this.shaders);
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
 	this.objects[i].draw(this.gl, this.shaders); 
@@ -82,6 +82,7 @@ GLcanvas.prototype.start = function(objToDraw) {
 	if (this.gl == null) { return; }
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
+	theMatrix.setConstUniforms(this.gl, this.shaders);
 	
 	// Instantiate models
 	this.add(objToDraw);
@@ -105,35 +106,6 @@ GLcanvas.prototype.start = function(objToDraw) {
 	this.add(objToDraw);
 	this.bufferModels();
     }
-}
-
-/**
- * Begins the canvas.
- */
-GLcanvas.prototype.start2 = function(objToDraw) {
-    this.canvas = document.getElementById("glcanvas2");
-    this.canvas.style.display = "block";
-    this.canvas.style.width = "100%";
-    this.initGL();
-    if (this.gl == null) { return; }
-
-    // Initialize the shaders; this is where all the lighting for the
-    // vertices and so forth is established.
-    this.initShaders();
-    this.initTextures();
-    
-    // Instantiate models
-    this.add(objToDraw);
-    this.bufferModels();
-
-    // Set background color, clear everything, and
-    //  enable depth testing
-    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
-    this.gl.clearDepth(1.0);
-    this.gl.enable(this.gl.DEPTH_TEST);
-    
-    // Set up to draw the scene periodically.
-    tick2();  
 }
 
 /*
@@ -181,68 +153,77 @@ GLcanvas.prototype.drawScene = function() {
     // Update side display as well
     drawDashboard();}
 
+const WOOD_TEXTURE = 0;
+const HEAVEN_TEXTURE = 1;
+const HELL_TEXTURE = 2;
+const FLOOR_TEXTURE = 3;
+const OPERA_TEXTURE = 4;
+const BRICK_TEXTURE = 5;
+const TILE_TEXTURE = 6;
+const NO_TEXTURE = 7;
+
 GLcanvas.prototype.initTextures = function() {
     woodTexture = this.gl.createTexture();
     woodImage = new Image();
-    woodImage.onload = handleTextureLoaded.bind(
-	undefined,
-	this.gl,
+    woodImage.onload = this.loadTexture.bind(
+	this,
 	woodImage, 
-	woodTexture);
+	woodTexture,
+	WOOD_TEXTURE);
     woodImage.src = "textures/wood.jpg";
 
     heavenTexture = this.gl.createTexture();
     heavenImage = new Image();
-    heavenImage.onload = handleTextureLoaded.bind(
-	undefined,
-	this.gl,
+    heavenImage.onload = this.loadTexture.bind(
+	this,
 	heavenImage, 
-	heavenTexture);
+	heavenTexture,
+	HEAVEN_TEXTURE);
     heavenImage.src = "textures/heaven.jpg";
 
     hellTexture = this.gl.createTexture();
     hellImage = new Image();
-    hellImage.onload = handleTextureLoaded.bind(
-	undefined,
-	this.gl,
+    hellImage.onload = this.loadTexture.bind(
+	this,
 	hellImage, 
-	hellTexture);
+	hellTexture,
+	HELL_TEXTURE);
     hellImage.src = "textures/hell.png";
 
     floorTexture = this.gl.createTexture();
     floorImage = new Image();
-    floorImage.onload = handleTextureLoaded.bind(
-	undefined,
-	this.gl,
+    floorImage.onload = this.loadTexture.bind(
+	this,
 	floorImage, 
-	floorTexture);
+	floorTexture,
+	FLOOR_TEXTURE);
     floorImage.src = "textures/floor.jpg";
 
     operaTexture = this.gl.createTexture();
     operaImage = new Image();
-    operaImage.onload = handleTextureLoaded.bind(
-	undefined,
-	this.gl,
+    operaImage.onload = this.loadTexture.bind(
+	this,
 	operaImage, 
-	operaTexture);
+	operaTexture,
+	OPERA_TEXTURE);
     operaImage.src = "textures/opera.png";
     
     brickTexture = this.gl.createTexture();
     brickImage = new Image();
-    brickImage.onload = handleTextureLoaded.bind(
+    brickImage.onload = this.loadTexture.bind(
 	this,
-	this.gl,
 	brickImage, 
-	brickTexture);
+	brickTexture,
+	BRICK_TEXTURE);
     brickImage.src = "textures/brick.jpg";
 
     tileTexture = this.gl.createTexture();
     tileImage = new Image();
-    tileImage.onload = handleTextureLoaded.bind(
+    tileImage.onload = this.loadTexture.bind(
 	this,
-	this.gl,
 	tileImage, 
-	tileTexture);
+	tileTexture,
+	TILE_TEXTURE);
     tileImage.src = "textures/tiles.jpg";
 }
 
@@ -288,12 +269,35 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.gl.getAttribLocation(this.shaders, "textureA");
     this.gl.enableVertexAttribArray(this.shaders.textureA);
 
+    this.shaders.textureNumA = 
+	this.gl.getAttribLocation(this.shaders, "textureNumA");
+    this.gl.enableVertexAttribArray(this.shaders.textureNumA);
+
     //default to not use texture
     this.shaders.useTextureU = 
 	this.gl.getUniformLocation(this.shaders,"uUseTexture");
     this.gl.uniform1f(this.shaders.useTextureU, 0.0);
     this.gl.activeTexture(this.gl.TEXTURE0);
 
+    // Which texture to use
+    this.shaders.samplerU = 
+	this.gl.getUniformLocation(this.shaders, "samplerU");
+    this.shaders.woodU = 
+	this.gl.getUniformLocation(this.shaders, "woodU");
+    this.shaders.heavenU = 
+	this.gl.getUniformLocation(this.shaders, "heavenU");
+    this.shaders.hellU = 
+	this.gl.getUniformLocation(this.shaders, "hellU");
+    this.shaders.floorU = 
+	this.gl.getUniformLocation(this.shaders, "floorU");
+    this.shaders.operaU = 
+	this.gl.getUniformLocation(this.shaders, "operaU");
+    this.shaders.brickU = 
+	this.gl.getUniformLocation(this.shaders, "brickU");
+    this.shaders.tileU = 
+	this.gl.getUniformLocation(this.shaders, "tileU");
+    this.shaders.noU = 
+	this.gl.getUniformLocation(this.shaders, "noU");
     // Perspecctive matrix
     this.shaders.pMatU = 
 	this.gl.getUniformLocation(this.shaders, "pMatU");
@@ -312,7 +316,22 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     // Initial light's position
     this.shaders.lightPosU = 
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
+
+}
+
+GLcanvas.prototype.loadTexture = function(image, texture, textureNum) {
+    this.gl.activeTexture(this.gl.TEXTURE0 + textureNum);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, 
+		   this.gl.RGBA, this.gl.RGBA, 
+		   this.gl.UNSIGNED_BYTE, image);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+		      this.gl.TEXTURE_MAG_FILTER, 
+		      this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+		      this.gl.TEXTURE_MIN_FILTER, 
+		      this.gl.LINEAR_MIPMAP_NEAREST);
+    this.gl.generateMipmap(this.gl.TEXTURE_2D);
 }
 
 var theCanvas;
-

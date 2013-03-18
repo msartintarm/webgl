@@ -6,10 +6,11 @@ const RIGHT = 0x4; // 0100
 const LEFT = 0x8; // 1000
 
 const NO_FRONT = BACK | RIGHT | LEFT;
+const NO_LEFT = BACK | RIGHT | FRONT;
 const BACK_LEFT = BACK | LEFT;
-const NONE = 0x0;
-const NONE = 0x0;
+const NO_WALLS = 0x0;
 const FRONT_BACK = FRONT | BACK;
+const FRONT_RIGHT = RIGHT | FRONT;
 const BACK_RIGHT = RIGHT | BACK;
 const LEFT_RIGHT = RIGHT | LEFT;
 const FRONT_LEFT = FRONT | LEFT;
@@ -24,17 +25,28 @@ the number of walls to build and texture for each wall is an input variable
 each wall consists of 4 quads (right now at least)
 probably can make this a variable parameter
 */
-function MazePiece(f,b,r,l,ft,bt,rt,lt) { 
+//function MazePiece(walls, ft, bt, rt, lt) { 
+function MazePiece(walls, textures) { 
     //f,b,r,l boolean variables draw or not
-    this.f = f;
-    this.b = b;
-    this.r = r;
-    this.l = l;
-    //specify textures for each wall (can have different textures)
-    this.ft = ft;
-    this.bt = bt;
-    this.rt = rt;
-    this.lt = lt;
+    this.f = walls & FRONT;
+    this.b = walls & BACK;
+    this.r = walls & RIGHT;
+    this.l = walls & LEFT;
+
+    // Array with textures for each wall (can have up to 4 textures)
+    // If instead a texture object is passed, uses it for  all walls
+    if(!isNaN(textures)) {
+	    this.ft = textures;
+	    this.bt = textures;
+	    this.rt = textures;
+	    this.lt = textures;
+    } else {
+	var texNum = 0;
+	if(this.f) { this.ft = textures[texNum++] };
+	if(this.b) { this.bt = textures[texNum++] };
+	if(this.r) { this.rt = textures[texNum++] };
+	if(this.l) { this.lt = textures[texNum] };
+    }
 
     this.objs = [];
 
@@ -49,7 +61,9 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
     b = vec3.fromValues(-10, 0,-10);
     c = vec3.fromValues( 10, 0, 10);
     d = vec3.fromValues( 10, 0,-10);
-    this.qFloor = this.Quad(a, b, c, d).initTextures(at, bt, ct, dt);
+    this.qFloor = this.Quad(a, b, c, d)
+    .invertNorms()
+    .setTexture(TILE_TEXTURE);
 
     //define the bounds for walls
     //A VALUE OF -100 MEANS NO BOUNDS
@@ -81,7 +95,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(11.4,10,-8.5);
 
 	this.nZ_bound = position[2] - 8;
-	this.qFront = this.Prism(a,b,c,d,e,f,g,h);
+	this.qFront = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.ft);
     }
     if(this.l){
 	//left wall
@@ -95,7 +109,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h =  vec3.fromValues(-8.5,10,-11.4);
 
 	this.nX_bound = position[0] - 8;
-	this.qLeft = this.Prism(a, b, c, d, e, f, g, h);
+	this.qLeft = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.lt);
     }
     if(this.r){
 	//right wall
@@ -109,7 +123,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(8.5,10,11.4);
 
 	this.pX_bound = 8 + position[0];
-	this.qRight = this.Prism(a, b, c, d, e, f, g, h);
+	this.qRight = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.rt);
     }
     if(this.b){
 	//behind wall
@@ -123,7 +137,7 @@ function MazePiece(f,b,r,l,ft,bt,rt,lt) {
 	h = vec3.fromValues(-11.4,10,8.5);
 
 	this.pZ_bound = position[2] + 8;
-	this.qBack = this.Prism(a, b, c, d, e, f, g, h);
+	this.qBack = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.bt);
     }
 };
 
@@ -133,43 +147,26 @@ MazePiece.prototype.Quad = _Quad;
 MazePiece.prototype.Prism = _Prism;
 
 MazePiece.prototype.draw = function(gl_, shaders_) {
+
     gl_.uniform1f(shaders_.useTextureU, 1);
-    gl_.bindTexture(gl_.TEXTURE_2D, tileTexture);
-    gl_.uniform1i(shaders_.samplerUniform, 0);
+    gl_.uniform1i(shaders_.samplerU, TILE_TEXTURE);
     this.qFloor.draw(gl_, shaders_);
-    gl_.bindTexture(gl_.TEXTURE_2D, null);
     
-    if(this.f==1){
-	//draw front
-	gl_.uniform1f(shaders_.useTextureU, 1);
-	gl_.bindTexture(gl_.TEXTURE_2D, this.ft);
-	gl_.uniform1i(shaders_.samplerUniform, 0);
+    if(this.f){ //draw front
+	gl_.uniform1i(shaders_.samplerU, this.ft);
 	this.qFront.draw(gl_, shaders_);
-	gl_.bindTexture(gl_.TEXTURE_2D, null);
     }
-    if(this.b==1){
-	//draw back
-	gl_.uniform1f(shaders_.useTextureU, 1);
-	gl_.bindTexture(gl_.TEXTURE_2D, this.bt);
-	gl_.uniform1i(shaders_.samplerUniform, 0);
+    if(this.b){ //draw back
+	gl_.uniform1i(shaders_.samplerU, this.bt);
 	this.qBack.draw(gl_, shaders_);
-	gl_.bindTexture(gl_.TEXTURE_2D, null);
     }
-    if(this.r==1){
-	//draw right
-	gl_.uniform1f(shaders_.useTextureU, 1);
-	gl_.bindTexture(gl_.TEXTURE_2D, this.rt);
-	gl_.uniform1i(shaders_.samplerUniform, 1);
+    if(this.r){ //draw right
+	gl_.uniform1i(shaders_.samplerU, this.rt);
 	this.qRight.draw(gl_, shaders_);
-	gl_.bindTexture(gl_.TEXTURE_2D, null);
     }
-    if(this.l==1){
-	//draw left
-	gl_.uniform1f(shaders_.useTextureU, 1);
-	gl_.bindTexture(gl_.TEXTURE_2D, this.lt);
-	gl_.uniform1i(shaders_.samplerUniform, 0);
+    if(this.l){ //draw left
+	gl_.uniform1i(shaders_.samplerU, this.lt);
 	this.qLeft.draw(gl_, shaders_);
-	gl_.bindTexture(gl_.TEXTURE_2D, null);
     }
     gl_.uniform1f(shaders_.useTextureU, 0.0);
 

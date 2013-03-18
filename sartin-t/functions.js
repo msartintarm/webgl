@@ -405,8 +405,10 @@ function tick2() {
     theCanvas.drawScene();
 }
 
-function handleTextureLoaded(gl_, image, texture) {
 
+var count = 0;
+function handleTextureLoaded(gl_, image, texture) {
+    gl_.activeTexture(gl_.TEXTURE0 + count++);
     gl_.bindTexture(gl_.TEXTURE_2D, texture);
     gl_.texImage2D(gl_.TEXTURE_2D, 0, 
 		   gl_.RGBA, gl_.RGBA, 
@@ -418,6 +420,5 @@ function handleTextureLoaded(gl_, image, texture) {
 		      gl_.TEXTURE_MIN_FILTER, 
 		      gl_.LINEAR_MIPMAP_NEAREST);
     gl_.generateMipmap(gl_.TEXTURE_2D);
-    gl_.bindTexture(gl_.TEXTURE_2D, null);
 }
 

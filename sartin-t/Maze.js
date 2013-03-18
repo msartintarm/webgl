@@ -1,12 +1,3 @@
-const NO_FRONT = BACK | RIGHT | LEFT;
-const BACK_LEFT = BACK | LEFT;
-const NONE = 0x0;
-const NONE = 0x0;
-const FRONT_BACK = FRONT | BACK;
-const BACK_RIGHT = RIGHT | BACK;
-const LEFT_RIGHT = RIGHT | LEFT;
-const FRONT_LEFT = FRONT | LEFT;
-
 
 function Maze() {  
     //f b r l
@@ -15,56 +6,49 @@ function Maze() {
     this.width = 5;
     this.height = 7;
  
-    this.hellRoom = new MazePiece(0,1,1,1,
-				  hellTexture,
-				  hellTexture,
-				  hellTexture, 
-				  hellTexture).translate([20, 0, 20]);
-    this.Piece(0,1,0,1,
-	       brickTexture,
-	       brickTexture,
-	       brickTexture,
-	       brickTexture);
-    this.Piece(0,0,0,0,brickTexture,hellTexture,brickTexture,brickTexture);   
-    this.Piece(1,1,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,1,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,1,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.hellRoom = new MazePiece(NO_FRONT, HELL_TEXTURE).translate([20, 0, 20]);
+    this.Piece(BACK_LEFT, BRICK_TEXTURE);
+    this.Piece(NO_WALLS);
+    this.Piece(FRONT_BACK, BRICK_TEXTURE);
+    this.Piece(BACK, BRICK_TEXTURE);
+    this.Piece(BACK_RIGHT, BRICK_TEXTURE);
     
-    this.Piece(0,0,1,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,1,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
+    this.Piece(FRONT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT, BRICK_TEXTURE);
+    this.Piece(LEFT, BRICK_TEXTURE);
+    this.Piece(FRONT, BRICK_TEXTURE);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,1,1,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,1,0,woodTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(RIGHT,FLOOR_TEXTURE);
+    this.Piece(FRONT_RIGHT, [WOOD_TEXTURE, FLOOR_TEXTURE]);
 
-    this.Piece(1,0,0,1,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,1,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,1,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,1,floorTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(FRONT_LEFT, FLOOR_TEXTURE);
+    this.Piece(FRONT_BACK, FLOOR_TEXTURE);
+    this.Piece(NO_LEFT, FLOOR_TEXTURE);
+    this.Piece(RIGHT, FLOOR_TEXTURE);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
 
-    this.Piece(1,0,0,1,floorTexture,floorTexture,floorTexture,heavenTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(FRONT_LEFT, [FLOOR_TEXTURE, HEAVEN_TEXTURE]);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT_RIGHT, FLOOR_TEXTURE);
+
     this.transPieces();
 }
 
@@ -75,8 +59,8 @@ Maze.prototype.initBuffers = function(gl_) {
     this.hellRoom.initBuffers(gl_);
 }
 
-Maze.prototype.Piece = function(a,b,c,d,e,f,g,h) {
-    var newPiece = new MazePiece(a,b,c,d,e,f,g,h);
+Maze.prototype.Piece = function(a,b,c,d,e) {
+    var newPiece = new MazePiece(a,b,c,d,e);
     this.pieces.push(newPiece);
     return newPiece;
 }
@@ -90,19 +74,11 @@ Maze.prototype.transPieces = function() {
     }
 }
 
-// Based upon the piece number, translate it by its coords
-Maze.prototype.transPiece = function(num) {
-    var theWidth = num % this.width;
-    var theHeight = (num - theWidth) / this.width;
-    theMatrix.translate([theWidth * 20, 0, theHeight * -20]);
-}
-
 Maze.prototype.draw = function(gl_,buffer_) {
+    theMatrix.setVertexUniforms(gl_, buffer_);
     this.hellRoom.draw(gl_,buffer_);
-    for(var i=0; i<this.height; i++){
-	for(var j=0; j<this.width; j++){
-	    this.pieces[i*this.width+j].draw(gl_, buffer_);
-	}
+    for(var i = 0; i<this.pieces.length; i++){
+	this.pieces[i].draw(gl_, buffer_);
     }
 }
 
