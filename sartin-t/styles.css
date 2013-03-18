@@ -1,0 +1,189 @@
+h1 {
+    font-size: 23px;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    text-align: center;
+}
+h2 { text-align: center; }
+
+a:link {text-decoration: none; }
+a:visited {color: #880000; }
+a:active {color: red; }
+a:hover {text-decoration: underline; color: red;}
+
+div#map_canvas {
+    width: 400px;
+    height: 400px;
+}
+
+body {
+    
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #111111;
+    font-family: Verdana, sans-serif;
+    padding: 1% 5% 0% 5%;
+}
+
+div#banner{
+    position: absolute;
+    background: url(graphics/banner.gif);
+    height: 200px;    
+    width:18%;
+    text-align:center;
+    color: #FF0000;
+    line-height:200%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+	background-size: 100% 200px;
+
+}
+
+div.main {
+    display: inline-block;
+    position: relative;
+    width:75%;
+    text-align: justify;
+    margin: 0% 0% 0% 25%;
+        background-color: #cccccc;
+}
+ 
+div.space {
+    position: relative;
+    width: 71%;
+    margin: 0% 0% 0% 27%;
+    height: 4px;
+    background-color: #000000;
+}
+
+div.padDiv {
+    display: absolute;
+    width: 94%;
+    margin: 0px;
+    padding: 20px 3%;
+}
+
+div.title { 
+    position: relative;
+    width:90%;
+    display: block;
+    float: left;
+    margin: 17px 17px;
+    font-size: 23px;
+    text-align: center; 
+    color: #111144;
+}
+
+div.content { 
+    display: none;
+    background-color: #cccccc;
+    position: relative;
+    float: right;
+    margin: 17px 17px;
+    text-align: center; }
+
+input.button_add {
+    width:100%;
+    background-image: url(/graphics/addButton.png); /* 16px x 16px */
+    background-color: transparent; /* make the button transparent */
+    background-repeat: no-repeat;  /* make the background image appear only once */
+    background-position: 0px 0px;  /* equivalent to 'top left' */
+    border: none;           /* assuming we don't want any borders */
+    cursor: pointer;        /* make the cursor like hovering over an <a> element */
+    vertical-align: middle; /* align the text vertically centered */
+    font-size: inherit;
+    text-align: inherit;
+    color: inherit;
+}
+
+div.topLeft {     
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url(graphics/cornerTopLeftNew.gif) top left no-repeat; }
+div.topRight {     
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url(graphics/cornerTopRightNew.gif) top right no-repeat; }
+div.topAcross {     
+    position: absolute; 
+    height: 100%;
+    width: 100%;
+    background: url(graphics/topAcrossNew.gif) top repeat-x; }
+div.lowAcross {     
+    position: absolute; 
+    height: 100%;
+    width: 100%;
+    background: url(graphics/lowAcrossNew.gif) bottom repeat-x; }
+div.leftSide {     
+    position: absolute; 
+    height: 100%;
+    width: 100%;
+    background: url(graphics/leftSideNew.gif) left repeat-y; }
+div.rightSide {     
+    position: absolute; 
+    height: 100%;
+    width: 100%;
+    background: url(graphics/rightSideNew.gif) right repeat-y; }
+div.lowLeft {     
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url(graphics/cornerLowLeftNew.gif) bottom left no-repeat; }
+div.lowRight { 
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url(graphics/cornerLowRightNew.gif) bottom right no-repeat; }
+
+
+
+div#header {
+    width: 100%;
+    height: 120px; 
+    border-width: 2px;
+    border-bottom-style: solid;
+    border-color: #333333;
+    margin-bottom: 0px;
+    background: url('graphics/panorama.jpg') no-repeat;
+    background-size: 105% 300%;
+    color: #123123; 
+    padding: 6px 0px;
+    text-align:right;
+    line-height:1px;
+}
+
+div#footer {
+    width: 100%;
+    border-width: 2px;
+    border-top-style: solid;
+    border-color: #333333;
+    background: url('graphics/panorama.jpg') no-repeat;
+    background-size: 105% 800%;
+    color: #123123; 
+    height: 21px;
+    text-align:right;
+    margin: 0px;
+    background-color: #000000;
+}
+
+
+div.one_third{
+    height:85%;
+    width:33%;
+    float:left;
+    text-align:center;
+    line-height:200%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+}
+
+
+div#wrap {
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #000000;
+}
