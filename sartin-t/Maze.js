@@ -77,7 +77,6 @@ Maze.prototype.transPieces = function() {
 }
 
 Maze.prototype.draw = function(gl_,buffer_) {
-    theMatrix.setVertexUniforms(gl_, buffer_);
     this.hellRoom.draw(gl_,buffer_);
     for(var i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_, buffer_);

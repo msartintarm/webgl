@@ -140,9 +140,9 @@ GLcanvas.prototype.drawScene = function() {
 			  0.1, 900.0);
 
 
-    theMatrix.modelInit();
-    if(!mazeMode)
-	theMatrix.modelUpdate();
+//    theMatrix.modelInit();
+//    if(!mazeMode)
+//	theMatrix.modelUpdate();
 
     // Draw all our objects
     theMatrix.push();

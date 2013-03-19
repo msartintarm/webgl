@@ -13,6 +13,7 @@ function GLmatrix() {
     this.uncheckedPos = vec4.create();
 
     this.mMatrixChanged = false;
+    this.vMatrixChanged = false;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -42,15 +43,8 @@ GLmatrix.prototype.viewInit = function() {
 }
 
 GLmatrix.prototype.viewMaze = function() {
-    mat4.translate(this.vMatrixNew,
-		   this.vMatrix, 
-		   [20,2,9.0]);
-    
-    mat4.rotate(this.vMatrixNew,
-		this.vMatrixNew,
-		Math.PI, 
-		[0, 1, 0]);
-		
+    this.vTranslate([20,2,9.0]);
+    this.vRotate(Math.PI, [0, 1, 0]);
 }
 
 GLmatrix.prototype.translate = function(vector) {
@@ -74,6 +68,9 @@ GLmatrix.prototype.rotate = function(rads, vector) {
     mat4.rotate(this.mMatrix, this.mMatrix, rads, vector);
     this.mMatrixChanged = true;
 }
+GLmatrix.prototype.vRotate = function(rads, vector) {
+    mat4.rotate(this.vMatrixNew, this.vMatrixNew, rads, vector);
+}
 GLmatrix.prototype.scale = function(vector) {
     mat4.scale(this.mMatrix, this.mMatrix, vector); 
     this.mMatrixChanged = true;
@@ -83,55 +80,44 @@ GLmatrix.prototype.mul = function(m) {
     this.mMatrixChanged = true;
 }
 
+GLmatrix.prototype.vMul = function(v) {
+    mat4.multiply(this.vMatrix, this.vMatrix, v); 
+    this.vMatrixChanged = true;
+}
+
 const lookDist = 1 / 64;
 const moveDist = 2.1;
 
 GLmatrix.prototype.lookUp = function() {
-    mat4.rotate(this.vMatrixNew,
-		this.vMatrixNew,
-		lookDist * 2 * Math.PI, 
+    this.vRotate(lookDist * 2 * Math.PI, 
 		[1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookDown = function() {
-    mat4.rotate(this.vMatrixNew,
-		this.vMatrixNew,
-		lookDist * 2 * Math.PI, 
+    this.vRotate(lookDist * 2 * Math.PI, 
 		[-1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookLeft = function() {
-    mat4.rotate(this.vMatrixNew, 
-		this.vMatrixNew,
-		lookDist * 2 * Math.PI, 
+    this.vRotate(lookDist * 2 * Math.PI, 
 		[ 0, 1, 0]);
 }
 
 GLmatrix.prototype.lookRight = function() {
-    mat4.rotate(this.vMatrixNew,
-		this.vMatrixNew, 
-		lookDist * 2 * Math.PI, 
-		[ 0,-1, 0]); 
+    this.vRotate(lookDist * 2 * Math.PI, 
+		[ 0,-1, 0]);
 }
 
 GLmatrix.prototype.moveRight = function() {
-    mat4.translate(
-	this.vMatrixNew,
-	this.vMatrixNew,
-	[-moveDist, 0, 0]); 
+    this.vTranslate([-moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveLeft = function() {
-    mat4.translate(
-	this.vMatrixNew,
-	this.vMatrixNew,
-	[ moveDist, 0, 0]);
+    this.vTranslate([moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveUp = function() {
-    mat4.translate(this.vMatrixNew,
- 		   this.vMatrixNew,
-		   [0, moveDist, 0]); 
+    this.vTranslate([0, moveDist, 0]); 
 }
 
 GLmatrix.prototype.jump = function() {
@@ -145,9 +131,7 @@ GLmatrix.prototype.jump = function() {
 }
 
 GLmatrix.prototype.moveDown = function() {
-    mat4.translate(this.vMatrixNew,
-		   this.vMatrixNew,
-		   [0, -moveDist, 0]); 
+    this.vTranslate([0, -moveDist, 0]); 
 }
 
 GLmatrix.prototype.getPosition = function() {
@@ -186,17 +170,11 @@ GLmatrix.prototype.newViewIllegal = function() {
 }
 
 GLmatrix.prototype.moveForward = function() {
-    mat4.translate(
-	this.vMatrixNew,
-	this.vMatrixNew,
-	[0, 0, -moveDist]); 
+    this.vTranslate([0, 0, -moveDist]); 
 }
 
 GLmatrix.prototype.moveBack = function() {
-    mat4.translate(
-	this.vMatrixNew,
-	this.vMatrixNew,
-	[0, 0, moveDist]); 
+    this.vTranslate([0, 0, moveDist]); 
 }
 
 /**
@@ -206,13 +184,10 @@ GLmatrix.prototype.update = function() {
     const x = 0.1;
     if(this.inJump == false) {
 	if( priveledgedMode.val || !this.newViewIllegal()){
-	    mat4.copy(this.vMatrix, this.vMatrixNew);
+	    this.vMul(this.vMatrixNew);
 	}
-	mat4.mul(this.vMatrix, 
-		 this.vMatrix,
-		 this.vMatrixNew);
 	this.viewingPos = this.getPosition();
-	mat4.identity(this.vMatrixNew);
+//	mat4.identity(this.vMatrixNew);
 	return; 
     }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
@@ -228,7 +203,8 @@ GLmatrix.prototype.update = function() {
 			if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
 			else { this.inJump = false; return; }
 		    }}}}}   
-    mat4.mul(this.vMatrix, this.vMatrixNew);
+    this.vMul(this.vMatrixNew);
+    this.vMatrixChanged = true;
 }
 
 /**
@@ -270,6 +246,8 @@ GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
  http://www.songho.ca/opengl/gl_transform.html
 */
 GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
+
+    if (!this.vMatrixChanged) { return; }
     // models and lights are transformed by 
     //  inverse of viewing matrix
     var ilMatrix = mat4.create();
@@ -285,6 +263,7 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
 			 false, ilMatrix);
     gl_.uniform3fv(shader_.lightPosU, 
 		   lightPos);
+    this.vMatrixChanged = false;
 }
 
 
@@ -295,6 +274,7 @@ var mvMatrix = mat4.create();  // modelview
  * Per-vertex uniforms must be set each time.
  */
 GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
+
     if (!this.mMatrixChanged) { return; }
     gl_.uniformMatrix4fv(shader_.mMatU, 
 			 false, this.mMatrix);

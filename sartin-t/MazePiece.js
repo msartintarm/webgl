@@ -161,34 +161,30 @@ MazePiece.prototype.Prism = _Prism;
  *  This is the area it encompasses, plus a buffer zone.
  * 
  */
-MazePiece.prototype.checkBounds = function(position) {
+MazePiece.prototype.positionLegal = function(position, transMat) {
 
-    
+    if(this.f && position[0] - 1 < -bZ_) { return false; }
+    if(this.b && position[0] + 1 >  bZ_) { return false; }
+    if(this.r && position[2] + 1 >  bZ_) { return false; }
+    if(this.l && position[2] - 1 < -bZ_) { return false; }
 
+    return true;
 }
 
 MazePiece.prototype.draw = function(gl_, shaders_) {
 
-    gl_.uniform1f(shaders_.useTextureU, 1);
-    gl_.uniform1i(shaders_.samplerU, TILE_TEXTURE);
     this.qFloor.draw(gl_, shaders_);
     
     if(this.f){ //draw front
-	gl_.uniform1i(shaders_.samplerU, this.ft);
 	this.qFront.draw(gl_, shaders_);
     }
     if(this.b){ //draw back
-	gl_.uniform1i(shaders_.samplerU, this.bt);
 	this.qBack.draw(gl_, shaders_);
     }
     if(this.r){ //draw right
-	gl_.uniform1i(shaders_.samplerU, this.rt);
 	this.qRight.draw(gl_, shaders_);
     }
     if(this.l){ //draw left
-	gl_.uniform1i(shaders_.samplerU, this.lt);
 	this.qLeft.draw(gl_, shaders_);
     }
-    gl_.uniform1f(shaders_.useTextureU, 0.0);
-
 };
