@@ -45,3 +45,4 @@ function Sphere(radius) {
 
 Sphere.prototype.initBuffers = _oInitBuffers;
 Sphere.prototype.draw = _oDraw;
+Sphere.prototype.translate = _oTranslate;

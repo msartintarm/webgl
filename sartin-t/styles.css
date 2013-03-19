@@ -28,7 +28,7 @@ body {
 div#banner{
     position: absolute;
     background: url(graphics/banner.gif);
-    height: 200px;    
+/*    height: 200px;    */
     width:18%;
     text-align:center;
     color: #FF0000;

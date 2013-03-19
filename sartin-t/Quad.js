@@ -42,7 +42,7 @@ Quad.prototype.initTextures = function(at, bt, ct, dt) {
 
 Quad.prototype.setTexture = function(texture) { 
     this.o.setTexture(texture);
-    this.initTextures([0,1], [0,0], [1,1], [1,0]);
+    this.initTextures([0,0], [0,1], [1,0], [1,1]);
     return this;
 }
 

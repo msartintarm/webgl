@@ -45,8 +45,6 @@ GLmatrix.prototype.viewInit = function() {
 GLmatrix.prototype.viewMaze = function() {
     this.vTranslate([20,2,9.0]);
     this.vRotate(Math.PI, [0, 1, 0]);
-    this.vTranslate([20,2,9.0]);
-    this.vRotate(Math.PI, [0, 1, 0]);
 }
 
 GLmatrix.prototype.translate = function(vector) {
@@ -147,9 +145,9 @@ GLmatrix.prototype.newViewIllegal = function() {
     var pos = vec4.fromValues(0,0,1,1);
     vec4.transformMat4(pos, pos, this.vMatrix);
 
-    return 0;
+//    return 0;
 
-    //return myMaze.getBound(pos);
+    return myMaze.checkPosition(pos);
     
     if(pos[2] >= 11) return 1;
     if(pos[0] <= -8) return 1;
@@ -288,10 +286,12 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 GLmatrix.prototype.push = function() {
     var copy = mat4.clone(this.mMatrix);
     this.mStack.push(copy);
+    this.mMatrixChanged = true;
 }
 
 GLmatrix.prototype.pop = function() {
     if (this.mStack.length == 0) {
         throw "Invalid pop"; }
     mat4.copy(this.mMatrix, this.mStack.pop());
+    this.mMatrixChanged = true;
 }

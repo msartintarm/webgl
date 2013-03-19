@@ -1,6 +1,6 @@
 function Light() {
-    this.o = new Sphere(-0.05);
-    this.o.o.translate(lightPos);
+    this.o = new Sphere(-0.05)
+	.translate(lightPos);
 }
 
 Light.prototype.initBuffers = function(gl_) {

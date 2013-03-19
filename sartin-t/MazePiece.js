@@ -172,18 +172,7 @@ MazePiece.prototype.positionLegal = function(position, transMat) {
 
 MazePiece.prototype.draw = function(gl_, shaders_) {
 
-    this.qFloor.draw(gl_, shaders_);
-    
-    if(this.f){ //draw front
-	this.qFront.draw(gl_, shaders_);
-    }
-    if(this.b){ //draw back
-	this.qBack.draw(gl_, shaders_);
-    }
-    if(this.r){ //draw right
-	this.qRight.draw(gl_, shaders_);
-    }
-    if(this.l){ //draw left
-	this.qLeft.draw(gl_, shaders_);
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].draw(gl_, shaders_);
     }
 };

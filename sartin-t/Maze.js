@@ -83,6 +83,41 @@ Maze.prototype.draw = function(gl_,buffer_) {
     }
 }
 
+/**
+ *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
+ *  bottom right, in the xz plane
+ */
+Maze.prototype.checkPosition = function() {
+    var curPos = theMatrix.getPosition();
+    var newPos = vec4.create();
+    vec4.transformMat4(newPos, curPos, theMatrix.vMatrixNew);
+
+    var pieceX = Math.round(curPos[0] / 20);
+    var pieceZ = Math.round(curPos[2] /-20);
+    var curPiece = (this.width * pieceZ) + pieceX;
+    pieceX = Math.round(newPos[0] / 20);
+    pieceZ = Math.round(newPos[2] /-20);
+    var newPiece = (this.width * pieceZ) + pieceX;
+    if(1 == 1) {
+	var posStats = document.getElementById("positionCheckStats");
+	posStats.style.display = "inline-block";
+	posStats.innerHTML = "old position: " + 
+	    parseFloat(curPos[0]).toFixed(2) + "," + 
+	    parseFloat(curPos[1]).toFixed(2) + "," +  
+	    parseFloat(curPos[2]).toFixed(2) +
+	    "<br/>new position: " +
+	    parseFloat(newPos[0]).toFixed(2) + "," + 
+	    parseFloat(newPos[1]).toFixed(2) + "," +  
+	    parseFloat(newPos[2]).toFixed(2);
+	
+	posStats.innerHTML += "<br/> Maze Piece: from " + 
+	    curPiece +
+	    " to " + newPiece;
+	
+    }
+    return 0;
+}
+
 Maze.prototype.getBound = function(pos) {
     //check to see if you are violating bound
     //and within the square
