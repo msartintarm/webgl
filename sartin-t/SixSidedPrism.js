@@ -7,6 +7,9 @@
              | F -|-G          
              |/   |/            
              B----C             
+
+    Start with 4 most positive X coords.
+    Negative Z first two, negative Y second and third.
  */
 function SixSidedPrism(a, b, c, d, e, f, g, h) { 
     this.objs = []
@@ -37,6 +40,16 @@ SixSidedPrism.prototype.setTexture = function(texture) {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].setTexture(texture);
     }
+    return this;
+}
+
+SixSidedPrism.prototype.setSixTextures = function(a,b,c,d,e,f) {
+    this.q1.setTexture(a);
+    this.q2.setTexture(b);
+    this.q3.setTexture(c);
+    this.q4.setTexture(d);
+    this.q5.setTexture(e);
+    this.q6.setTexture(f);
     return this;
 }
 

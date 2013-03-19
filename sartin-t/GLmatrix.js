@@ -12,8 +12,8 @@ function GLmatrix() {
     this.viewingPos = vec4.create();
     this.uncheckedPos = vec4.create();
 
-    this.mMatrixChanged = false;
-    this.vMatrixChanged = false;
+    this.mMatrixChanged = true;
+    this.vMatrixChanged = true;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -45,12 +45,15 @@ GLmatrix.prototype.viewInit = function() {
 GLmatrix.prototype.viewMaze = function() {
     this.vTranslate([20,2,9.0]);
     this.vRotate(Math.PI, [0, 1, 0]);
+    this.vTranslate([20,2,9.0]);
+    this.vRotate(Math.PI, [0, 1, 0]);
 }
 
 GLmatrix.prototype.translate = function(vector) {
     mat4.translate(this.mMatrix, this.mMatrix, vector); 
     this.mMatrixChanged = true;
 }
+
 GLmatrix.prototype.vTranslate = function(vector) {
     mat4.translate(this.vMatrixNew,
 		   this.vMatrixNew, 
@@ -185,9 +188,10 @@ GLmatrix.prototype.update = function() {
     if(this.inJump == false) {
 	if( priveledgedMode.val || !this.newViewIllegal()){
 	    this.vMul(this.vMatrixNew);
+	    this.vMatrixChanged = true;
 	}
 	this.viewingPos = this.getPosition();
-//	mat4.identity(this.vMatrixNew);
+	mat4.identity(this.vMatrixNew);
 	return; 
     }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
@@ -204,6 +208,7 @@ GLmatrix.prototype.update = function() {
 			else { this.inJump = false; return; }
 		    }}}}}   
     this.vMul(this.vMatrixNew);
+    mat4.identity(this.vMatrixNew);
     this.vMatrixChanged = true;
 }
 
@@ -221,24 +226,14 @@ GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
     gl_.uniform1i(shader_.brickU, BRICK_TEXTURE);
     gl_.uniform1i(shader_.tileU, TILE_TEXTURE);
     gl_.uniform1i(shader_.noU, NO_TEXTURE);
-/*    gl_.activeTexture(gl_.TEXTURE0);
-    gl_.bindTexture(gl_.TEXTURE_2D, woodTexture);
-    gl_.activeTexture(gl_.TEXTURE1);
-    gl_.bindTexture(gl_.TEXTURE_2D, heavenTexture);
-    gl_.activeTexture(gl_.TEXTURE2);
-    gl_.bindTexture(gl_.TEXTURE_2D, hellTexture);
-    gl_.activeTexture(gl_.TEXTURE3);
-    gl_.bindTexture(gl_.TEXTURE_2D, floorTexture);
-    gl_.activeTexture(gl_.TEXTURE4);
-    gl_.bindTexture(gl_.TEXTURE_2D, operaTexture);
-    gl_.activeTexture(gl_.TEXTURE5);
-    gl_.bindTexture(gl_.TEXTURE_2D, brickTexture);
-    gl_.activeTexture(gl_.TEXTURE6);
-    gl_.bindTexture(gl_.TEXTURE_2D, tileTexture);
-
+    gl_.uniform1i(shader_.sky1U, SKYBOX_TEXTURE_1);
+    gl_.uniform1i(shader_.sky2U, SKYBOX_TEXTURE_2);
+    gl_.uniform1i(shader_.sky3U, SKYBOX_TEXTURE_3);
+    gl_.uniform1i(shader_.sky4U, SKYBOX_TEXTURE_4);
+    gl_.uniform1i(shader_.sky5U, SKYBOX_TEXTURE_5);
+    gl_.uniform1i(shader_.sky6U, SKYBOX_TEXTURE_6);
     // Default to wood
-    gl_.uniform1i(shader_.samplerUniform, 0);
-*/
+//    gl_.uniform1i(shader_.samplerUniform, 0);
 }
 
 /**
@@ -274,6 +269,7 @@ var mvMatrix = mat4.create();  // modelview
  * Per-vertex uniforms must be set each time.
  */
 GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
+
 
     if (!this.mMatrixChanged) { return; }
     gl_.uniformMatrix4fv(shader_.mMatU, 

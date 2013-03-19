@@ -33,15 +33,15 @@ GLcanvas.prototype.add = function(objToDraw) {
     theMatrix.viewInit();
     this.objects = [];
     priveledgedMode.reset();
+    mazeMode = 0;
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
-	mazeMode = 0;
     } else if(objToDraw == "sphere") {
 	this.objects.push(new Sphere(2));
-	mazeMode = 0;
+    } else if(objToDraw == "skybox") {
+	this.objects.push(new Skybox);
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
-	mazeMode = 0;
     } else if(objToDraw == "maze") {
 	this.objects.push(new Maze());
 	myMaze = this.objects[0]; //new Maze();
@@ -50,7 +50,6 @@ GLcanvas.prototype.add = function(objToDraw) {
 	theMatrix.viewMaze();
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
-	mazeMode = 0;
     }
     this.objects.push(new Light());
 }
@@ -137,7 +136,7 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.perspective(zoom.val,
 			  this.gl.viewportWidth / 
 			  this.gl.viewportHeight,
-			  0.1, 900.0);
+			  0.1, 9000.0);
 
 
 //    theMatrix.modelInit();
@@ -153,14 +152,37 @@ GLcanvas.prototype.drawScene = function() {
     // Update side display as well
     drawDashboard();}
 
-const WOOD_TEXTURE = 0;
-const HEAVEN_TEXTURE = 1;
-const HELL_TEXTURE = 2;
-const FLOOR_TEXTURE = 3;
-const OPERA_TEXTURE = 4;
-const BRICK_TEXTURE = 5;
-const TILE_TEXTURE = 6;
-const NO_TEXTURE = 7;
+var zz = 0;
+const WOOD_TEXTURE = zz++;
+const HEAVEN_TEXTURE = zz++;
+const HELL_TEXTURE = zz++;
+const FLOOR_TEXTURE = zz++;
+const OPERA_TEXTURE = zz++;
+const BRICK_TEXTURE = zz++;
+const TILE_TEXTURE = zz++;
+const NO_TEXTURE = zz++;
+const SKYBOX_TEXTURE_1 = zz++;
+const SKYBOX_TEXTURE_2 = zz++;
+const SKYBOX_TEXTURE_3 = zz++;
+const SKYBOX_TEXTURE_4 = zz++;
+const SKYBOX_TEXTURE_5 = zz++;
+const SKYBOX_TEXTURE_6 = zz++;
+
+GLcanvas.prototype.initSkybox = function() {
+    var skyTextures = [];
+    var skyImages = [];
+
+    for(var i= 0; i < 6; ++i) {
+	skyTextures[i] = this.gl.createTexture();
+	skyImages[i] = new Image();
+    skyImages[i].onload = this.loadTexture.bind(
+	this,
+	skyImages[i], 
+	skyTextures[i],
+	SKYBOX_TEXTURE_1 + i);
+	skyImages[i].src = "skybox/cage" + i + ".jpg";
+    }
+}
 
 GLcanvas.prototype.initTextures = function() {
     woodTexture = this.gl.createTexture();
@@ -230,6 +252,7 @@ GLcanvas.prototype.initTextures = function() {
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.initTextures();
+    this.initSkybox();
     this.bufferModels();
 }
 
@@ -298,6 +321,18 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.gl.getUniformLocation(this.shaders, "tileU");
     this.shaders.noU = 
 	this.gl.getUniformLocation(this.shaders, "noU");
+    this.shaders.sky1U = 
+	this.gl.getUniformLocation(this.shaders, "sky1U");
+    this.shaders.sky2U = 
+	this.gl.getUniformLocation(this.shaders, "sky2U");
+    this.shaders.sky3U = 
+	this.gl.getUniformLocation(this.shaders, "sky3U");
+    this.shaders.sky4U = 
+	this.gl.getUniformLocation(this.shaders, "sky4U");
+    this.shaders.sky5U = 
+	this.gl.getUniformLocation(this.shaders, "sky5U");
+    this.shaders.sky6U = 
+	this.gl.getUniformLocation(this.shaders, "sky6U");
     // Perspecctive matrix
     this.shaders.pMatU = 
 	this.gl.getUniformLocation(this.shaders, "pMatU");

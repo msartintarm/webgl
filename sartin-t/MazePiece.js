@@ -62,8 +62,7 @@ function MazePiece(walls, textures) {
     c = vec3.fromValues( 10, 0, 10);
     d = vec3.fromValues( 10, 0,-10);
     this.qFloor = this.Quad(a, b, c, d)
-    .invertNorms()
-    .setTexture(TILE_TEXTURE);
+	.setTexture(TILE_TEXTURE);
 
     //define the bounds for walls
     //A VALUE OF -100 MEANS NO BOUNDS
@@ -96,28 +95,28 @@ var bW_ = 3.0;  // width of back wall
 
 MazePiece.prototype.FrontWall = function(texture) {
     var front = new SixSidedPrism(
-	[-bX_, h_, -(bZ_ + bW_)],
-	[-bX_,  0, -(bZ_ + bW_)],
-	[-bX_,  0, -(bZ_      )],
-	[-bX_, h_, -(bZ_      )],
 	[ bX_, h_, -(bZ_ + bW_)],
 	[ bX_,  0, -(bZ_ + bW_)],
 	[ bX_,  0, -(bZ_      )],
-	[ bX_, h_, -(bZ_      )]).setTexture(texture);
+	[ bX_, h_, -(bZ_      )],
+	[-bX_, h_, -(bZ_ + bW_)],
+	[-bX_,  0, -(bZ_ + bW_)],
+	[-bX_,  0, -(bZ_      )],
+	[-bX_, h_, -(bZ_      )]).setTexture(texture);
     this.objs.push(front);
     return front;
 }
 
 MazePiece.prototype.LeftWall = function(texture) {
     var left = new SixSidedPrism(
-	[-(bZ_ + bW_), h_, bX_],
-	[-(bZ_ + bW_),  0, bX_],
-	[-(bZ_      ),  0, bX_],
-	[-(bZ_      ), h_, bX_],
 	[-(bZ_ + bW_), h_,-bX_],
 	[-(bZ_ + bW_),  0,-bX_],
 	[-(bZ_      ),  0,-bX_],
-	[-(bZ_      ), h_,-bX_]).setTexture(texture);
+	[-(bZ_      ), h_,-bX_],
+	[-(bZ_ + bW_), h_, bX_],
+	[-(bZ_ + bW_),  0, bX_],
+	[-(bZ_      ),  0, bX_],
+	[-(bZ_      ), h_, bX_]).setTexture(texture);
     this.objs.push(left);
     return left;
 }
@@ -126,10 +125,10 @@ MazePiece.prototype.RightWall = function(texture) {
     var right = new SixSidedPrism(
 	[bZ_ + bW_, h_, -bX_],
 	[bZ_ + bW_,  0, -bX_],
-	[bZ_      ,  0, -bX_],
-	[bZ_      , h_, -bX_],
-	[bZ_ + bW_, h_,  bX_],
 	[bZ_ + bW_,  0,  bX_],
+	[bZ_ + bW_, h_,  bX_],
+	[bZ_      , h_, -bX_],
+	[bZ_      ,  0, -bX_],
 	[bZ_      ,  0,  bX_],
 	[bZ_      , h_,  bX_]).setTexture(texture);
     this.objs.push(right);
@@ -138,14 +137,14 @@ MazePiece.prototype.RightWall = function(texture) {
 
 MazePiece.prototype.BackWall = function(texture) {
     var back = new SixSidedPrism(
-	[ bX_, h_, bZ_ + bW_],
-	[ bX_,  0, bZ_ + bW_],
-	[ bX_,  0, bZ_      ],
 	[ bX_, h_, bZ_      ],
-	[-bX_, h_, bZ_ + bW_],
-	[-bX_,  0, bZ_ + bW_],
+	[ bX_,  0, bZ_      ],
+	[ bX_,  0, bZ_ + bW_],
+	[ bX_, h_, bZ_ + bW_],
+	[-bX_, h_, bZ_      ],
 	[-bX_,  0, bZ_      ],
-	[-bX_, h_, bZ_      ]).setTexture(texture);
+	[-bX_,  0, bZ_ + bW_],
+	[-bX_, h_, bZ_ + bW_]).setTexture(texture);
     this.objs.push(back);
     return back;
 }
