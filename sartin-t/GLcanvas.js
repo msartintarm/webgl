@@ -39,12 +39,13 @@ GLcanvas.prototype.add = function(objToDraw) {
     } else if(objToDraw == "sphere") {
 	this.objects.push(new Sphere(2));
     } else if(objToDraw == "skybox") {
-	this.objects.push(new Skybox);
+	this.objects.push(new Skybox());
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
     } else if(objToDraw == "maze") {
-	this.objects.push(new Maze());
-	myMaze = this.objects[0]; //new Maze();
+	myMaze = new Maze();
+	this.objects.push(myMaze);
+	this.objects.push(new Skybox());
 	mazeMode = 1;
 	priveledgedMode.toggle();
 	theMatrix.viewMaze();
@@ -81,6 +82,7 @@ GLcanvas.prototype.start = function(objToDraw) {
 	if (this.gl == null) { return; }
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
+	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shaders);
 	
 	// Instantiate models
