@@ -69,9 +69,10 @@ Maze.prototype.Piece = function(a,b) {
 
 // Based upon the piece number, translate it by its coords
 Maze.prototype.transPieces = function() {
+    var theWidth, theHeight;
     for(var i = 0; i < this.pieces.length; ++i) {
-	var theWidth = i % this.width;
-	var theHeight = (i - theWidth) / this.width;
+	theWidth = i % this.width;
+	theHeight = (i - theWidth) / this.width;
 	this.pieces[i].translate([theWidth * 20, 0, theHeight * -20]);
     }
 }
@@ -83,22 +84,29 @@ Maze.prototype.draw = function(gl_,buffer_) {
     }
 }
 
+var mazeDebug = false;
+
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
  *  bottom right, in the xz plane
  */
 Maze.prototype.checkPosition = function() {
-    var curPos = theMatrix.getPosition();
-    var newPos = vec4.create();
+    var curPos, newPos, pieceX, pieceZ, curPiece, newPiece;
+    curPos = theMatrix.getPosition();
+    newPos = vec4.create();
     vec4.transformMat4(newPos, curPos, theMatrix.vMatrixNew);
 
-    var pieceX = Math.round(curPos[0] / 20);
-    var pieceZ = Math.round(curPos[2] /-20);
-    var curPiece = (this.width * pieceZ) + pieceX;
+    pieceX = Math.round(curPos[0] / 20);
+    pieceZ = Math.round(curPos[2] /-20);
+    curPiece = (this.width * pieceZ) + pieceX;
     pieceX = Math.round(newPos[0] / 20);
     pieceZ = Math.round(newPos[2] /-20);
-    var newPiece = (this.width * pieceZ) + pieceX;
-    if(1 == 1) {
+    newPiece = (this.width * pieceZ) + pieceX;
+
+    var piecePosX = newPos[0] % 20;
+    var piecePosZ = newPos[2] % 20;
+
+    if(mazeDebug== true) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 
@@ -112,8 +120,22 @@ Maze.prototype.checkPosition = function() {
 	
 	posStats.innerHTML += "<br/> Maze Piece: from " + 
 	    curPiece +
-	    " to " + newPiece;
-	
+	    " to " + newPiece + " with piece-local coords " +
+	    parseFloat(piecePosX).toFixed(2) + "," +  
+	    parseFloat(piecePosZ).toFixed(2);
+	if(piecePosX > 10 && piecePosX < 12) posStats.innerHTML += 
+	"<br/> Getting close to right wall..";
+	else if(piecePosX > 8 && piecePosX < 10) posStats.innerHTML += 
+	"<br/> Getting close to left wall..";
+	if(piecePosZ < -10 && piecePosZ > -12) posStats.innerHTML += 
+	"<br/> Getting close to top wall..";
+	else if(piecePosZ < -8 && piecePosZ > -10) posStats.innerHTML += 
+	"<br/> Getting close to bottom wall..";
+
+	if((curPiece >= 0) && 
+	   (!this.pieces[curPiece].positionLegal(newPos))) {
+	    alert("Crossing illegal border..");
+	}
     }
     return 0;
 }

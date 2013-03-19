@@ -131,6 +131,14 @@ GLcanvas.prototype.initGL = function() {
  */
 GLcanvas.prototype.drawScene = function() {
     // Clear the canvas before we start drawing on it.
+    var error = this.gl.getError();
+    while (error != this.gl.NO_ERROR) {
+	alert(error);
+	error = this.gl.getError();
+
+    }
+
+    this.gl.viewport(0, 0, 800, 800);
     this.gl.viewport(0, 0, 800, 800);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);

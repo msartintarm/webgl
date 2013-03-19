@@ -64,16 +64,6 @@ function MazePiece(walls, textures) {
     this.qFloor = this.Quad(a, b, c, d)
 	.setTexture(TILE_TEXTURE);
 
-    //define the bounds for walls
-    //A VALUE OF -100 MEANS NO BOUNDS
-    //can't use -1 b/c that is in our area
-    this.pX_bound = -100;
-    this.nX_bound = -100;
-    this.pZ_bound = -100;
-    this.nZ_bound = -100;
-
-    var position = theMatrix.getPosition();
-    
  /*
    It gets a little confusing in here.  We never share walls, so to preserve
    the coordinate space the walls go from 8.5 to 11.5 (length of 3) expanding
@@ -86,6 +76,7 @@ function MazePiece(walls, textures) {
     if(this.l){ this.qLeft = this.LeftWall(this.lt); }
     if(this.r){ this.qRight = this.RightWall(this.rt); }
     if(this.b){ this.qBack = this.BackWall(this.bt); }
+    // Bounds - N, S, W, and E - are created within as well.
 };
 
 var bX_ = 11.4; // back X coordinates
@@ -104,6 +95,7 @@ MazePiece.prototype.FrontWall = function(texture) {
 	[-bX_,  0, -(bZ_      )],
 	[-bX_, h_, -(bZ_      )]).setTexture(texture);
     this.objs.push(front);
+    this.north = -bZ_;
     return front;
 }
 
@@ -118,6 +110,7 @@ MazePiece.prototype.LeftWall = function(texture) {
 	[-(bZ_      ),  0, bX_],
 	[-(bZ_      ), h_, bX_]).setTexture(texture);
     this.objs.push(left);
+    this.west = -bZ_;
     return left;
 }
 
@@ -132,6 +125,7 @@ MazePiece.prototype.RightWall = function(texture) {
 	[bZ_      ,  0,  bX_],
 	[bZ_      , h_,  bX_]).setTexture(texture);
     this.objs.push(right);
+    this.east = bZ_;
     return right;
 }
 
@@ -146,11 +140,29 @@ MazePiece.prototype.BackWall = function(texture) {
 	[-bX_,  0, bZ_ + bW_],
 	[-bX_, h_, bZ_ + bW_]).setTexture(texture);
     this.objs.push(back);
+    this.south = bZ_;
     return back;
 }
 
 MazePiece.prototype.initBuffers = _objsInitBuffers;
-MazePiece.prototype.translate = _objsTranslate;
+
+/**
+ *  Translation will be done right after the object
+ *  is created - we need to update our bounds 
+ *  accordingly.
+ */
+MazePiece.prototype.translate = function(vec_) {
+
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].translate(vec_);
+    }
+    if(this.f){ this.north += vec_[2]; }
+    if(this.l){ this.west += vec_[0]; }
+    if(this.r){ this.east += vec_[0]; }
+    if(this.b){ this.south += vec_[2]; }
+    return this;
+}
+
 MazePiece.prototype.Quad = _Quad;
 MazePiece.prototype.Prism = _Prism;
 
@@ -160,12 +172,12 @@ MazePiece.prototype.Prism = _Prism;
  *  This is the area it encompasses, plus a buffer zone.
  * 
  */
-MazePiece.prototype.positionLegal = function(position, transMat) {
+MazePiece.prototype.positionLegal = function(position) {
 
-    if(this.f && position[0] - 1 < -bZ_) { return false; }
-    if(this.b && position[0] + 1 >  bZ_) { return false; }
-    if(this.r && position[2] + 1 >  bZ_) { return false; }
-    if(this.l && position[2] - 1 < -bZ_) { return false; }
+    if(this.f && position[2] < this.north) { return false; }
+    if(this.b && position[2] > this.south) { return false; }
+    if(this.l && position[0] > this.west) { return false; }
+    if(this.r && position[0] < this.east) { return false; }
 
     return true;
 }

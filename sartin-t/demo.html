@@ -388,6 +388,10 @@ void main(void) {
           <div id="settings" class="content">
               Privledge Mode:<br/>
               <input type="button" onclick="priveledgedMode.toggle()" value="toggle"/>
+              <br/>Debug Statistics:<br/>
+              <input type="button" 
+		     onclick="mazeDebug = !mazeDebug;" 
+		     value="Maze Bound Checking"/>
 	      <br/><br/>
               Move scene:<br/>
               <input type="button" onclick="positionY.setInc(-1)" value="Up"/>
