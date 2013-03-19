@@ -35,7 +35,8 @@ function Maze() {
     this.Piece(FRONT, FLOOR_TEXTURE);
     this.Piece(FRONT, FLOOR_TEXTURE);
     this.Piece(RIGHT,FLOOR_TEXTURE);
-    this.Piece(FRONT_RIGHT, [WOOD_TEXTURE, FLOOR_TEXTURE]);
+    this.Piece(FRONT_RIGHT, 
+	       [WOOD_TEXTURE, FLOOR_TEXTURE]);
 
     this.Piece(FRONT_LEFT, FLOOR_TEXTURE);
     this.Piece(FRONT_BACK, FLOOR_TEXTURE);
@@ -43,7 +44,8 @@ function Maze() {
     this.Piece(RIGHT, FLOOR_TEXTURE);
     this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
 
-    this.Piece(FRONT_LEFT, [FLOOR_TEXTURE, HEAVEN_TEXTURE]);
+    this.Piece(FRONT_LEFT, 
+	       [FLOOR_TEXTURE, HEAVEN_TEXTURE]);
     this.Piece(FRONT, FLOOR_TEXTURE);
     this.Piece(FRONT, FLOOR_TEXTURE);
     this.Piece(FRONT, FLOOR_TEXTURE);
@@ -59,8 +61,8 @@ Maze.prototype.initBuffers = function(gl_) {
     this.hellRoom.initBuffers(gl_);
 }
 
-Maze.prototype.Piece = function(a,b,c,d,e) {
-    var newPiece = new MazePiece(a,b,c,d,e);
+Maze.prototype.Piece = function(a,b) {
+    var newPiece = new MazePiece(a,b);
     this.pieces.push(newPiece);
     return newPiece;
 }

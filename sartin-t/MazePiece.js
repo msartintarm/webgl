@@ -73,7 +73,7 @@ function MazePiece(walls, textures) {
     this.pZ_bound = -100;
     this.nZ_bound = -100;
 
-    var position = theMatrix.getMvPos();
+    var position = theMatrix.getPosition();
     
  /*
    It gets a little confusing in here.  We never share walls, so to preserve
@@ -83,68 +83,89 @@ function MazePiece(walls, textures) {
    you see lengths of 11.4 that is to give the long wall texture preference
    over the short edge(looks crappy) when those conflicts do occur.
 */
-    if(this.f){
-	//front wall
-	a = vec3.fromValues(-11.4,10,-11.5);
-	b = vec3.fromValues(-11.4,0,-11.5);
-	c = vec3.fromValues(-11.4,0,-8.5);
-	d = vec3.fromValues(-11.4,10,-8.5);
-	e = vec3.fromValues(11.4,10,-11.5);
-	f = vec3.fromValues(11.4,0,-11.5);
-	g = vec3.fromValues(11.4,0,-8.5);
-	h = vec3.fromValues(11.4,10,-8.5);
-
-	this.nZ_bound = position[2] - 8;
-	this.qFront = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.ft);
-    }
-    if(this.l){
-	//left wall
-	a = vec3.fromValues(-11.5,10,11.4);
-	b = vec3.fromValues(-11.5,0,11.4);
-	c = vec3.fromValues(-8.5,0,11.4);
-	d = vec3.fromValues(-8.5,10,11.4);
-	e = vec3.fromValues(-11.5,10,-11.4);
-	f =  vec3.fromValues(-11.5,-11.4);
-	g = vec3.fromValues(-8.5,0,-11.4);
-	h =  vec3.fromValues(-8.5,10,-11.4);
-
-	this.nX_bound = position[0] - 8;
-	this.qLeft = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.lt);
-    }
-    if(this.r){
-	//right wall
-	a = vec3.fromValues(11.5,10,-11.4);
-	b = vec3.fromValues(11.5,0,-11.4);
-	c = vec3.fromValues(8.5,0,-11.4);
-	d = vec3.fromValues(8.5,10,-11.4);
-	e = vec3.fromValues(11.5,10,11.4);
-	f = vec3.fromValues(11.5,0,11.4);   
-        g = vec3.fromValues(8.5,0,11.4);
-	h = vec3.fromValues(8.5,10,11.4);
-
-	this.pX_bound = 8 + position[0];
-	this.qRight = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.rt);
-    }
-    if(this.b){
-	//behind wall
-	a = vec3.fromValues(11.4,10,11.5);
-	b = vec3.fromValues(11.4,0,11.5);
-	c = vec3.fromValues(11.4,0,8.5);
-	d = vec3.fromValues(11.4,10,8.5);
-	e = vec3.fromValues(-11.4,10,11.5);
-	f = vec3.fromValues(-11.4,0,11.5);
-	g = vec3.fromValues(-11.4,0,8.5);
-	h = vec3.fromValues(-11.4,10,8.5);
-
-	this.pZ_bound = position[2] + 8;
-	this.qBack = this.Prism(a,b,c,d,e,f,g,h).setTexture(this.bt);
-    }
+    if(this.f){ this.qFront = this.FrontWall(this.ft); }
+    if(this.l){ this.qLeft = this.LeftWall(this.lt); }
+    if(this.r){ this.qRight = this.RightWall(this.rt); }
+    if(this.b){ this.qBack = this.BackWall(this.bt); }
 };
+
+var bX_ = 11.4; // back X coordinates
+var h_ = 10;    // height of wall
+var bZ_ = 8.5;  // back Z coordinate
+var bW_ = 3.0;  // width of back wall 
+
+MazePiece.prototype.FrontWall = function(texture) {
+    var front = new SixSidedPrism(
+	[-bX_, h_, -(bZ_ + bW_)],
+	[-bX_,  0, -(bZ_ + bW_)],
+	[-bX_,  0, -(bZ_      )],
+	[-bX_, h_, -(bZ_      )],
+	[ bX_, h_, -(bZ_ + bW_)],
+	[ bX_,  0, -(bZ_ + bW_)],
+	[ bX_,  0, -(bZ_      )],
+	[ bX_, h_, -(bZ_      )]).setTexture(texture);
+    this.objs.push(front);
+    return front;
+}
+
+MazePiece.prototype.LeftWall = function(texture) {
+    var left = new SixSidedPrism(
+	[-(bZ_ + bW_), h_, bX_],
+	[-(bZ_ + bW_),  0, bX_],
+	[-(bZ_      ),  0, bX_],
+	[-(bZ_      ), h_, bX_],
+	[-(bZ_ + bW_), h_,-bX_],
+	[-(bZ_ + bW_),  0,-bX_],
+	[-(bZ_      ),  0,-bX_],
+	[-(bZ_      ), h_,-bX_]).setTexture(texture);
+    this.objs.push(left);
+    return left;
+}
+
+MazePiece.prototype.RightWall = function(texture) {
+    var right = new SixSidedPrism(
+	[bZ_ + bW_, h_, -bX_],
+	[bZ_ + bW_,  0, -bX_],
+	[bZ_      ,  0, -bX_],
+	[bZ_      , h_, -bX_],
+	[bZ_ + bW_, h_,  bX_],
+	[bZ_ + bW_,  0,  bX_],
+	[bZ_      ,  0,  bX_],
+	[bZ_      , h_,  bX_]).setTexture(texture);
+    this.objs.push(right);
+    return right;
+}
+
+MazePiece.prototype.BackWall = function(texture) {
+    var back = new SixSidedPrism(
+	[ bX_, h_, bZ_ + bW_],
+	[ bX_,  0, bZ_ + bW_],
+	[ bX_,  0, bZ_      ],
+	[ bX_, h_, bZ_      ],
+	[-bX_, h_, bZ_ + bW_],
+	[-bX_,  0, bZ_ + bW_],
+	[-bX_,  0, bZ_      ],
+	[-bX_, h_, bZ_      ]).setTexture(texture);
+    this.objs.push(back);
+    return back;
+}
 
 MazePiece.prototype.initBuffers = _objsInitBuffers;
 MazePiece.prototype.translate = _objsTranslate;
 MazePiece.prototype.Quad = _Quad;
 MazePiece.prototype.Prism = _Prism;
+
+/**
+ *  The intention is that the Maze object will only call the
+ *  check upon a maze piece if we are in its jurisdiction.
+ *  This is the area it encompasses, plus a buffer zone.
+ * 
+ */
+MazePiece.prototype.checkBounds = function(position) {
+
+    
+
+}
 
 MazePiece.prototype.draw = function(gl_, shaders_) {
 

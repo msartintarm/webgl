@@ -41,17 +41,10 @@ GLmatrix.prototype.viewInit = function() {
     mat4.identity(this.vMatrixNew);
 }
 
-GLmatrix.prototype.getMvPos = function(){
-    var thePos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(thePos, thePos, this.vMatrixNew);
-    return thePos;
-}
-
-
 GLmatrix.prototype.viewMaze = function() {
     mat4.translate(this.vMatrixNew,
 		   this.vMatrix, 
-		   [20,2,9.0]); 
+		   [20,2,9.0]);
     
     mat4.rotate(this.vMatrixNew,
 		this.vMatrixNew,
@@ -65,7 +58,10 @@ GLmatrix.prototype.translate = function(vector) {
     this.mMatrixChanged = true;
 }
 GLmatrix.prototype.vTranslate = function(vector) {
-    mat4.translate(this.vMatrixNew, this.vMatrix, vector); }
+    mat4.translate(this.vMatrixNew,
+		   this.vMatrixNew, 
+		   vector); }
+
 GLmatrix.prototype.translateN = function(vector) {
     mat4.translate(this.mMatrix, 
 		   this.mMatrix,
@@ -92,28 +88,28 @@ const moveDist = 2.1;
 
 GLmatrix.prototype.lookUp = function() {
     mat4.rotate(this.vMatrixNew,
-		this.vMatrix,
+		this.vMatrixNew,
 		lookDist * 2 * Math.PI, 
 		[1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookDown = function() {
     mat4.rotate(this.vMatrixNew,
-		this.vMatrix,
+		this.vMatrixNew,
 		lookDist * 2 * Math.PI, 
 		[-1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookLeft = function() {
     mat4.rotate(this.vMatrixNew, 
-		this.vMatrix,
+		this.vMatrixNew,
 		lookDist * 2 * Math.PI, 
 		[ 0, 1, 0]);
 }
 
 GLmatrix.prototype.lookRight = function() {
     mat4.rotate(this.vMatrixNew,
-		this.vMatrix, 
+		this.vMatrixNew, 
 		lookDist * 2 * Math.PI, 
 		[ 0,-1, 0]); 
 }
@@ -121,20 +117,21 @@ GLmatrix.prototype.lookRight = function() {
 GLmatrix.prototype.moveRight = function() {
     mat4.translate(
 	this.vMatrixNew,
-	this.vMatrix,
+	this.vMatrixNew,
 	[-moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveLeft = function() {
     mat4.translate(
 	this.vMatrixNew,
-	this.vMatrix,
+	this.vMatrixNew,
 	[ moveDist, 0, 0]);
 }
 
 GLmatrix.prototype.moveUp = function() {
     mat4.translate(this.vMatrixNew,
- 		   this.vMatrix, [0, moveDist, 0]); 
+ 		   this.vMatrixNew,
+		   [0, moveDist, 0]); 
 }
 
 GLmatrix.prototype.jump = function() {
@@ -149,20 +146,21 @@ GLmatrix.prototype.jump = function() {
 
 GLmatrix.prototype.moveDown = function() {
     mat4.translate(this.vMatrixNew,
-		   this.vMatrix, [0, -moveDist, 0]); 
+		   this.vMatrixNew,
+		   [0, -moveDist, 0]); 
 }
 
 GLmatrix.prototype.getPosition = function() {
-    var thePos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(thePos, thePos, this.vMatrixNew);
-//    console.log('view pos= x:%d y:%d   z:%d',
-//		thePos[0], thePos[1], thePos[2]);
+    var thePos = vec4.fromValues(0,0,0,1);
+    vec4.transformMat4(thePos, thePos, this.vMatrix);
     return thePos;
 }
 
 GLmatrix.prototype.newViewIllegal = function() {
     var pos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(pos, pos, this.vMatrixNew);
+    vec4.transformMat4(pos, pos, this.vMatrix);
+
+    return 0;
 
     //return myMaze.getBound(pos);
     
@@ -190,14 +188,14 @@ GLmatrix.prototype.newViewIllegal = function() {
 GLmatrix.prototype.moveForward = function() {
     mat4.translate(
 	this.vMatrixNew,
-	this.vMatrix, 
+	this.vMatrixNew,
 	[0, 0, -moveDist]); 
 }
 
 GLmatrix.prototype.moveBack = function() {
     mat4.translate(
 	this.vMatrixNew,
-	this.vMatrix, 
+	this.vMatrixNew,
 	[0, 0, moveDist]); 
 }
 
@@ -210,8 +208,11 @@ GLmatrix.prototype.update = function() {
 	if( priveledgedMode.val || !this.newViewIllegal()){
 	    mat4.copy(this.vMatrix, this.vMatrixNew);
 	}
-	mat4.copy(this.vMatrixNew, this.vMatrix);
+	mat4.mul(this.vMatrix, 
+		 this.vMatrix,
+		 this.vMatrixNew);
 	this.viewingPos = this.getPosition();
+	mat4.identity(this.vMatrixNew);
 	return; 
     }
     if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
@@ -227,7 +228,7 @@ GLmatrix.prototype.update = function() {
 			if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
 			else { this.inJump = false; return; }
 		    }}}}}   
-    mat4.copy(this.vMatrix, this.vMatrixNew);
+    mat4.mul(this.vMatrix, this.vMatrixNew);
 }
 
 /**
