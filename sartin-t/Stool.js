@@ -57,6 +57,7 @@ Stool.prototype.Prism = _Prism;
 Stool.prototype.Disk = _Disk;
 Stool.prototype.Cyl = _Cyl;
 Stool.prototype.Torus = _Torus;
+Stool.prototype.translate = _objsTranslate;
 
 Stool.prototype.initBuffers = _objsInitBuffers;
 

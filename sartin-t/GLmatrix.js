@@ -10,7 +10,6 @@ function GLmatrix() {
     this.mStack = [];
     this.inJump = false;
     this.viewingPos = vec4.create();
-    this.uncheckedPos = vec4.create();
 
     this.mMatrixChanged = true;
     this.vMatrixChanged = true;
@@ -141,33 +140,8 @@ GLmatrix.prototype.getPosition = function() {
     return thePos;
 }
 
-GLmatrix.prototype.newViewIllegal = function() {
-    var pos = vec4.fromValues(0,0,1,1);
-    vec4.transformMat4(pos, pos, this.vMatrix);
-
-//    return 0;
-
-    return myMaze.checkPosition(pos);
-    
-    if(pos[2] >= 11) return 1;
-    if(pos[0] <= -8) return 1;
-    if(pos[0] >= 88) return 1;
-    if(pos[2] <= -128) return 1;
-    if((pos[0] >= 8 && pos[0] <= 12) && (pos[2] <= -8 && pos[2] >= -92)) return 1;
-    if((pos[0] >= 28 && pos[0] <= 32) && (pos[2] <= -8 && pos[2] >= -32)) return 1;
-    if((pos[0] >= 48 && pos[0] <= 52) && (pos[2] <= -28 && pos[2] >= -72)) return 1;
-    if((pos[0] >= 48 && pos[0] <= 52) && (pos[2] <= -88 && pos[2] >= -112)) return 1;
-    if((pos[0] >= 68 && pos[0] <= 72) && (pos[2] <= -68 && pos[2] >= -112)) return 1;
-    if((pos[0] >= 68 && pos[0] <= 72) && (pos[2] <= -8 && pos[2] >= -52)) return 1;
-    if((pos[0] >= 28 && pos[0] <= 52) && (pos[2] <= -28 && pos[2] >= -32)) return 1;
-    if((pos[0] >= 8 && pos[0] <= 32) && (pos[2] <= -48 && pos[2] >= -52)) return 1;
-    if((pos[0] >= 28 && pos[0] <= 72) && (pos[2] <= -68 && pos[2] >= -72)) return 1;
-    if((pos[0] >= 8 && pos[0] <= 52) && (pos[2] <= -88 && pos[2] >= -92)) return 1;
-    if((pos[0] >= 68 && pos[0] <= 92) && (pos[2] <= -88 && pos[2] >= -92)) return 1;
-    if((pos[0] >= -8 && pos[0] <= 52) && (pos[2] <= -108 && pos[2] >= -112)) return 1;
-    
-    //return value of 1 means we cannot move that way
-    return 0;
+GLmatrix.prototype.newViewAllowed = function() {
+    return myMaze.checkPosition();
 }
 
 GLmatrix.prototype.moveForward = function() {
@@ -184,7 +158,9 @@ GLmatrix.prototype.moveBack = function() {
 GLmatrix.prototype.update = function() {
     const x = 0.1;
     if(this.inJump == false) {
-	if( priveledgedMode.val || !this.newViewIllegal()){
+	if( priveledgedMode.val || this.newViewAllowed()){
+	    // We only check the view if we are
+	    //  not in 'god mode'
 	    this.vMul(this.vMatrixNew);
 	    this.vMatrixChanged = true;
 	}
@@ -286,7 +262,6 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 GLmatrix.prototype.push = function() {
     var copy = mat4.clone(this.mMatrix);
     this.mStack.push(copy);
-    this.mMatrixChanged = true;
 }
 
 GLmatrix.prototype.pop = function() {

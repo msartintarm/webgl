@@ -89,6 +89,8 @@ var mazeDebug = false;
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
  *  bottom right, in the xz plane
+ * 
+ *  This function returns false if position is illegal
  */
 Maze.prototype.checkPosition = function() {
     var curPos, newPos, pieceX, pieceZ, curPiece, newPiece;
@@ -135,31 +137,8 @@ Maze.prototype.checkPosition = function() {
 	if((curPiece >= 0) && 
 	   (!this.pieces[curPiece].positionLegal(newPos))) {
 	    alert("Crossing illegal border..");
+	    return false;
 	}
     }
-    return 0;
-}
-
-Maze.prototype.getBound = function(pos) {
-    //check to see if you are violating bound
-    //and within the square
-    for(var i=0; i<this.pieces.length; i++){
-	if(pos[0] > (this.pieces[i].nX_bound-3) &&
-	   pos[0] < (this.pieces[i].pX_bound+3) && 
-	   pos[2] > (this.pieces[i].nZ_bound-3) &&
-	   pos[2] < (this.pieces[i].pZ_bound+3)){
-	    if(this.pieces[i].pZ_bound < pos[2] || 
-	       this.pieces[i].nZ_bound > pos[2]){
-		console.log('i : %d', i);
-		return 1;
-	    }
-	    if(this.pieces[i].pX_bound < pos[0] || 
-	       this.pieces[i].nX_bound > pos[0]){
-		return 1; 
-	    }     
-	}
-	//in the square and no violations, no problem
-	else return 0;
-    }
-    return 0;
+    return true;
 }

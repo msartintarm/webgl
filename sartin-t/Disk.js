@@ -67,10 +67,6 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 //    }
 //}
 
-Disk.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
-}
-
-Disk.prototype.draw = function(gl_, buffer_) {
-    this.o.drawBuffers(gl_, buffer_);
-};
+Disk.prototype.initBuffers = _oInitBuffers;
+Disk.prototype.initBuffers = _oTranslate;
+Disk.prototype.draw = _oDraw;

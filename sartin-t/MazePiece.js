@@ -51,10 +51,6 @@ function MazePiece(walls, textures) {
     this.objs = [];
 
     var a,b,c,d,at,bt,ct,dt;
-    at = vec2.fromValues(0.0,0.0);
-    bt = vec2.fromValues(1.0,0.0);
-    ct = vec2.fromValues(0.0,1.0);
-    dt = vec2.fromValues(1.0,1.0);
 
     //always draw the tiled floor
     a = vec3.fromValues(-10, 0, 10);
@@ -166,6 +162,13 @@ MazePiece.prototype.translate = function(vec_) {
 MazePiece.prototype.Quad = _Quad;
 MazePiece.prototype.Prism = _Prism;
 
+var qq = 0;
+const ILLEGAL_FRONT = qq++;
+const ILLEGAL_BACK = qq++;
+const ILLEGAL_LEFT = qq++;
+const ILLEGAL_RIGHT = qq++;
+const LEGAL_BOUND = qq++;
+
 /**
  *  The intention is that the Maze object will only call the
  *  check upon a maze piece if we are in its jurisdiction.
@@ -176,8 +179,8 @@ MazePiece.prototype.positionLegal = function(position) {
 
     if(this.f && position[2] < this.north) { return false; }
     if(this.b && position[2] > this.south) { return false; }
-    if(this.l && position[0] > this.west) { return false; }
-    if(this.r && position[0] < this.east) { return false; }
+    if(this.l && position[0] < this.west) { return false; }
+    if(this.r && position[0] > this.east) { return false; }
 
     return true;
 }

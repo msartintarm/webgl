@@ -12,7 +12,7 @@
     Negative Z first two, negative Y second and third.
  */
 function SixSidedPrism(a, b, c, d, e, f, g, h) { 
-    this.objs = []
+    this.objs = [];
     var at,bt,ct,dt;
     at = vec2.fromValues(0.0,0.0);
     bt = vec2.fromValues(1.0,0.0);
