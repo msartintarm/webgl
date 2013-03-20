@@ -143,7 +143,15 @@ Maze.prototype.checkPosition = function() {
 	   (!this.pieces[newPiece].positionLegal(newPos))) {
 //	    alert("Crossing illegal border..");
 	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
-	    return false;
+	    if(curPiece == 30){
+		alert("You win the game, now I give you GOD mode..");
+		priveledgedMode.toggle();
+		mat4.translate(theMatrix.vMatrixNew, theMatrix.vMatrixNew, [0,2,-10]);
+		
+		return true;
+	    }
+	    else
+		return false;
 	}
     }
     return true;
