@@ -309,12 +309,6 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.gl.getAttribLocation(this.shaders, "textureNumA");
     this.gl.enableVertexAttribArray(this.shaders.textureNumA);
 
-    //default to not use texture
-    this.shaders.useTextureU = 
-	this.gl.getUniformLocation(this.shaders,"uUseTexture");
-    this.gl.uniform1f(this.shaders.useTextureU, 0.0);
-    this.gl.activeTexture(this.gl.TEXTURE0);
-
     // Which texture to use
     this.shaders.samplerU = 
 	this.gl.getUniformLocation(this.shaders, "samplerU");

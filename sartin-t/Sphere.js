@@ -23,8 +23,9 @@ function Sphere(radius) {
 
 	    //not correct to add texture must set properly
 	    this.o.addTexture(0.0, 0.0);  
-
-	    this.o.addColors(x/2, y/2, z/2);
+	    
+	    this.o.addColors(x,y,z);
+	    //this.o.addColors(x/2, y/2, z/2);
 	}
     }
 
@@ -38,7 +39,7 @@ function Sphere(radius) {
 	var A = (i * (kLong + 1));
 	var C = A + kLong + 1;
 	for (var j = 0; j < kLong; j++) {
-	    this.o.addQuadIndexes(A++,C++);
+	    this.o.addQuadIndexes(C++,A++);
 	}
     }
 }

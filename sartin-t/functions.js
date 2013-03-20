@@ -387,6 +387,10 @@ function handleKeyDown(theEvent) {
 	if(priveledgedMode.val)
 	    theMatrix.moveDown();
 	break;
+    case 112: // F1: cycle through shaders 
+	FLATNORMS = !FLATNORMS;
+	theCanvas.changeShaders('shader-fs', 'shader-vs');
+	break;
     default:
 	wrongKey = true;
 	document.getElementById("keyboard").innerHTML = 
