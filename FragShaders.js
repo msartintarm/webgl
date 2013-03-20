@@ -31,19 +31,10 @@
     <script id="shader-fs" type="x-shader/x-fragment">
 precision mediump float;
 
-// Passed to the fragment shader
 varying float diffuseV;
 varying float specularV;
 varying float textureNumV;
 varying vec3 colorV;
-
-varying vec3 reflectionV;
-varying vec3 viewPosV;
-varying vec3 vModel;
-varying vec4 lModel;
-varying vec3 lightNorm;
-varying vec3 vertNorm;
-
 
 varying vec2 textureV;
 uniform sampler2D samplerU;
@@ -65,20 +56,6 @@ uniform float uUseTexture;
 
 void main(void) {
 
-  // Specular
-
-vec3 reflectionV2 = (vertNorm * diffuseV *
-		 2.0) - lightNorm;
-    vec3 viewer = vec3(0.,0.,0.);
-float specularV2 = dot(normalize(reflectionV2), 
-                    normalize(viewer - vModel.xyz));
-    if (specularV2 <= 0. || diffuseV <= 0.) { specularV2 = 0.0; }
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
-
-  vec3 specColor = vec3(.8,.8,.8) * specularV2;
 
   vec4 textureColor;
 
@@ -94,8 +71,6 @@ if (textureNumV < 0.1) {
   textureColor = texture2D(
     hellU, 
     vec2(textureV.s, textureV.t));
-    specColor = vec3(.7,.2,.2) * specularV2;
-    textureColor.rgb = textureColor.rgb * 2.5;
 } else if (textureNumV < 3.1) {
   textureColor = texture2D(
     floorU, 
@@ -108,7 +83,6 @@ if (textureNumV < 0.1) {
   textureColor = texture2D(
     brickU, 
     vec2(textureV.s, textureV.t));
-
 } else if (textureNumV < 6.1) {
   textureColor = texture2D(
     tileU, 
@@ -140,12 +114,13 @@ if (textureNumV < 0.1) {
     sky6U, 
     vec2(textureV.s, textureV.t));
 } else {
-  textureColor = vec4(colorV * 2.0, 1.0);
+  textureColor = vec4(colorV, 1.0);
 }
 
-  vec3 colorV2 = textureColor.rgb / 3.0;
+  vec3 colorV2 = textureColor.rgb / 1.5;
   vec3 ambColor = colorV2 * 0.1;
   vec3 diffColor = colorV2 * diffuseV * 0.7;
+  vec3 specColor = vec3(.8,.8,.8) * specularV;
 
   vec4 vertColor = vec4(ambColor + diffColor + specColor, 1.0);
 
@@ -164,79 +139,6 @@ if (textureNumV < 0.1) {
 }
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
-precision mediump float;
-
-// Vector Attributes
-attribute vec3 vPosA;
-attribute vec3 vNormA;
-attribute vec3 vColA;
-attribute vec2 textureA;
-attribute float textureNumA;
-
-// Matrixes
-uniform mat4 pMatU; // Position
-uniform mat4 mMatU; // Model
-uniform mat4 vMatU; // View
-uniform mat4 nMatU; // Normal
-uniform mat4 lMatU; // Lighting
-
-// Position attributes
-uniform vec3 lightPosU;
-uniform vec3 viewPosU;
-
-// Passed to the fragment shader
-varying float diffuseV;
-varying float specularV;
-varying float textureNumV;
-varying vec3 colorV;
-varying vec2 textureV;
-
-varying vec3 reflectionV;
-varying vec3 viewPosV;
-varying vec3 vModel;
-varying vec4 lModel;
-varying vec3 lightNorm;
-varying vec3 vertNorm;
-
-void main(void) {
-
-textureNumV = textureNumA;
-
-// Viewing space coordinates of light / vertex
-vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;
-lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
-
-  // -- Position -- //
-
-  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
-
-  // -- Lighting -- //
-
-  // Ambient components we'll leave until frag shader
-  colorV = vColA;
-  textureV = textureA;
-
-  // Diffuse component
-  lightNorm = normalize(lModel.xyz - vModel.xyz);
-
-  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);
-  diffuseV = dot(vertNorm, lightNorm);
-  if (diffuseV < 0.0) { diffuseV = 0.0; }
-       
-  // Specular
-    reflectionV = (vertNorm * diffuseV *
-		 2.0) - lightNorm;
-    vec3 viewer = vec3(0.,0.,0.);
-    specularV = dot(normalize(reflectionV), 
-                    normalize(viewer - vModel.xyz));
-    if (specularV <= 0. || diffuseV <= 0.) { specularV = 0.0; }
-    specularV = specularV * specularV;
-    specularV = specularV * specularV;
-    specularV = specularV * specularV;
-    specularV = specularV * specularV;
-}
-    </script>
-    <script id="vertex-shader-flat" type="x-shader/x-vertex">
 precision mediump float;
 
 // Vector Attributes
@@ -358,6 +260,62 @@ void main(void) {
     specularV = specularV * specularV;
 }
     </script>
+    <script id="vertex-shader-bad" type="x-shader/x-vertex">
+
+// Vector Attributes
+attribute vec3 vPosA;
+attribute vec3 vNormA;
+attribute vec3 vColA;
+attribute vec2 textureA;
+
+// Matrixes
+uniform mat4 pMatU; // Position
+uniform mat4 mMatU; // Model
+uniform mat4 vMatU; // View
+uniform mat3 nMatU; // Normal
+
+// Position attributes
+uniform vec3 lightPosU;
+uniform vec3 viewPosU;
+
+// Passed to the fragment shader
+varying float diffuseV;
+varying float specularV;
+varying vec3 colorV;
+varying vec2 textureV;
+
+void main(void) {
+
+  vec3 lightNorm = normalize(lightPosU);
+  // -- Position -- //
+
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
+
+  // -- Lighting -- //
+
+  // Ambient component we'll leave until frag shader
+ 
+  colorV = vColA;
+  textureV = textureA;
+
+  vec3 n = nMatU * vNormA;
+
+  // Diffuse component
+  diffuseV = dot(n, lightNorm);
+  if (diffuseV < 0.0) { diffuseV = 0.0; }
+       
+  // Specular
+    vec3 reflection = (n * diffuseV *
+		 2.0) - lightNorm;
+    vec4 reflectNorm = vec4(normalize(reflection), 0.0);
+    specularV = dot(reflectNorm, vec4(0,0,1,1) * vMatU);
+    if (specularV <= 0. || diffuseV <= 0.) { specularV = 0.0; }
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+    specularV = specularV * specularV;
+}
+    </script>
   </head>
 
   <body onload="theCanvas = new GLcanvas();">
@@ -407,12 +365,7 @@ void main(void) {
 	    <div id="positionYStats" style="display:none;"></div>
 	    <div id="rotateStats" style="display:none;"></div>
 	    <div id="rotateCamStats" style="display:none;"></div>
-            <input type="button" 
-		   onclick="priveledgedMode.toggle()" 
-		   id="priveledgedStats"
-		   class="button_add" 
-		   style="width:15%; display:none;"/>
-<!--	    <div id="priveledgedStats" style="display:none;"></div>-->
+	    <div id="priveledgedStats" style="display:none;"></div>
 	    <div id="positionCheckStats" style="display:none;"></div>
 	  </div>
 	</div>
@@ -516,8 +469,8 @@ void main(void) {
               <br/><br/>Select Shading:<br/>
               <input type="button" value="ADS model"
 onclick="theCanvas.changeShaders('shader-fs', 'shader-vs')"/>
-              <input type="button" value="Flat shading"
-onclick="FLATNORMS = !FLATNORMS; theCanvas.changeShaders('shader-fs', 'shader-vs');"/>
+              <input type="button" value="Flat shading" 
+onclick="theCanvas.changeShaders(shader-fs', 'vertex-shader-flat')"/>
               <input type="button" value="Bad shading" 
 onclick="theCanvas.changeShaders('frag-shader-flat', 'vertex-shader-bad')"/>
               <input type="button" value="Worse shading" 

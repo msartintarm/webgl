@@ -33,7 +33,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    var y_norm = y*xy
 	    // z norm = sin theta
 
-	    this.o.addNorms(x_norm, y_norm, z_norm);;
+	    this.o.addNorms(x_norm, y_norm, z_norm);
 	    this.o.addPos(radius * x, radius * y, z);
 	    this.o.addColors(colorVec[2],
 			     colorVec[1],
@@ -91,20 +91,18 @@ Cylinder.prototype.drawScrew = function() {
 	    // x = r sin theta cos phi
 
 	    if(minAngle < phi && phi < maxAngle) {
+		const slicesPlus = this.slices + 1;
 	    var x = 1 * Math.cos(phi);
 	    var y = 1 * Math.sin(phi);
-		this.o.posData[index] /= 0.9;
-		this.o.posData[index+1] /= 0.9;
-		this.o.posData[index+(3*this.slices)] *= 0.9;
-		this.o.posData[index+1+(3*this.slices)] *= 0.9;
-		this.o.posData[index-(3*this.slices)] *= 0.9;
-		this.o.posData[index+1-(3*this.slices)] *= 0.9;
+		this.o.posData[index] /= 0.7;
+		this.o.posData[index+1] /= 0.7;
+		this.o.posData[index+(3*slicesPlus)] *= 0.7;
+		this.o.posData[index+1+(3*slicesPlus)] *= 0.7;
+		this.o.posData[index-(3*slicesPlus)] *= 0.7;
+		this.o.posData[index+1-(3*slicesPlus)] *= 0.7;
 		this.o.colData[index] = 1.0;
 		this.o.colData[index+1] = 1.0;
 		this.o.colData[index+2] = 1.0;
-//		this.o.colData[index+this.slices] = 0.0;
-//		this.o.colData[index+1+this.slices] = 0.0;
-//		this.o.colData[index+2+this.slices] = 0.0;
 	    }
 
 	    index += 3;
@@ -163,10 +161,6 @@ Cylinder.prototype.drawBlackStreak = function() {
     }
 }    
 
-Cylinder.prototype.initBuffers = function(gl_) {
-    this.o.initBuffers(gl_);
-}
-
-Cylinder.prototype.draw = function(gl_, buffer_) {
-    this.o.drawBuffers(gl_, buffer_);
-};
+Cylinder.prototype.initBuffers = _oInitBuffers;
+Cylinder.prototype.translate = _oTranslate;
+Cylinder.prototype.draw = _oDraw;

@@ -1,12 +1,3 @@
-const NO_FRONT = BACK | RIGHT | LEFT;
-const BACK_LEFT = BACK | LEFT;
-const NONE = 0x0;
-const NONE = 0x0;
-const FRONT_BACK = FRONT | BACK;
-const BACK_RIGHT = RIGHT | BACK;
-const LEFT_RIGHT = RIGHT | LEFT;
-const FRONT_LEFT = FRONT | LEFT;
-
 
 function Maze() {  
     //f b r l
@@ -15,56 +6,51 @@ function Maze() {
     this.width = 5;
     this.height = 7;
  
-    this.hellRoom = new MazePiece(0,1,1,1,
-				  hellTexture,
-				  hellTexture,
-				  hellTexture, 
-				  hellTexture).translate([20, 0, 20]);
-    this.Piece(0,1,0,1,
-	       brickTexture,
-	       brickTexture,
-	       brickTexture,
-	       brickTexture);
-    this.Piece(0,0,0,0,brickTexture,hellTexture,brickTexture,brickTexture);   
-    this.Piece(1,1,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,1,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,1,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.hellRoom = new MazePiece(NO_FRONT, HELL_TEXTURE).translate([20, 0, 20]);
+    this.Piece(BACK_LEFT, BRICK_TEXTURE);
+    this.Piece(NO_WALLS);
+    this.Piece(FRONT_BACK, BRICK_TEXTURE);
+    this.Piece(BACK, BRICK_TEXTURE);
+    this.Piece(BACK_RIGHT, BRICK_TEXTURE);
     
-    this.Piece(0,0,1,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,1,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
+    this.Piece(FRONT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,0,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(1,0,0,1,brickTexture,brickTexture,brickTexture,brickTexture);
-    this.Piece(0,0,1,0,brickTexture,brickTexture,brickTexture,brickTexture);
+    this.Piece(LEFT, BRICK_TEXTURE);
+    this.Piece(LEFT, BRICK_TEXTURE);
+    this.Piece(FRONT, BRICK_TEXTURE);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
+    this.Piece(RIGHT, BRICK_TEXTURE);
 
-    this.Piece(0,0,1,1,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,1,0,woodTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(RIGHT,FLOOR_TEXTURE);
+    this.Piece(FRONT_RIGHT, 
+	       [WOOD_TEXTURE, FLOOR_TEXTURE]);
 
-    this.Piece(1,0,0,1,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,1,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,1,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(0,0,1,1,floorTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(FRONT_LEFT, FLOOR_TEXTURE);
+    this.Piece(FRONT_BACK, FLOOR_TEXTURE);
+    this.Piece(NO_LEFT, FLOOR_TEXTURE);
+    this.Piece(RIGHT, FLOOR_TEXTURE);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
 
-    this.Piece(1,0,0,1,floorTexture,floorTexture,floorTexture,heavenTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,0,0,floorTexture,floorTexture,floorTexture,floorTexture);
-    this.Piece(1,0,1,0,floorTexture,floorTexture,floorTexture,floorTexture);
+    this.Piece(FRONT_LEFT, 
+	       [FLOOR_TEXTURE, HEAVEN_TEXTURE]);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT, FLOOR_TEXTURE);
+    this.Piece(FRONT_RIGHT, FLOOR_TEXTURE);
+
     this.transPieces();
 }
 
@@ -75,57 +61,90 @@ Maze.prototype.initBuffers = function(gl_) {
     this.hellRoom.initBuffers(gl_);
 }
 
-Maze.prototype.Piece = function(a,b,c,d,e,f,g,h) {
-    var newPiece = new MazePiece(a,b,c,d,e,f,g,h);
+Maze.prototype.Piece = function(a,b) {
+    var newPiece = new MazePiece(a,b);
     this.pieces.push(newPiece);
     return newPiece;
 }
 
 // Based upon the piece number, translate it by its coords
 Maze.prototype.transPieces = function() {
+    var theWidth, theHeight;
     for(var i = 0; i < this.pieces.length; ++i) {
-	var theWidth = i % this.width;
-	var theHeight = (i - theWidth) / this.width;
+	theWidth = i % this.width;
+	theHeight = (i - theWidth) / this.width;
 	this.pieces[i].translate([theWidth * 20, 0, theHeight * -20]);
     }
 }
 
-// Based upon the piece number, translate it by its coords
-Maze.prototype.transPiece = function(num) {
-    var theWidth = num % this.width;
-    var theHeight = (num - theWidth) / this.width;
-    theMatrix.translate([theWidth * 20, 0, theHeight * -20]);
-}
-
 Maze.prototype.draw = function(gl_,buffer_) {
     this.hellRoom.draw(gl_,buffer_);
-    for(var i=0; i<this.height; i++){
-	for(var j=0; j<this.width; j++){
-	    this.pieces[i*this.width+j].draw(gl_, buffer_);
-	}
+    for(var i = 0; i<this.pieces.length; i++){
+	this.pieces[i].draw(gl_, buffer_);
     }
 }
 
-Maze.prototype.getBound = function(pos) {
-    //check to see if you are violating bound
-    //and within the square
-    for(var i=0; i<this.pieces.length; i++){
-	if(pos[0] > (this.pieces[i].nX_bound-3) &&
-	   pos[0] < (this.pieces[i].pX_bound+3) && 
-	   pos[2] > (this.pieces[i].nZ_bound-3) &&
-	   pos[2] < (this.pieces[i].pZ_bound+3)){
-	    if(this.pieces[i].pZ_bound < pos[2] || 
-	       this.pieces[i].nZ_bound > pos[2]){
-		console.log('i : %d', i);
-		return 1;
-	    }
-	    if(this.pieces[i].pX_bound < pos[0] || 
-	       this.pieces[i].nX_bound > pos[0]){
-		return 1; 
-	    }     
+var mazeDebug = false;
+
+/**
+ *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
+ *  bottom right, in the xz plane
+ * 
+ *  This function returns false if position is illegal
+ */
+Maze.prototype.checkPosition = function() {
+    var pieceX, pieceZ, curPiece, newPiece;
+    var thePos = vec4.fromValues(0,0,0,1);
+    var newPos = vec4.fromValues(0,0,0,1);
+    var curPos = vec4.fromValues(0,0,0,1);
+
+    vec4.transformMat4(newPos, thePos, theMatrix.vMatrixNew);
+    vec4.transformMat4(newPos, newPos, theMatrix.vMatrix);
+    vec4.transformMat4(curPos, curPos, theMatrix.vMatrix);
+
+    pieceX = Math.round(curPos[0] / 20);
+    pieceZ = Math.round(curPos[2] /-20);
+    curPiece = (this.width * pieceZ) + pieceX;
+    pieceX = Math.round(newPos[0] / 20);
+    pieceZ = Math.round(newPos[2] /-20);
+    newPiece = (this.width * pieceZ) + pieceX;
+
+    var piecePosX = newPos[0] % 20;
+    var piecePosZ = newPos[2] % 20;
+
+    if(mazeDebug == true) {
+	var posStats = document.getElementById("positionCheckStats");
+	posStats.style.display = "inline-block";
+	posStats.innerHTML = "old position: " + 
+	    parseFloat(curPos[0]).toFixed(2) + "," + 
+	    parseFloat(curPos[1]).toFixed(2) + "," +  
+	    parseFloat(curPos[2]).toFixed(2) +
+	    "<br/>new position: " +
+	    parseFloat(newPos[0]).toFixed(2) + "," + 
+	    parseFloat(newPos[1]).toFixed(2) + "," +  
+	    parseFloat(newPos[2]).toFixed(2);
+	
+	posStats.innerHTML += "<br/> Maze Piece: from " + 
+	    curPiece +
+	    " to " + newPiece;
+	if(piecePosX > 10 && piecePosX < 12) posStats.innerHTML += 
+	"<br/> Getting close to right wall..";
+	else if(piecePosX > 8 && piecePosX < 10) posStats.innerHTML += 
+	"<br/> Getting close to left wall..";
+	if(piecePosZ < -10 && piecePosZ > -12) posStats.innerHTML += 
+	"<br/> Getting close to top wall..";
+	else if(piecePosZ < -8 && piecePosZ > -10) posStats.innerHTML += 
+	"<br/> Getting close to bottom wall..";
+
+	if(newPiece < 0) { return false; }
+
+	if((curPiece >= 0) && 
+	   (!this.pieces[curPiece].positionLegal(newPos)) ||
+	   (!this.pieces[newPiece].positionLegal(newPos))) {
+//	    alert("Crossing illegal border..");
+	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
+	    return false;
 	}
-	//in the square and no violations, no problem
-	else return 0;
     }
-    return 0;
+    return true;
 }

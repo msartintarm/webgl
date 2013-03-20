@@ -11,14 +11,14 @@ function Stool() {
     var y_ = min_stool_height;
     var z_offset = base_leg_distance;
     var z_ = base_leg_width;
-    var a_ = vec3.fromValues( x_,  y_,  z_ + z_offset + tilt);
-    var b_ = vec3.fromValues( x_,   0,  z_ + z_offset);
-    var c_ = vec3.fromValues( x_,   0, -z_ + z_offset);
-    var d_ = vec3.fromValues( x_,  y_, -z_ + z_offset + tilt);
-    var e_ = vec3.fromValues(-x_,  y_,  z_ + z_offset + tilt);
-    var f_ = vec3.fromValues(-x_,   0,  z_ + z_offset);
-    var g_ = vec3.fromValues(-x_,   0, -z_ + z_offset);
-    var h_ = vec3.fromValues(-x_,  y_, -z_ + z_offset + tilt);
+    var a_ = vec3.fromValues( x_,  y_, -z_ + z_offset + tilt);
+    var b_ = vec3.fromValues( x_,   0, -z_ + z_offset);
+    var c_ = vec3.fromValues( x_,   0,  z_ + z_offset);
+    var d_ = vec3.fromValues( x_,  y_,  z_ + z_offset + tilt);
+    var e_ = vec3.fromValues(-x_,  y_, -z_ + z_offset + tilt);
+    var f_ = vec3.fromValues(-x_,   0, -z_ + z_offset);
+    var g_ = vec3.fromValues(-x_,   0,  z_ + z_offset);
+    var h_ = vec3.fromValues(-x_,  y_,  z_ + z_offset + tilt);
 
     this.stoolLeg = this.Prism(a_, b_, c_, d_, e_, f_, g_, h_);
 
@@ -27,7 +27,7 @@ function Stool() {
     this.disk1b = this.Disk(0.015,0.05,30,30);
 //    this.disk1b.invert();
     colorVec = [0.5,0,0];
-    this.cylinder2 = this.Cyl(0.015,0.015,0.06,30,300); 
+    this.cylinder2 = this.Cyl(0.015,0.015,0.06,30,120); 
     this.cylinder2.drawScrew();
     colorVec = [0,0.5,0.5];
     this.disk3t = this.Disk(0.015,0.065,30,30);
@@ -60,7 +60,10 @@ Stool.prototype.Torus = _Torus;
 
 Stool.prototype.initBuffers = _objsInitBuffers;
 
+var seat_location;
 Stool.prototype.draw = function(gl_, buffer_) {
+    seat_height = stoolHeight.val;
+    seat_location = min_stool_height + 12*(seat_height/60)+12*0.02;
 
     //draws the legs of the stool
     for (var i = 0; i < 4; ++i) {
@@ -98,8 +101,6 @@ Stool.prototype.draw = function(gl_, buffer_) {
 
     //moving parts
     theMatrix.push();
-    seat_height = stoolHeight.val;
-    var seat_location = min_stool_height + 12*(seat_height/60)+12*0.02;
     theMatrix.translate([0,seat_location,0]);
     theMatrix.rotate((seat_height/4.375)*100*Math.PI, [0, 1, 0]);
     theMatrix.rotate(Math.PI/2, [1, 0, 0]);

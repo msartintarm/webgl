@@ -11,6 +11,7 @@ function GLobject() {
     this.colData = [];
     this.indexData = [];
     this.textureData =  [];
+    this.textureNum = [];
 
     // Quads use an index position counter
     this.indexPos = 0;
@@ -72,7 +73,12 @@ GLobject.prototype.addColorVec =
  * Sometimes, we'll have to invert the norms 
  *  of flat objects
  */
-GLobject.prototype.invertNorms = function() {}
+GLobject.prototype.invertNorms = function() {
+
+    for (var i = 0; i < this.normData.length; ++i) {
+	this.normData[i] = -this.normData[i];
+    }
+}
 
 /** 
  *  A---C 
@@ -114,10 +120,17 @@ GLobject.prototype.Quad = function(a, b, c, d) {
 }
 
 GLobject.prototype.initTextures = function(at, bt, ct, dt) { 
-    this.addTexture(at.x, at.y);
-    this.addTexture(bt.x, bt.y);
-    this.addTexture(ct.x, ct.y); 
-    this.addTexture(dt.x, dt.y);
+    this.addTexture(at[0], at[1]);
+    this.addTexture(bt[0], bt[1]);
+    this.addTexture(ct[0], ct[1]); 
+    this.addTexture(dt[0], dt[1]);
+}
+
+GLobject.prototype.setTexture = function(theTexture) { 
+    for(var i = 0; i < this.normData.length / 3; ++i) {
+	this.textureNum[i] = theTexture;
+    }
+    return this;
 }
 
 /**
@@ -125,15 +138,15 @@ GLobject.prototype.initTextures = function(at, bt, ct, dt) {
  *  buffer WebGL with their data
  */
 GLobject.prototype.initBuffers = function(gl_) {
-    if(!gl_) gl_ = thisGL;
-    else thisGL = gl_;
-    if(!gl_) { alert("yo"); }
+
+    this.initFlatNorms();
 
     this.normBuff = gl_.createBuffer();
     this.posBuff = gl_.createBuffer();
     this.colBuff = gl_.createBuffer();
     this.indexBuff = gl_.createBuffer();
     this.textureBuff = gl_.createBuffer();
+    this.textureNumBuff = gl_.createBuffer();
 
     if(this.textureData.length >= 1) {
 	this.enableTextures = true;
@@ -143,6 +156,14 @@ GLobject.prototype.initBuffers = function(gl_) {
 	for(; i < max; ++i) {
 	    this.textureData.push(0);
 	    this.textureData.push(0);
+	}
+    }
+
+    if(this.textureNum.length < 1) {
+	var i = 0;
+	var max = this.normData.length / 3;
+	for(; i < max; ++i) {
+	    this.textureNum.push(NO_TEXTURE);
 	}
     }
 
@@ -170,9 +191,16 @@ GLobject.prototype.initBuffers = function(gl_) {
     this.colBuff.numItems = this.colData.length / 3;
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.bufferData(gl_.ARRAY_BUFFER, new Float32Array(this.textureData), gl_.STATIC_DRAW);
+    gl_.bufferData(gl_.ARRAY_BUFFER, 
+		   new Float32Array(this.textureData), 
+		   gl_.STATIC_DRAW);
     this.textureBuff.itemSize = 2;
-    this.textureBuff.numItems = this.textureBuff.length/2;
+    this.textureBuff.numItems = this.textureData.length/2;
+
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER, new Float32Array(this.textureNum), gl_.STATIC_DRAW);
+    this.textureNumBuff.itemSize = 1;
+    this.textureNumBuff.numItems = this.textureNum.length;
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
@@ -207,32 +235,53 @@ GLobject.prototype.translate = function(vec) {
  */
 GLobject.prototype.drawBuffers = function(gl_, shader_) {
 
+    theMatrix.setVertexUniforms(gl_, shader_);
+
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.vNormA, 
-			    this.normBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
-    
+	this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(shader_.vPosA, 
-			    this.posBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.vPosA, 			           this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
     
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.vertexAttribPointer(shader_.vColA, 
-			    this.colBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
+	this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
     gl_.vertexAttribPointer(shader_.textureA, 
-			    this.textureBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
+	this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
+
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
+    gl_.vertexAttribPointer(shader_.textureNumA, 
+        this.textureNumBuff.itemSize, gl_.FLOAT, false, 0, 0);
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
-    theMatrix.setVertexUniforms(gl_, shader_);
     gl_.drawElements(gl_.TRIANGLES, 
-		     this.indexBuff.numItems, 
-		     gl_.UNSIGNED_SHORT, 0);
+        this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
+}
 
+const FLATNORMS = false;
 
+/**
+   Each quad is made up of four triangles, and hence, 
+   the norms -can- be calculated solely through their
+   positions. 
 
-};
+   All position data must be stable before this point.*/
+GLobject.prototype.initFlatNorms = function() {
+
+    if(FLATNORMS == false) return;
+    alert("yo flatNorms away");
+    var a, b, c, d;
+    for(var i = 0; i < this.posBuff.itemSize; i += 4) {
+	vec3.sub(a, posBuff[i+1], posBuff[i]);
+	vec3.sub(b, posBuff[i+2], posBuff[i]);
+	vec3.cross(c, b, a);
+	vec3.normalize(d, c);
+
+	normData[i] = d;
+	normData[i+1] = d;
+	normData[i+2] = d;
+	normData[i+3] = d;
+    }
+}

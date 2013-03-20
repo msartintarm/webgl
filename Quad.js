@@ -15,7 +15,7 @@ function Quad(a, b, c, d) {
     var temp2 = vec3.create();
     var normV = vec3.create();
 
-    vec3.cross(normV, vec3.sub(temp1,b,a), vec3.sub(temp2,c,a));
+    vec3.cross(normV, vec3.sub(temp2,c,a), vec3.sub(temp1,b,a));
     vec3.normalize(normV, normV);
     for (var i = 0; i < 4; ++i) {
 	this.o.addNormVec(normV);
@@ -29,12 +29,12 @@ function Quad(a, b, c, d) {
   
 }
 
+
 Quad.prototype.invertNorms = _oInvertNorms;
-Quad.prototype.initTextures = function(at, bt, ct, dt) { 
-    this.o.addTexture(at[0], at[1]);
-    this.o.addTexture(bt[0], bt[1]);
-    this.o.addTexture(ct[0], ct[1]); 
-    this.o.addTexture(dt[0], dt[1]);
+
+Quad.prototype.setTexture = function(texture) { 
+    this.o.setTexture(texture);
+    this.o.initTextures([0,0], [0,1], [1,0], [1,1]);
     return this;
 }
 
