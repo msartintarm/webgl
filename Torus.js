@@ -46,7 +46,7 @@ function Torus(innerRadius, outerRadius) {
 	for (var j = 0; j < stacks; j++) {
 	    var A = (i * (stacks + 1)) + j;
 	    var C = A + stacks + 1;
-	    this.o.addQuadIndexes(A, C);
+	    this.o.addQuadIndexes(C, A);
 	}
     }
     

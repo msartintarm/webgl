@@ -39,7 +39,7 @@ function Sphere(radius) {
 	var A = (i * (kLong + 1));
 	var C = A + kLong + 1;
 	for (var j = 0; j < kLong; j++) {
-	    this.o.addQuadIndexes(A++,C++);
+	    this.o.addQuadIndexes(C++,A++);
 	}
     }
 }
