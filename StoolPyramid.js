@@ -13,6 +13,8 @@ function StoolPyramid() {
     this.objs.push(this.sphere);
     this.objs.push(this.cylinder);
     this.objs.push(this.torus);
+    
+    rotateY.setInc(6);
 }
 
 //StoolPyramid.prototype.Stool = _Stool;
@@ -22,7 +24,11 @@ const d_ = 2.75; // Arbitrary const denoting dist betwen chairs
 
 StoolPyramid.prototype.draw = function(gl_, buffer_) {
 
-    var seat_location = min_stool_height + rotateY.val/360 * 4.375; //12*(stoolHeight.val/60)+12*0.02;
+    var seat_location = min_stool_height + 12*(stoolHeight.val/60)+12*0.02;
+    if(rotateY.val > 180){
+	stoolHeight.setStoolHeight(-0.2);
+    }
+    else stoolHeight.setStoolHeight(0.2);
 
     var r2 = Math.sqrt(2);
 
