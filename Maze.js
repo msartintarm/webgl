@@ -1,3 +1,4 @@
+var start;
 
 function Maze() {  
     //f b r l
@@ -52,6 +53,8 @@ function Maze() {
     this.Piece(FRONT_RIGHT, FLOOR_TEXTURE);
 
     this.transPieces();
+
+    start = true;
 }
 
 Maze.prototype.initBuffers = function(gl_) {
@@ -135,13 +138,17 @@ Maze.prototype.checkPosition = function() {
 	"<br/> Getting close to top wall..";
 	else if(piecePosZ < -8 && piecePosZ > -10) posStats.innerHTML += 
 	"<br/> Getting close to bottom wall..";
+	}
 
+    if(curPiece == 1) start = false;
+
+    if(!start){
 	if(newPiece < 0) { return false; }
-
+	
 	if((curPiece >= 0) && 
 	   (!this.pieces[curPiece].positionLegal(newPos)) ||
 	   (!this.pieces[newPiece].positionLegal(newPos))) {
-//	    alert("Crossing illegal border..");
+	    //	    alert("Crossing illegal border..");
 	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
 	    if(curPiece == 30){
 		alert("You win the game, now I give you GOD mode..");
@@ -152,7 +159,7 @@ Maze.prototype.checkPosition = function() {
 	    }
 	    else
 		return false;
-	}
+	}	
     }
     return true;
 }
