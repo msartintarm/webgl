@@ -22,20 +22,37 @@ const d_ = 2.75; // Arbitrary const denoting dist betwen chairs
 
 StoolPyramid.prototype.draw = function(gl_, buffer_) {
 
-    var seat_location = min_stool_height + 12*(stoolHeight.val/60)+12*0.02;
+    var seat_location = min_stool_height + rotateY.val/360 * 4.375; //12*(stoolHeight.val/60)+12*0.02;
+
+    var r2 = Math.sqrt(2);
 
     //place other objects
     theMatrix.push();
     theMatrix.translate([40,2,-100]);
+    theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
     this.disk.draw(gl_, buffer_);
-    theMatrix.translate([40,0,0]);
+  
+    theMatrix.translate([0,0,-0.001]);
+    theMatrix.rotate(Math.PI,[0,1,0]);
+    this.disk.draw(gl_, buffer_);
+    theMatrix.pop();
+
+    theMatrix.push();
+    theMatrix.translate([80,2,-100]);
+    theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
     this.sphere.draw(gl_,buffer_);
+    theMatrix.pop();
 
-    theMatrix.translate([0,0,20]);
+    theMatrix.push();
+    theMatrix.translate([80,3,-80]);
+    theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
     this.torus.draw(gl_, buffer_);
-    theMatrix.translate([-40,2,60]);
-    this.cylinder.draw(gl_, buffer_);
+    theMatrix.pop();
 
+    theMatrix.push();
+    theMatrix.translate([40,4,-20]);
+    theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
+    this.cylinder.draw(gl_, buffer_);
     theMatrix.pop();
 
     //place stool pyramid

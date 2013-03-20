@@ -52,6 +52,11 @@ GLmatrix.prototype.translate = function(vector) {
     this.mMatrixChanged = true;
 }
 
+GLmatrix.prototype.rotate = function(angle, vector) {
+    mat4.rotate(this.mMatrix, this.mMatrix, angle, vector); 
+    this.mMatrixChanged = true;
+}
+
 GLmatrix.prototype.vTranslate = function(vector) {
     mat4.translate(this.vMatrixNew,
 		   this.vMatrixNew, 
