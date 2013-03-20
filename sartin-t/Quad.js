@@ -32,17 +32,9 @@ function Quad(a, b, c, d) {
 
 Quad.prototype.invertNorms = _oInvertNorms;
 
-Quad.prototype.initTextures = function(at, bt, ct, dt) { 
-    this.o.addTexture(at[0], at[1]);
-    this.o.addTexture(bt[0], bt[1]);
-    this.o.addTexture(ct[0], ct[1]); 
-    this.o.addTexture(dt[0], dt[1]);
-    return this;
-}
-
 Quad.prototype.setTexture = function(texture) { 
     this.o.setTexture(texture);
-    this.initTextures([0,0], [0,1], [1,0], [1,1]);
+    this.o.initTextures([0,0], [0,1], [1,0], [1,1]);
     return this;
 }
 

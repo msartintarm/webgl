@@ -91,20 +91,18 @@ Cylinder.prototype.drawScrew = function() {
 	    // x = r sin theta cos phi
 
 	    if(minAngle < phi && phi < maxAngle) {
+		const slicesPlus = this.slices + 1;
 	    var x = 1 * Math.cos(phi);
 	    var y = 1 * Math.sin(phi);
-		this.o.posData[index] /= 0.9;
-		this.o.posData[index+1] /= 0.9;
-		this.o.posData[index+(3*this.slices)] *= 0.9;
-		this.o.posData[index+1+(3*this.slices)] *= 0.9;
-		this.o.posData[index-(3*this.slices)] *= 0.9;
-		this.o.posData[index+1-(3*this.slices)] *= 0.9;
+		this.o.posData[index] /= 0.7;
+		this.o.posData[index+1] /= 0.7;
+		this.o.posData[index+(3*slicesPlus)] *= 0.7;
+		this.o.posData[index+1+(3*slicesPlus)] *= 0.7;
+		this.o.posData[index-(3*slicesPlus)] *= 0.7;
+		this.o.posData[index+1-(3*slicesPlus)] *= 0.7;
 		this.o.colData[index] = 1.0;
 		this.o.colData[index+1] = 1.0;
 		this.o.colData[index+2] = 1.0;
-//		this.o.colData[index+this.slices] = 0.0;
-//		this.o.colData[index+1+this.slices] = 0.0;
-//		this.o.colData[index+2+this.slices] = 0.0;
 	    }
 
 	    index += 3;

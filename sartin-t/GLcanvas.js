@@ -42,6 +42,7 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Skybox());
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
+
     } else if(objToDraw == "maze") {
 	myMaze = new Maze();
 	this.objects.push(myMaze);
@@ -77,8 +78,9 @@ GLcanvas.prototype.drawModels = function() {
 GLcanvas.prototype.start = function(objToDraw) {
     if (this.gl == null) {
 	// One-time display methods
-	this.canvas.style.display = "block";
+	this.canvas.style.display = "inline-block";
 	this.canvas.style.width = "100%";
+	this.canvas.width = this.canvas.offsetWidth - 16;
 	this.initGL();
 	if (this.gl == null) { return; }
 	this.initShaders("shader-fs", "shader-vs");

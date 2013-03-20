@@ -141,12 +141,6 @@ GLmatrix.prototype.moveDown = function() {
     this.vTranslate([0, -moveDist, 0]); 
 }
 
-GLmatrix.prototype.getPosition = function() {
-    var thePos = vec4.fromValues(0,0,0,1);
-    vec4.transformMat4(thePos, thePos, this.vMatrix);
-    return thePos;
-}
-
 GLmatrix.prototype.newViewAllowed = function() {
     return myMaze.checkPosition();
 }

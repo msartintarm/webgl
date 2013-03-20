@@ -93,10 +93,14 @@ var mazeDebug = false;
  *  This function returns false if position is illegal
  */
 Maze.prototype.checkPosition = function() {
-    var curPos, newPos, pieceX, pieceZ, curPiece, newPiece;
-    curPos = theMatrix.getPosition();
-    newPos = vec4.create();
-    vec4.transformMat4(newPos, curPos, theMatrix.vMatrixNew);
+    var pieceX, pieceZ, curPiece, newPiece;
+    var thePos = vec4.fromValues(0,0,0,1);
+    var newPos = vec4.fromValues(0,0,0,1);
+    var curPos = vec4.fromValues(0,0,0,1);
+
+    vec4.transformMat4(newPos, thePos, theMatrix.vMatrixNew);
+    vec4.transformMat4(newPos, newPos, theMatrix.vMatrix);
+    vec4.transformMat4(curPos, curPos, theMatrix.vMatrix);
 
     pieceX = Math.round(curPos[0] / 20);
     pieceZ = Math.round(curPos[2] /-20);
@@ -122,9 +126,7 @@ Maze.prototype.checkPosition = function() {
 	
 	posStats.innerHTML += "<br/> Maze Piece: from " + 
 	    curPiece +
-	    " to " + newPiece + " with piece-local coords " +
-	    parseFloat(piecePosX).toFixed(2) + "," +  
-	    parseFloat(piecePosZ).toFixed(2);
+	    " to " + newPiece;
 	if(piecePosX > 10 && piecePosX < 12) posStats.innerHTML += 
 	"<br/> Getting close to right wall..";
 	else if(piecePosX > 8 && piecePosX < 10) posStats.innerHTML += 
