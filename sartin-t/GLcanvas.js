@@ -45,6 +45,7 @@ GLcanvas.prototype.add = function(objToDraw) {
     } else if(objToDraw == "maze") {
 	myMaze = new Maze();
 	this.objects.push(myMaze);
+	this.objects.push(new StoolPyramid());
 	this.objects.push(new Skybox());
 	mazeMode = 1;
 	priveledgedMode.toggle();

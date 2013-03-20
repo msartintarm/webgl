@@ -41,7 +41,7 @@ function Sphere(radius) {
 	    this.o.addQuadIndexes(A++,C++);
 	}
     }
-};
+}
 
 Sphere.prototype.initBuffers = _oInitBuffers;
 Sphere.prototype.draw = _oDraw;

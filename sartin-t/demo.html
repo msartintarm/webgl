@@ -15,6 +15,7 @@
     <script src="GLmatrix.js" type="text/javascript"></script>
     <script src="Cylinder.js" type="text/javascript"></script>
     <script src="Stool.js" type="text/javascript"></script>
+    <script src="StoolPyramid.js" type="text/javascript"></script>
     <script src="Sphere.js" type="text/javascript"></script>
     <script src="Torus.js" type="text/javascript"></script>
     <script src="Disk.js" type="text/javascript"></script>
@@ -116,7 +117,7 @@ if (textureNumV < 0.1) {
   textureColor = vec4(colorV, 1.0);
 }
 
-  vec3 colorV2 = textureColor.rgb / 2.0;
+  vec3 colorV2 = textureColor.rgb / 1.5;
   vec3 ambColor = colorV2 * 0.1;
   vec3 diffColor = colorV2 * diffuseV * 0.7;
   vec3 specColor = vec3(.8,.8,.8) * specularV;

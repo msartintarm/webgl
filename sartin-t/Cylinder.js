@@ -33,7 +33,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    var y_norm = y*xy
 	    // z norm = sin theta
 
-	    this.o.addNorms(x_norm, y_norm, z_norm);;
+	    this.o.addNorms(x_norm, y_norm, z_norm);
 	    this.o.addPos(radius * x, radius * y, z);
 	    this.o.addColors(colorVec[2],
 			     colorVec[1],

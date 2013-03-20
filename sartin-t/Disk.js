@@ -56,7 +56,7 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 	    this.o.addIndexes(B, D, C);
 	}
     }
-};
+}
 
 /**
  * Flip the z-coordinate of normals to -1
@@ -68,5 +68,5 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 //}
 
 Disk.prototype.initBuffers = _oInitBuffers;
-Disk.prototype.initBuffers = _oTranslate;
+Disk.prototype.translate = _oTranslate;
 Disk.prototype.draw = _oDraw;

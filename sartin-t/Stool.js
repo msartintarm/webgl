@@ -11,14 +11,14 @@ function Stool() {
     var y_ = min_stool_height;
     var z_offset = base_leg_distance;
     var z_ = base_leg_width;
-    var a_ = vec3.fromValues( x_,  y_,  z_ + z_offset + tilt);
-    var b_ = vec3.fromValues( x_,   0,  z_ + z_offset);
-    var c_ = vec3.fromValues( x_,   0, -z_ + z_offset);
-    var d_ = vec3.fromValues( x_,  y_, -z_ + z_offset + tilt);
-    var e_ = vec3.fromValues(-x_,  y_,  z_ + z_offset + tilt);
-    var f_ = vec3.fromValues(-x_,   0,  z_ + z_offset);
-    var g_ = vec3.fromValues(-x_,   0, -z_ + z_offset);
-    var h_ = vec3.fromValues(-x_,  y_, -z_ + z_offset + tilt);
+    var a_ = vec3.fromValues( x_,  y_, -z_ + z_offset + tilt);
+    var b_ = vec3.fromValues( x_,   0, -z_ + z_offset);
+    var c_ = vec3.fromValues( x_,   0,  z_ + z_offset);
+    var d_ = vec3.fromValues( x_,  y_,  z_ + z_offset + tilt);
+    var e_ = vec3.fromValues(-x_,  y_, -z_ + z_offset + tilt);
+    var f_ = vec3.fromValues(-x_,   0, -z_ + z_offset);
+    var g_ = vec3.fromValues(-x_,   0,  z_ + z_offset);
+    var h_ = vec3.fromValues(-x_,  y_,  z_ + z_offset + tilt);
 
     this.stoolLeg = this.Prism(a_, b_, c_, d_, e_, f_, g_, h_);
 
@@ -57,7 +57,6 @@ Stool.prototype.Prism = _Prism;
 Stool.prototype.Disk = _Disk;
 Stool.prototype.Cyl = _Cyl;
 Stool.prototype.Torus = _Torus;
-Stool.prototype.translate = _objsTranslate;
 
 Stool.prototype.initBuffers = _objsInitBuffers;
 

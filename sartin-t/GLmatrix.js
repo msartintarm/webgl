@@ -9,10 +9,10 @@ function GLmatrix() {
     this.r2 = Math.sqrt(2);
     this.mStack = [];
     this.inJump = false;
-    this.viewingPos = vec4.create();
 
     this.mMatrixChanged = true;
     this.vMatrixChanged = true;
+    this.vMatrixNewChanged = false;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
@@ -34,6 +34,7 @@ GLmatrix.prototype.modelUpdate = function() {
 	this.mMatrix,
 	rotateY.val * Math.PI/180,
 	[this.r2, this.r2, 0]);
+    this.mMatrixChanged = true;
 }
 
 GLmatrix.prototype.viewInit = function() {
@@ -54,7 +55,9 @@ GLmatrix.prototype.translate = function(vector) {
 GLmatrix.prototype.vTranslate = function(vector) {
     mat4.translate(this.vMatrixNew,
 		   this.vMatrixNew, 
-		   vector); }
+		   vector); 
+    this.vMatrixNewChanged = true;
+}
 
 GLmatrix.prototype.translateN = function(vector) {
     mat4.translate(this.mMatrix, 
@@ -64,13 +67,17 @@ GLmatrix.prototype.translateN = function(vector) {
 		    -vector[2]]); 
     this.mMatrixChanged = true;
 }
+
 GLmatrix.prototype.rotate = function(rads, vector) {
     mat4.rotate(this.mMatrix, this.mMatrix, rads, vector);
     this.mMatrixChanged = true;
 }
+
 GLmatrix.prototype.vRotate = function(rads, vector) {
     mat4.rotate(this.vMatrixNew, this.vMatrixNew, rads, vector);
+    this.vMatrixNewChanged = true;
 }
+
 GLmatrix.prototype.scale = function(vector) {
     mat4.scale(this.mMatrix, this.mMatrix, vector); 
     this.mMatrixChanged = true;
@@ -90,22 +97,22 @@ const moveDist = 2.1;
 
 GLmatrix.prototype.lookUp = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
-		[1, 0, 0]); 
+		 [1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookDown = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
-		[-1, 0, 0]); 
+		 [-1, 0, 0]); 
 }
 
 GLmatrix.prototype.lookLeft = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
-		[ 0, 1, 0]);
+		 [ 0, 1, 0]);
 }
 
 GLmatrix.prototype.lookRight = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
-		[ 0,-1, 0]);
+		 [ 0,-1, 0]);
 }
 
 GLmatrix.prototype.moveRight = function() {
@@ -158,13 +165,13 @@ GLmatrix.prototype.moveBack = function() {
 GLmatrix.prototype.update = function() {
     const x = 0.1;
     if(this.inJump == false) {
+	if(this.vMatrixNewChanged == false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
 	    // We only check the view if we are
 	    //  not in 'god mode'
 	    this.vMul(this.vMatrixNew);
 	    this.vMatrixChanged = true;
 	}
-	this.viewingPos = this.getPosition();
 	mat4.identity(this.vMatrixNew);
 	return; 
     }
@@ -180,7 +187,7 @@ GLmatrix.prototype.update = function() {
 		    else {
 			if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
 			else { this.inJump = false; return; }
-		    }}}}}   
+		    }}}}}
     this.vMul(this.vMatrixNew);
     mat4.identity(this.vMatrixNew);
     this.vMatrixChanged = true;

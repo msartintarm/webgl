@@ -188,9 +188,9 @@ function drawDashboard() {
 	positionY.html.innerHTML = "";
     }
     if(priveledgedMode.html.style.display == "inline-block") {
-	priveledgedMode.html.innerHTML = "Privledged Mode " + priveledgedMode.val;
-    priveledgedMode.html.innerHTML += "<br/>View Position " + " x: " + 
-	    theMatrix.viewingPos[0] + " z: " + theMatrix.viewingPos[2];
+	priveledgedMode.html.innerHTML = 
+	    "Privledged Mode " + 
+	    priveledgedMode.val;
     }
     zoom.inc();
 }

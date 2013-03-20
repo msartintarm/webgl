@@ -50,7 +50,7 @@ function Torus(innerRadius, outerRadius) {
 	}
     }
     
-};
+}
 
 Torus.prototype.translate = _oTranslate;
 Torus.prototype.initBuffers = _oInitBuffers;

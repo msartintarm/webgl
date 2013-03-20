@@ -91,7 +91,7 @@ MazePiece.prototype.FrontWall = function(texture) {
 	[-bX_,  0, -(bZ_      )],
 	[-bX_, h_, -(bZ_      )]).setTexture(texture);
     this.objs.push(front);
-    this.north = -bZ_;
+    this.north = -(bZ_ - 1);
     return front;
 }
 
@@ -106,7 +106,7 @@ MazePiece.prototype.LeftWall = function(texture) {
 	[-(bZ_      ),  0, bX_],
 	[-(bZ_      ), h_, bX_]).setTexture(texture);
     this.objs.push(left);
-    this.west = -bZ_;
+    this.west = -(bZ_ - 1);
     return left;
 }
 
@@ -121,7 +121,7 @@ MazePiece.prototype.RightWall = function(texture) {
 	[bZ_      ,  0,  bX_],
 	[bZ_      , h_,  bX_]).setTexture(texture);
     this.objs.push(right);
-    this.east = bZ_;
+    this.east = bZ_ - 1;
     return right;
 }
 
@@ -136,7 +136,7 @@ MazePiece.prototype.BackWall = function(texture) {
 	[-bX_,  0, bZ_ + bW_],
 	[-bX_, h_, bZ_ + bW_]).setTexture(texture);
     this.objs.push(back);
-    this.south = bZ_;
+    this.south = bZ_ - 1;
     return back;
 }
 

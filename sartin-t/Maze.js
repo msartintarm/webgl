@@ -108,7 +108,7 @@ Maze.prototype.checkPosition = function() {
     var piecePosX = newPos[0] % 20;
     var piecePosZ = newPos[2] % 20;
 
-    if(mazeDebug== true) {
+    if(mazeDebug == true) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 
@@ -134,9 +134,13 @@ Maze.prototype.checkPosition = function() {
 	else if(piecePosZ < -8 && piecePosZ > -10) posStats.innerHTML += 
 	"<br/> Getting close to bottom wall..";
 
+	if(newPiece < 0) { return false; }
+
 	if((curPiece >= 0) && 
-	   (!this.pieces[curPiece].positionLegal(newPos))) {
-	    alert("Crossing illegal border..");
+	   (!this.pieces[curPiece].positionLegal(newPos)) ||
+	   (!this.pieces[newPiece].positionLegal(newPos))) {
+//	    alert("Crossing illegal border..");
+	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
 	    return false;
 	}
     }
