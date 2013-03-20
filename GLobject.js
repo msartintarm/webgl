@@ -260,7 +260,7 @@ GLobject.prototype.drawBuffers = function(gl_, shader_) {
         this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
 }
 
-const FLATNORMS = false;
+var FLATNORMS = false;
 
 /**
    Each quad is made up of four triangles, and hence, 
@@ -271,17 +271,30 @@ const FLATNORMS = false;
 GLobject.prototype.initFlatNorms = function() {
 
     if(FLATNORMS == false) return;
-    alert("yo flatNorms away");
-    var a, b, c, d;
-    for(var i = 0; i < this.posBuff.itemSize; i += 4) {
-	vec3.sub(a, posBuff[i+1], posBuff[i]);
-	vec3.sub(b, posBuff[i+2], posBuff[i]);
-	vec3.cross(c, b, a);
-	vec3.normalize(d, c);
+    var a = vec3.create();
+    var b = vec3.create();
+    var c = vec3.create();
+    var d = vec3.create();
+    for(var i = 0; i < this.posData.length; i += 12) {
+	vec3.set(a, this.posData[i], this.posData[i+1], this.posData[i+2]); 
+	vec3.set(b, this.posData[i+3], this.posData[i+4], this.posData[i+5]); 
+	vec3.set(c, this.posData[i+6], this.posData[i+7], this.posData[i+8]); 
+	vec3.sub(b, b, a);
+	vec3.sub(c, c, a);
+	vec3.cross(c, b, b);
+	vec3.normalize(c, c);
 
-	normData[i] = d;
-	normData[i+1] = d;
-	normData[i+2] = d;
-	normData[i+3] = d;
+	this.normData[i] = c[0];
+	this.normData[i+1] = c[1];
+	this.normData[i+2] = c[2];
+	this.normData[i+3] = c[0];
+	this.normData[i+4] = c[1];
+	this.normData[i+5] = c[2];
+	this.normData[i+6] = c[0];
+	this.normData[i+7] = c[1];
+	this.normData[i+8] = c[2];
+	this.normData[i+9] = c[0];
+	this.normData[i+10] = c[1];
+	this.normData[i+11] = c[2];
     }
 }
