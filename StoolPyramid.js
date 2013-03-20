@@ -8,12 +8,22 @@ function StoolPyramid() {
     this.sphere = new Sphere(2);
     this.cylinder = new Cylinder(1,2,3,150,150);
     this.torus = new Torus(0.2,2);
+
+    a = vec3.fromValues(-15, 0, 5);
+    b = vec3.fromValues(-15, 0,-25);
+    c = vec3.fromValues( 15, 0, 5);
+    d = vec3.fromValues( 15, 0,-25);
+    this.floor = new Quad(a,b,c,d);
+    this.floor.setTexture(RUG_TEXTURE);
+
     this.objs.push(this.sp);
     this.objs.push(this.disk);
     this.objs.push(this.sphere);
     this.objs.push(this.cylinder);
     this.objs.push(this.torus);
-    
+    this.objs.push(this.floor);
+
+    //will set the value to rotate
     rotateY.setInc(6);
 }
 
@@ -64,6 +74,7 @@ StoolPyramid.prototype.draw = function(gl_, buffer_) {
     //place stool pyramid
     theMatrix.push();
     theMatrix.translate([-40,0,-110]);
+    this.floor.draw(gl_,buffer_);
     for(var i = 5; i > 0; --i) {
 	theMatrix.push();
 	this.drawBase(gl_, buffer_, i);

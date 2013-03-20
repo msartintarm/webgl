@@ -39,6 +39,7 @@ varying vec3 colorV;
 varying vec2 textureV;
 uniform sampler2D samplerU;
 uniform sampler2D woodU;
+uniform sampler2D rugU;
 uniform sampler2D heavenU;
 uniform sampler2D hellU;
 uniform sampler2D floorU;
@@ -57,7 +58,7 @@ uniform float uUseTexture;
 void main(void) {
 
 
-  vec4 textureColor;
+ vec4 textureColor;
 
 if (textureNumV < 0.1) {
   textureColor = texture2D(
@@ -112,6 +113,11 @@ if (textureNumV < 0.1) {
 } else if (textureNumV < 13.1) {
   textureColor = texture2D(
     sky6U, 
+    vec2(textureV.s, textureV.t));
+}
+ else if (textureNumV < 14.1) {
+  textureColor = texture2D(
+    rugU, 
     vec2(textureV.s, textureV.t));
 } else {
   textureColor = vec4(colorV, 1.0);

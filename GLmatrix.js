@@ -199,6 +199,7 @@ GLmatrix.prototype.update = function() {
 GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
 
     gl_.uniform1i(shader_.woodU, WOOD_TEXTURE);
+    gl_.uniform1i(shader_.rugU, RUG_TEXTURE);
     gl_.uniform1i(shader_.heavenU, HEAVEN_TEXTURE);
     gl_.uniform1i(shader_.hellU, HELL_TEXTURE);
     gl_.uniform1i(shader_.floorU, FLOOR_TEXTURE);

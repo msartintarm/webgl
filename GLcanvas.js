@@ -180,6 +180,7 @@ const SKYBOX_TEXTURE_3 = zz++;
 const SKYBOX_TEXTURE_4 = zz++;
 const SKYBOX_TEXTURE_5 = zz++;
 const SKYBOX_TEXTURE_6 = zz++;
+const RUG_TEXTURE = zz++;
 
 GLcanvas.prototype.initSkybox = function() {
     var skyTextures = [];
@@ -206,6 +207,16 @@ GLcanvas.prototype.initTextures = function() {
 	woodTexture,
 	WOOD_TEXTURE);
     woodImage.src = "textures/wood.jpg";
+
+    rugTexture = this.gl.createTexture();
+    rugImage = new Image();
+    rugImage.onload = this.loadTexture.bind(
+	this,
+	rugImage, 
+	rugTexture,
+	RUG_TEXTURE);
+    rugImage.src = "textures/rug.jpg";
+
 
     heavenTexture = this.gl.createTexture();
     heavenImage = new Image();
@@ -320,6 +331,8 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.gl.getUniformLocation(this.shaders, "samplerU");
     this.shaders.woodU = 
 	this.gl.getUniformLocation(this.shaders, "woodU");
+    this.shaders.rugU = 
+	this.gl.getUniformLocation(this.shaders, "rugU");
     this.shaders.heavenU = 
 	this.gl.getUniformLocation(this.shaders, "heavenU");
     this.shaders.hellU = 
