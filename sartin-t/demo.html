@@ -100,6 +100,8 @@ if (textureNumV < 0.1) {
   textureColor = texture2D(
     floorU, 
     vec2(textureV.s, textureV.t));
+    specColor = textureColor.rgb * specularV2;
+    textureColor.rgb = textureColor.rgb * 2.5;
 } else if (textureNumV < 4.1) {
   textureColor = texture2D(
     operaU, 
@@ -119,26 +121,32 @@ if (textureNumV < 0.1) {
   textureColor = texture2D(
     sky1U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else if (textureNumV < 9.1) {
   textureColor = texture2D(
     sky2U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else if (textureNumV < 10.1) {
   textureColor = texture2D(
     sky3U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else if (textureNumV < 11.1) {
   textureColor = texture2D(
     sky4U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else if (textureNumV < 12.1) {
   textureColor = texture2D(
     sky5U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else if (textureNumV < 13.1) {
   textureColor = texture2D(
     sky6U, 
     vec2(textureV.s, textureV.t));
+    specColor = vec3(0.,0.,0.);
 } else {
   textureColor = vec4(colorV * 2.0, 1.0);
 }

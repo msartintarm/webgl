@@ -166,6 +166,7 @@ function resetModel() {
     pause.reset();
     stoolHeight.reset();
     priveledgedMode.reset();
+
 }
 
 function drawDashboard() {

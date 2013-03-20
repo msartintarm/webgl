@@ -321,8 +321,6 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.gl.enableVertexAttribArray(this.shaders.textureNumA);
 
     // Which texture to use
-    this.shaders.samplerU = 
-	this.gl.getUniformLocation(this.shaders, "samplerU");
     this.shaders.woodU = 
 	this.gl.getUniformLocation(this.shaders, "woodU");
     this.shaders.rugU = 
@@ -372,6 +370,7 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.shaders.lightPosU = 
 	this.gl.getUniformLocation(this.shaders, "lightPosU");
 
+    theMatrix.setConstUniforms(this.gl, this.shaders);
 }
 
 GLcanvas.prototype.loadTexture = function(image, texture, textureNum) {
