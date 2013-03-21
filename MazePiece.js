@@ -26,12 +26,15 @@ each wall consists of 4 quads (right now at least)
 probably can make this a variable parameter
 */
 //function MazePiece(walls, ft, bt, rt, lt) { 
-function MazePiece(walls, textures) { 
+function MazePiece(room_size, walls, textures) { 
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
     this.b = walls & BACK;
     this.r = walls & RIGHT;
     this.l = walls & LEFT;
+
+    // only affects translate at the moment: TODO (mst)
+    this.size = room_size;
 
     // Array with textures for each wall (can have up to 4 textures)
     // If instead a texture object is passed, uses it for  all walls
@@ -157,6 +160,11 @@ MazePiece.prototype.translate = function(vec_) {
     if(this.r){ this.east += vec_[0]; }
     if(this.b){ this.south += vec_[2]; }
     return this;
+}
+
+// Based upon the piece number, translate it by its coords
+MazePiece.prototype.atCoord = function(x, y) {
+	this.translate([x * this.size, 0, y * -this.size]);
 }
 
 MazePiece.prototype.Quad = _Quad;

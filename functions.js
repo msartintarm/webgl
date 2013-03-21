@@ -175,7 +175,6 @@ function drawDashboard() {
 	rotateCam.inc();
     }
     if(rotateY.html.style.display == "inline-block") {
-	rotateY.html.innerHTML = "Rotation - Y: " + rotateY.val + "&deg;";
 	rotateY.inc();
     }
     if(!positionX.isZero()) {
@@ -189,9 +188,18 @@ function drawDashboard() {
 	positionY.html.innerHTML = "";
     }
     if(priveledgedMode.html.style.display == "inline-block") {
-	priveledgedMode.html.value = 
-	    "Privledged Mode " + 
-	    parseInt(priveledgedMode.val);
+	
+	priveledgedMode.html.innerHTML = 
+	    "<b>Player Controls</b> <br/>" +
+	    "Arrow keys to move <br/>" +
+	    "A and D to rotate";
+	if(priveledgedMode.val == 1) {
+	    priveledgedMode.html.innerHTML += 
+	    "<br/><b>God Controls</b> <br/>" +
+		"I and K to rotate up <br/>" +
+		"A and D to rotate";
+	    rotateY.html.innerHTML = "Rotation - Y: " + rotateY.val + "&deg;";
+	}
     }
     zoom.inc();
 }

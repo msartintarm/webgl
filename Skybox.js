@@ -23,7 +23,7 @@ function Skybox() {
 	    SKYBOX_TEXTURE_3,
 	    SKYBOX_TEXTURE_4,
 	    SKYBOX_TEXTURE_5,
-	    SKYBOX_TEXTURE_6);
+	    SKYBOX_TEXTURE_0);
 }
 
 Skybox.prototype.initBuffers = _oInitBuffers;

@@ -97,7 +97,7 @@ GLmatrix.prototype.vMul = function(v) {
     this.vMatrixChanged = true;
 }
 
-const lookDist = 1 / 64;
+const lookDist = 1 / 20;
 const moveDist = 2.1;
 
 GLmatrix.prototype.lookUp = function() {
@@ -196,26 +196,7 @@ GLmatrix.prototype.update = function() {
  * Uniforms that are const over the lifetime
  *  of a shader only need to be set once.
 */
-GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {
-
-    gl_.uniform1i(shader_.woodU, WOOD_TEXTURE);
-    gl_.uniform1i(shader_.rugU, RUG_TEXTURE);
-    gl_.uniform1i(shader_.heavenU, HEAVEN_TEXTURE);
-    gl_.uniform1i(shader_.hellU, HELL_TEXTURE);
-    gl_.uniform1i(shader_.floorU, FLOOR_TEXTURE);
-    gl_.uniform1i(shader_.operaU, OPERA_TEXTURE);
-    gl_.uniform1i(shader_.brickU, BRICK_TEXTURE);
-    gl_.uniform1i(shader_.tileU, TILE_TEXTURE);
-    gl_.uniform1i(shader_.noU, NO_TEXTURE);
-    gl_.uniform1i(shader_.sky1U, SKYBOX_TEXTURE_1);
-    gl_.uniform1i(shader_.sky2U, SKYBOX_TEXTURE_2);
-    gl_.uniform1i(shader_.sky3U, SKYBOX_TEXTURE_3);
-    gl_.uniform1i(shader_.sky4U, SKYBOX_TEXTURE_4);
-    gl_.uniform1i(shader_.sky5U, SKYBOX_TEXTURE_5);
-    gl_.uniform1i(shader_.sky6U, SKYBOX_TEXTURE_6);
-    // Default to wood
-//    gl_.uniform1i(shader_.samplerUniform, 0);
-}
+GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {}
 
 /**
  * View / model / normal ops I got from:

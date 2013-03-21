@@ -6,53 +6,54 @@ function Maze() {
     this.pieces = [];
     this.width = 5;
     this.height = 7;
- 
-    this.hellRoom = new MazePiece(NO_FRONT, HELL_TEXTURE).translate([20, 0, 20]);
-    this.Piece(BACK_LEFT, BRICK_TEXTURE);
-    this.Piece(NO_WALLS);
-    this.Piece(FRONT_BACK, BRICK_TEXTURE);
-    this.Piece(BACK, BRICK_TEXTURE);
-    this.Piece(BACK_RIGHT, BRICK_TEXTURE);
+    this.size = 20;
+
+    // hell room
+    this.Piece(NO_FRONT, HELL_TEXTURE).atCoord(1,-1);
+
+    this.Piece(BACK_LEFT, BRICK_TEXTURE).atCoord(0,0);
+    this.Piece(NO_WALLS).atCoord(1,0);
+    this.Piece(FRONT_BACK, BRICK_TEXTURE).atCoord(2,0);
+    this.Piece(BACK, BRICK_TEXTURE).atCoord(3,0);
+    this.Piece(BACK_RIGHT, BRICK_TEXTURE).atCoord(4,0);
     
-    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
-    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE).atCoord(0,1);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(1,1);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE).atCoord(2,1);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(3,1);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(4,1);
 
-    this.Piece(LEFT_RIGHT, BRICK_TEXTURE);
-    this.Piece(FRONT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(LEFT_RIGHT, BRICK_TEXTURE).atCoord(0,2);
+    this.Piece(FRONT, BRICK_TEXTURE).atCoord(1,2);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(2,2);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(3,2);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(4,2);
 
-    this.Piece(LEFT, BRICK_TEXTURE);
-    this.Piece(LEFT, BRICK_TEXTURE);
-    this.Piece(FRONT, BRICK_TEXTURE);
-    this.Piece(FRONT_LEFT, BRICK_TEXTURE);
-    this.Piece(RIGHT, BRICK_TEXTURE);
+    this.Piece(LEFT, BRICK_TEXTURE).atCoord(0,3);
+    this.Piece(LEFT, BRICK_TEXTURE).atCoord(1,3);
+    this.Piece(FRONT, BRICK_TEXTURE).atCoord(2,3);
+    this.Piece(FRONT_LEFT, BRICK_TEXTURE).atCoord(3,3);
+    this.Piece(RIGHT, BRICK_TEXTURE).atCoord(4,3);
 
-    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
-    this.Piece(FRONT, FLOOR_TEXTURE);
-    this.Piece(FRONT, FLOOR_TEXTURE);
-    this.Piece(RIGHT,FLOOR_TEXTURE);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE).atCoord(0,4);
+    this.Piece(FRONT, FLOOR_TEXTURE).atCoord(1,4);
+    this.Piece(FRONT, FLOOR_TEXTURE).atCoord(2,4);
+    this.Piece(RIGHT,FLOOR_TEXTURE).atCoord(3,4);
     this.Piece(FRONT_RIGHT, 
-	       [WOOD_TEXTURE, FLOOR_TEXTURE]);
+	       [WOOD_TEXTURE, FLOOR_TEXTURE]).atCoord(4,4);
 
-    this.Piece(FRONT_LEFT, FLOOR_TEXTURE);
-    this.Piece(FRONT_BACK, FLOOR_TEXTURE);
-    this.Piece(NO_LEFT, FLOOR_TEXTURE);
-    this.Piece(RIGHT, FLOOR_TEXTURE);
-    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE);
+    this.Piece(FRONT_LEFT, FLOOR_TEXTURE).atCoord(0,5);
+    this.Piece(FRONT_BACK, FLOOR_TEXTURE).atCoord(1,5);
+    this.Piece(NO_LEFT, FLOOR_TEXTURE).atCoord(2,5);
+    this.Piece(RIGHT, FLOOR_TEXTURE).atCoord(3,5);
+    this.Piece(LEFT_RIGHT, FLOOR_TEXTURE).atCoord(4,5);
 
     this.Piece(FRONT_LEFT, 
-	       [FLOOR_TEXTURE, HEAVEN_TEXTURE]);
-    this.Piece(FRONT, FLOOR_TEXTURE);
-    this.Piece(FRONT, FLOOR_TEXTURE);
-    this.Piece(FRONT, FLOOR_TEXTURE);
-    this.Piece(FRONT_RIGHT, FLOOR_TEXTURE);
-
-    this.transPieces();
+	       [FLOOR_TEXTURE, HEAVEN_TEXTURE]).atCoord(0,6);
+    this.Piece(FRONT, FLOOR_TEXTURE).atCoord(1,6);
+    this.Piece(FRONT, FLOOR_TEXTURE).atCoord(2,6);
+    this.Piece(FRONT, FLOOR_TEXTURE).atCoord(3,6);
+    this.Piece(FRONT_RIGHT, FLOOR_TEXTURE).atCoord(4,6);
 
     start = true;
 }
@@ -61,27 +62,15 @@ Maze.prototype.initBuffers = function(gl_) {
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
-    this.hellRoom.initBuffers(gl_);
 }
 
 Maze.prototype.Piece = function(a,b) {
-    var newPiece = new MazePiece(a,b);
+    var newPiece = new MazePiece(this.size, a,b);
     this.pieces.push(newPiece);
     return newPiece;
 }
 
-// Based upon the piece number, translate it by its coords
-Maze.prototype.transPieces = function() {
-    var theWidth, theHeight;
-    for(var i = 0; i < this.pieces.length; ++i) {
-	theWidth = i % this.width;
-	theHeight = (i - theWidth) / this.width;
-	this.pieces[i].translate([theWidth * 20, 0, theHeight * -20]);
-    }
-}
-
 Maze.prototype.draw = function(gl_,buffer_) {
-    this.hellRoom.draw(gl_,buffer_);
     for(var i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_, buffer_);
     }

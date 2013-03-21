@@ -25,8 +25,10 @@ function GLobject() {
 
     this.texture = "favicon.ico";
 
+    // Ensure any repeat initialization
+    //  of this object's data will do it correctly
     this.normsInverted = false;
-    this.FlatNorms = false;
+    this.hasFlatNorms = false;
 }
 
 /**
@@ -278,8 +280,8 @@ var FLATNORMS = false;
    All position data must be stable before this point.*/
 GLobject.prototype.initFlatNorms = function() {
     
-    if(FLATNORMS == false || this.FlatNorms == true) return;
-    this.FlatNorms = true;
+    if(FLATNORMS == false || this.hasFlatNorms == true) return;
+    this.hasFlatNorms = true;
 
     var a, b, c, d;
     a = vec3.create();
@@ -307,9 +309,9 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3] );
 	this.posData_.push( this.posData[ind * 3 + 1] );
 	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 3] );
-	this.textureData_.push( this.textureData[ind * 3 + 1] );
-	this.textureNum_.push( this.textureNum[ind * 3] );
+	this.textureData_.push( this.textureData[ind * 2] );
+	this.textureData_.push( this.textureData[ind * 2 + 1] );
+	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(a, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 
@@ -323,9 +325,9 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3] );
 	this.posData_.push( this.posData[ind * 3 + 1] );
 	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 3] );
-	this.textureData_.push( this.textureData[ind * 3 + 1] );
-	this.textureNum_.push( this.textureNum[ind * 3] );
+	this.textureData_.push( this.textureData[ind * 2] );
+	this.textureData_.push( this.textureData[ind * 2 + 1] );
+	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(b, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 
@@ -339,9 +341,9 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3] );
 	this.posData_.push( this.posData[ind * 3 + 1] );
 	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 3] );
-	this.textureData_.push( this.textureData[ind * 3 + 1] );
-	this.textureNum_.push( this.textureNum[ind * 3] );
+	this.textureData_.push( this.textureData[ind * 2] );
+	this.textureData_.push( this.textureData[ind * 2 + 1] );
+	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(c, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 
