@@ -164,18 +164,11 @@ MazePiece.prototype.translate = function(vec_) {
 
 // Based upon the piece number, translate it by its coords
 MazePiece.prototype.atCoord = function(x, y) {
-	this.translate([x * this.size, 0, y * -this.size]);
+	this.translate([x * this.size, 0, -y * this.size]);
 }
 
 MazePiece.prototype.Quad = _Quad;
 MazePiece.prototype.Prism = _Prism;
-
-var qq = 0;
-const ILLEGAL_FRONT = qq++;
-const ILLEGAL_BACK = qq++;
-const ILLEGAL_LEFT = qq++;
-const ILLEGAL_RIGHT = qq++;
-const LEGAL_BOUND = qq++;
 
 /**
  *  The intention is that the Maze object will only call the

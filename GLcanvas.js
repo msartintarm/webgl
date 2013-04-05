@@ -14,6 +14,7 @@ var myMaze;
 function GLcanvas() {
     this.objects = [];
     this.textures = [];
+    this.frameBuffs = [];
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
     theMatrix = new GLmatrix();
@@ -43,7 +44,9 @@ GLcanvas.prototype.add = function(objToDraw) {
 	this.objects.push(new Skybox());
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
-
+    } else if(objToDraw == "shadow") {
+	this.objects.push(new MazePiece(5, NO_LEFT, TILE_TEXTURE));
+	this.objects.push(new Stool());
     } else if(objToDraw == "maze") {
 	myMaze = new Maze();
 	this.objects.push(myMaze);
@@ -83,9 +86,9 @@ GLcanvas.prototype.start = function(objToDraw) {
 	this.canvas.style.width = "100%";
 	this.canvas.width = this.canvas.offsetWidth - 16;
 	this.initGL();
-	if (this.gl == null) { return; }
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
+	this.initFramebuffers();
 	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shaders);
 	
@@ -164,7 +167,12 @@ GLcanvas.prototype.drawScene = function() {
     // Update viewer's matrix
     theMatrix.update();
     // Update side display as well
-    drawDashboard();}
+    drawDashboard();
+
+
+    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
+
+}
 
 var zz = 0;
 const WOOD_TEXTURE = zz++;
@@ -186,36 +194,78 @@ const RUG_TEXTURE = zz++;
 GLcanvas.prototype.initSkybox = function() {
     for(var i= 0; i < 6; ++i) {
 	this.textures.push(new GLtexture(
-	    this.gl, "skybox/cage" + i + ".jpg", SKYBOX_TEXTURE_0 + i));
+	    this.gl, SKYBOX_TEXTURE_0 + i));
     }
 }
 
 GLcanvas.prototype.initTextures = function() {
     this.textures.push(new GLtexture(
-	this.gl, "textures/wood.jpg", WOOD_TEXTURE));
+	this.gl, WOOD_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/rug.jpg", RUG_TEXTURE));
+	this.gl, RUG_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/heaven.jpg", HEAVEN_TEXTURE));
+	this.gl, HEAVEN_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/hell.jpg", HELL_TEXTURE));
+	this.gl, HELL_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/floor.jpg", FLOOR_TEXTURE));
+	this.gl, FLOOR_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/opera.jpg", OPERA_TEXTURE));
+	this.gl, OPERA_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/brick.jpg", BRICK_TEXTURE));
+	this.gl, BRICK_TEXTURE));
     this.textures.push(new GLtexture(
-	this.gl, "textures/tiles.jpg", TILE_TEXTURE));
+	this.gl, TILE_TEXTURE));
 }
 
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.initTextures();
+    this.initFramebuffers();
     this.initSkybox();
     this.bufferModels();
 }
 
+const FRAME_BUFF = 16;
+
+GLcanvas.prototype.initFramebuffers = function() {
+
+    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
+
+    var theFramebuff = this.gl.createFramebuffer();
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, theFramebuff);
+    theFramebuff.width = 512;
+    theFramebuff.height = 512;
+    this.frameBuffs.push(theFramebuff);
+
+
+    var theTexture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, theTexture);
+   this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 
+		  theFramebuff.width, theFramebuff.height, 
+		  0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+		     this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+		     this.gl.TEXTURE_MIN_FILTER, 
+		     this.gl.LINEAR_MIPMAP_NEAREST);
+    this.gl.generateMipmap(this.gl.TEXTURE_2D);
+    
+    var renderBuffer = this.gl.createRenderbuffer();
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, renderBuffer);
+    this.gl.renderbufferStorage(this.gl.RENDERBUFFER, 
+			   this.gl.DEPTH_COMPONENT16, 
+			   theFramebuff.width, 
+			   theFramebuff.height);
+
+    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, 
+			    this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, theTexture, 0);
+    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, renderBuffer);
+
+    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+}
+		     
 GLcanvas.prototype.initShaders = function(frag, vert) {
     var fragmentShader = getShader(this.gl, frag);
     var vertexShader = getShader(this.gl, vert);

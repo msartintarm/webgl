@@ -8,9 +8,6 @@ function Maze() {
     this.height = 7;
     this.size = 20;
 
-    // hell room
-    this.Piece(NO_FRONT, HELL_TEXTURE).atCoord(1,-1);
-
     this.Piece(BACK_LEFT, BRICK_TEXTURE).atCoord(0,0);
     this.Piece(NO_WALLS).atCoord(1,0);
     this.Piece(FRONT_BACK, BRICK_TEXTURE).atCoord(2,0);
@@ -54,6 +51,9 @@ function Maze() {
     this.Piece(FRONT, FLOOR_TEXTURE).atCoord(2,6);
     this.Piece(FRONT, FLOOR_TEXTURE).atCoord(3,6);
     this.Piece(FRONT_RIGHT, FLOOR_TEXTURE).atCoord(4,6);
+
+    // hell room
+    this.Piece(NO_FRONT, HELL_TEXTURE).atCoord(1,-1);
 
     start = true;
 }
@@ -137,7 +137,7 @@ Maze.prototype.checkPosition = function() {
 	if((curPiece >= 0) && 
 	   (!this.pieces[curPiece].positionLegal(newPos)) ||
 	   (!this.pieces[newPiece].positionLegal(newPos))) {
-	    //	    alert("Crossing illegal border..");
+
 	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
 	    if(curPiece == 30){
 		alert("You win the game, now I give you GOD mode..");
