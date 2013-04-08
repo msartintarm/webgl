@@ -1,9 +1,8 @@
 #  CS 559 Spring 2013: Project #2
 
-**  Title: Caged   **
+**Title:** Caged
 
-  Authors: Michael Vello Sartin-Tarm
-           Christopher Richard Aberger
+**Authors:** Michael Vello Sartin-Tarm, Christopher Richard Aberger
 
 **Project Description:**  A webgl implementation of our IKEA DAFRED stool in 
     	        	  our special version of an environment.  Our environemnt is not the 
@@ -71,8 +70,7 @@
 ##Cylinder.js, Disk.js,  Quad.js, Sphere.js, Torus.js
         Uses composition as inheritance to interface away underlying GLobject.
  
-##Light.js, Maze.js, MazePiece.js, SixSidedPrism.js, 
-##Skybox.js, Stool.js, StoolPyramid.js
+##Light.js, Maze.js, MazePiece.js, SixSidedPrism.js, Skybox.js, Stool.js, StoolPyramid.js
 	   Heirarchically uses classes defined in these files, and above files,
 	   to create and render increasingly complex objects.
 
