@@ -145,6 +145,7 @@ After you commit but before you push your changes to the remote branch, you have
 - Mark rebase as resolved: `git rebase --continue`
 - Check to ensure everything works before you push.
 - If you screw your files up in the rebase, abort and try again: `git rebase --abort`
+- Message
 
 ###Misc. Git stuff
 - Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
