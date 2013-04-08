@@ -40,21 +40,6 @@ div#banner{
 
 }
 
-div#banner2{
-    position: absolute;
-    background: url(graphics/banner.gif);
-/*    height: 200px;    */
-    width:18%;
-    text-align:center;
-    color: #FF0000;
-    line-height:200%;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-	background-size: 100% 200px;
-
-}
-
 div.main {
     display: inline-block;
     position: relative;
