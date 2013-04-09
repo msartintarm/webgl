@@ -55,6 +55,10 @@ GLcanvas.prototype.add = function(objToDraw) {
 	mazeMode = 1;
 	priveledgedMode.toggle();
 	theMatrix.viewMaze();
+    } 
+    else if(objToDraw == "stadium") {
+	this.objects.push(new Stadium());
+	//this.objects.push(new Skybox());
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }

@@ -26,6 +26,8 @@
     <script src="Maze.js" type="text/javascript"></script>
     <script src="Skybox.js" type="text/javascript"></script>
     <script src="MazePiece.js" type="text/javascript"></script>
+    <script src="Stadium.js" type="text/javascript"></script>
+    <script src="StadiumPiece.js" type="text/javascript"></script>
     <script id="shader-fs" type="x-shader/x-fragment">
 precision mediump float;
 
@@ -389,6 +391,11 @@ void main(void) {
             <input type="button" 
 		   onclick="expand('title2', 'webgl_object'); theCanvas.start('shadow');" 
 		   value="Shadows" 
+		   class="button_add"
+		   style="width:15%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); theCanvas.start('stadium');" 
+		   value="Stadium" 
 		   class="button_add"
 		   style="width:15%;"/>
           </div>
