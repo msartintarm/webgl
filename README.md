@@ -103,6 +103,8 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
 - Feel free to mess with brightness or lighting values as some of the others do
 
 ####In GLcanvas.js
-- Add lines for places all other uniforms are.
+- Add lines to find location for your new uniform variable.
+- Add line to declare XXX_TEXTURE constant value (must be consistent with demo.html).
+- Add line to init your texture.
 
 And you're done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the default value loaded if none is set.
