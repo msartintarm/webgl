@@ -122,10 +122,11 @@ Viewing changes after files are modified: `git status`
 ####Config
 - We don't want Emacs backup files with a trailing `~` to be seen by Git: `echo "*~" >> .gitignore`
 - All commits get pushed to their upstream remote branch: `git config --global push.default upstream`
+- Rebase from remote branches by default: `git config --global branch.autosetuprebase remote`
 
 ###Workflow in Git
 To do a task 
-- Update code to latest version: `git fetch; git rebase origin/master` OR `git pull --rebase`
+- Update code to latest version: `git fetch; git rebase origin/master` OR `git pull` (config adds `--rebase` flag)
 - Create and switch to the new branch: `git checkout -b the_task origin/master`
 - This also sets the remote branch as upstream
 - make changes ...
