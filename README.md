@@ -91,14 +91,18 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
    `} else if(this.index == xxx_TEXTURE) { this.img.src = "data:image/png;base64,";`
 
 ####Convert the image into base64 encoding.
-- At this site: http://www.base64-image.de/step-1.php
+- At this site: demddasd
 - Upload the image
 - Copy the raw data of the string
 - Paste after the final comma within the string
 
 ####In demo.html:
+- Add the uniform sampler variable for your specified texture.
 - Navigate to the fragment shader - searching doc for `fs` is fast
 - After the final `else` statement, add another `else if` - should be the highest number mentioned
 - Feel free to mess with brightness or lighting values as some of the others do
+
+####In GLcanvas.js
+- Add lines for places all other uniforms are.
 
 And you're done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the default value loaded if none is set.
