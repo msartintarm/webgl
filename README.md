@@ -133,6 +133,7 @@ To do a task
 - commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
 - `git status` - if your branch is behind its upstream version, do a rebase
+- If you do a rebase, you have to make sure your changes don't erase anything intended.:
 - ...Create a new branch on origin with your branch's name: `git push origin the_task`
 - ...Go to https://github.com/msartintarm/webgl/commits/the_task and make sure nothing\
 's being erased. IMPORTANT
@@ -153,6 +154,7 @@ After you commit but before you push your changes to the remote branch, you have
 - Message
 
 ###Misc. Git stuff
+- Settting your branch up to track a remote one --set-upstream the_branch origin/master
 - Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
 - See active repositories: `git remote -v`
 - See which changes are in the current branch: `git log [--oneline]` 
