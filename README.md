@@ -128,7 +128,7 @@ Viewing changes after files are modified: `git status`
 To do a task 
 - Update code to latest version: `git fetch; git rebase origin/master` OR `git pull` (config adds `--rebase` flag)
 - Create and switch to the new branch: `git checkout -b the_task origin/master`
-- This also sets the remote branch as upstream
+- IMPORTANT: Must say it tracks remote branch XXX from origin by **rebasing**. Otherwise, config isn't set up.
 - make changes ...
 - commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
