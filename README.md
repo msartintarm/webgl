@@ -139,6 +139,8 @@ To do a task
 's being erased. IMPORTANT
 - ...If some changes are unintended, undo them, `git commit --amend`,  and repeat
 - Once it looks good, send commit to origin/master: `git push`
+- ...if you get an error message about nothing being upstream, it must not have been set correctly.
+- ...track the remote branch before you try to push again: `git branch --set-upstream the_branch origin/master`
 - You can't use the current branch anymore. delete it: `git branch -d the_task`
 
 ###Git Rebase
@@ -154,7 +156,6 @@ After you commit but before you push your changes to the remote branch, you have
 - Message
 
 ###Misc. Git stuff
-- Settting your branch up to track a remote one --set-upstream the_branch origin/master
 - Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
 - See active repositories: `git remote -v`
 - See which changes are in the current branch: `git log [--oneline]` 
