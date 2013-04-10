@@ -133,7 +133,7 @@ To do a task
 - commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
 - `git status` - if your branch is behind its upstream version, do a rebase
-- Send commit to origin/master to close it: `git push --rebase`
+- Send commit to origin/master to close it: `git push`
 
 ###Git Rebase
 After you commit but before you push your changes to the remote branch, you have to
