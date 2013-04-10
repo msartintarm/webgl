@@ -78,6 +78,7 @@ Heirarchically uses classes defined in these files, and above files,
 For example: GLobject -> Torus -> Stool -> StoolPyramid
 
 ##How to load a texture into WebGL
+TODO instead, just link to a commit
 
 ####Find or create an image with these properties:
 - less than 1.5 Mb in size 
@@ -107,7 +108,7 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
 - Add line to declare XXX_TEXTURE constant value (must be consistent with demo.html).
 - Add line to init your texture.
 
-And you're done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the default value loaded if none is set.
+Done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the default value loaded if none is set.
 
 ##How to Use Git
 This isn't directly related to the project, but it's pretty important for the (two) 
@@ -116,18 +117,19 @@ This isn't directly related to the project, but it's pretty important for the (t
 Checking the project out: `git clone https://github.com/msartintarm/webgl.git .`
 Viewing changes after files are modified: `git status`
 
-####Config:
-- We don't want Emacs backup files with a trailing `~` to be seen by Git:`echo "*~" >> .gitignore`
-- All commits get pushed to their upstream remote branch: `git config push.default upstream`
+####Config
+- We don't want Emacs backup files with a trailing `~` to be seen by Git: `echo "*~" >> .gitignore`
+- All commits get pushed to their upstream remote branch: `git config --global push.default upstream`
 
 ###Workflow in Git
 To do a task
 - Update code to master: `git fetch; git rebase origin/master`
 - Create and switch to the new branch: `git checkout -b the_task origin/master`
+- This also sets the remote branch as upstream
 - make changes ...
-- commit changes: `git commit -am "i did something awesome"`
+- commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
-- Send changes to origin/master: `git push`
+- Send commit to origin/master to close it: `git push`
 
 ###Misc. Git stuff
 Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
