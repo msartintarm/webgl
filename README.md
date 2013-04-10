@@ -91,7 +91,7 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
    `} else if(this.index == xxx_TEXTURE) { this.img.src = "data:image/png;base64,";`
 
 ####Convert the image into base64 encoding.
-- At this site: demddasd
+- At this site: http://www.base64-image.de/step-1.php
 - Upload the image
 - Copy the raw data of the string
 - Paste after the final comma within the string
