@@ -38,6 +38,41 @@ Quad.prototype.setTexture = function(texture) {
     return this;
 }
 
+Quad.prototype.setSkyTexture = function(texture, val) { 
+    this.o.setTexture(texture);
+   
+    
+    //it is not trivial to get these coordinates to work for an image
+    //so do not foolishly rush in here.
+    if(val== 0){
+	//set the south wall	
+	this.o.initTextures([0.25,0.75], [0,0.75], [0.25,0.5], [0,0.5]);
+	//this.o.initTextures([0.25,0.25], [0.25,0], [0.5,0.25], [0.5,0]);
+    }
+    else if(val == 1){
+	//north wall
+	this.o.initTextures([0.5,0.5], [0.75,0.5], [0.5,0.75], [0.75,0.75]);
+    }
+    else if(val == 2){
+	//east wall
+	this.o.initTextures([0.25,0.5], [0.25,0.25], [0.5,0.5], [0.5,0.25]);
+    }
+    else if(val == 3){
+	//west wall
+	this.o.initTextures([0.5,0.75], [0.5,1.0], [0.25,0.75], [0.25,1.0]);
+    }
+    else if(val == 4){
+	//bottom wall
+	this.o.initTextures([1.0,0.5], [1.0,0.75], [0.75,0.5], [0.75,0.75]);
+    }
+    else{
+	//top wall
+	this.o.initTextures([0.5,0.5], [0.5,0.75], [0.25,0.5],[0.25,0.75]);
+    }
+    return this;
+}
+
+
 Quad.prototype.initBuffers = _oInitBuffers;
 Quad.prototype.translate = _oTranslate;
 

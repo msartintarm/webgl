@@ -15,6 +15,7 @@ const SKYBOX_TEXTURE_3 = zz++;
 const SKYBOX_TEXTURE_4 = zz++;
 const SKYBOX_TEXTURE_5 = zz++;
 const RUG_TEXTURE = zz++;
+const SKYBOX_TEXTURE_REAL = zz++;
 
 // -- Framebuffer -- // 
 const FRAME_BUFF = 16;

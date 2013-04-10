@@ -51,14 +51,14 @@ GLcanvas.prototype.add = function(objToDraw) {
 	myMaze = new Maze();
 	this.objects.push(myMaze);
 	this.objects.push(new StoolPyramid());
-	this.objects.push(new Skybox());
+	this.objects.push(new Cagebox());
 	mazeMode = 1;
-	priveledgedMode.toggle();
+//	priveledgedMode.toggle();
 	theMatrix.viewMaze();
     } 
     else if(objToDraw == "stadium") {
 	this.objects.push(new Stadium());
-	//this.objects.push(new Skybox());
+	this.objects.push(new Skybox());
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
@@ -157,7 +157,7 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.perspective(zoom.val,
 			  this.gl.viewportWidth / 
 			  this.gl.viewportHeight,
-			  0.1, 9000.0);
+			  0.1, 30000.0);
 
 
 //    theMatrix.modelInit();
@@ -202,6 +202,8 @@ GLcanvas.prototype.initTextures = function() {
 	this.gl, BRICK_TEXTURE));
     this.textures.push(new GLtexture(
 	this.gl, TILE_TEXTURE));
+    this.textures.push(new GLtexture(
+	this.gl, SKYBOX_TEXTURE_REAL));
 }
 
 GLcanvas.prototype.changeShaders = function(frag, vert) {
@@ -295,6 +297,8 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.shaders, "woodU"), WOOD_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shaders, "rugU"), RUG_TEXTURE);
+    this.gl.uniform1i(this.gl.getUniformLocation(
+	this.shaders, "skyRealU"), SKYBOX_TEXTURE_REAL);
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shaders, "heavenU"), HEAVEN_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
