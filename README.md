@@ -117,9 +117,8 @@ Checking the project out: `git clone https://github.com/msartintarm/webgl.git .`
 Viewing changes after files are modified: `git status`
 
 ####Config:
-- We don't want Emacs backup files with a trailing `~` to be seen by Git:
-`echo "*~" >> .gitignore`
-All commits get pushed to their upstream remote branch: `git config push.default upstream`
+- We don't want Emacs backup files with a trailing `~` to be seen by Git:`echo "*~" >> .gitignore`
+- All commits get pushed to their upstream remote branch: `git config push.default upstream`
 
 ###Workflow in Git
 To do a task
