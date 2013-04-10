@@ -53,6 +53,16 @@ SixSidedPrism.prototype.setSixTextures = function(a,b,c,d,e,f) {
     return this;
 }
 
+SixSidedPrism.prototype.setSkyBoxTexture = function(texture) {
+    this.q1.setSkyTexture(texture, 0);
+    this.q2.setSkyTexture(texture, 1);
+    this.q3.setSkyTexture(texture, 2);
+    this.q4.setSkyTexture(texture, 3);
+    this.q5.setSkyTexture(texture, 4);
+    this.q6.setSkyTexture(texture, 5);
+    return this;
+}
+
 SixSidedPrism.prototype.initBuffers = function(gl_) {
     this.q1.initBuffers(gl_);
     this.q2.initBuffers(gl_);
