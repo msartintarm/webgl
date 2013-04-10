@@ -116,9 +116,6 @@ Done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the
 This isn't directly related to the project, but it's pretty important for the (two) 
   contributors to know how to properly configure and use Git.
 
-Checking the project out: `git clone https://github.com/msartintarm/webgl.git .`
-Viewing changes after files are modified: `git status`
-
 ####Config
 - We don't want Emacs backup files with a trailing `~` to be seen by Git: `echo "*~" >> .gitignore`
 - All commits get pushed to their upstream remote branch: `git config --global push.default upstream`
@@ -156,6 +153,8 @@ After you commit but before you push your changes to the remote branch, you have
 - Message
 
 ###Misc. Git stuff
+- Checking the project out: `git clone https://github.com/msartintarm/webgl.git .`
+- Viewing changes after files are modified: `git status`
 - Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
 - See active repositories: `git remote -v`
 - See which changes are in the current branch: `git log [--oneline]` 
