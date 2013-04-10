@@ -55,10 +55,6 @@ GLcanvas.prototype.add = function(objToDraw) {
 	mazeMode = 1;
 	priveledgedMode.toggle();
 	theMatrix.viewMaze();
-    } 
-    else if(objToDraw == "stadium") {
-	this.objects.push(new Stadium());
-	//this.objects.push(new Skybox());
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
@@ -178,23 +174,6 @@ GLcanvas.prototype.drawScene = function() {
 
 }
 
-var zz = 0;
-const WOOD_TEXTURE = zz++;
-const HEAVEN_TEXTURE = zz++;
-const HELL_TEXTURE = zz++;
-const FLOOR_TEXTURE = zz++;
-const OPERA_TEXTURE = zz++;
-const BRICK_TEXTURE = zz++;
-const TILE_TEXTURE = zz++;
-const NO_TEXTURE = zz++;
-const SKYBOX_TEXTURE_0 = zz++;
-const SKYBOX_TEXTURE_1 = zz++;
-const SKYBOX_TEXTURE_2 = zz++;
-const SKYBOX_TEXTURE_3 = zz++;
-const SKYBOX_TEXTURE_4 = zz++;
-const SKYBOX_TEXTURE_5 = zz++;
-const RUG_TEXTURE = zz++;
-
 GLcanvas.prototype.initSkybox = function() {
     for(var i= 0; i < 6; ++i) {
 	this.textures.push(new GLtexture(
@@ -228,8 +207,6 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initSkybox();
     this.bufferModels();
 }
-
-const FRAME_BUFF = 16;
 
 GLcanvas.prototype.initFramebuffers = function() {
 
