@@ -1,20 +1,3 @@
-// Locations of Wall
-
-const FRONT = 0x1; // 0001
-const BACK = 0x2; // 0010
-const RIGHT = 0x4; // 0100
-const LEFT = 0x8; // 1000
-
-const NO_FRONT = BACK | RIGHT | LEFT;
-const NO_LEFT = BACK | RIGHT | FRONT;
-const BACK_LEFT = BACK | LEFT;
-const NO_WALLS = 0x0;
-const FRONT_BACK = FRONT | BACK;
-const FRONT_RIGHT = RIGHT | FRONT;
-const BACK_RIGHT = RIGHT | BACK;
-const LEFT_RIGHT = RIGHT | LEFT;
-const FRONT_LEFT = FRONT | LEFT;
-
 /* 
 this function stamps out the walls for one maze piece
 
@@ -56,11 +39,11 @@ function StadiumPiece(room_size, walls, textures) {
     var a,b,c,d,at,bt,ct,dt;
 
     //always draw the tiled floor
-    a = vec3.fromValues(-this.size, 0, this.size);
-    b = vec3.fromValues(-this.size, 0,-this.size);
-    c = vec3.fromValues( this.size, 0, this.size);
-    d = vec3.fromValues( this.size, 0,-this.size);
-    this.qFloor = this.Quad(a, b, c, d);
+    a = vec3.fromValues(-this.size/2, 0, this.size/2);
+    b = vec3.fromValues(-this.size/2, 0,-this.size/2);
+    c = vec3.fromValues( this.size/2, 0, this.size/2);
+    d = vec3.fromValues( this.size/2, 0,-this.size/2);
+    this.qFloor = this.Quad(a, b, c, d).setTexture(TILE_TEXTURE);
 
  /*
    It gets a little confusing in here.  We never share walls, so to preserve
@@ -77,68 +60,63 @@ function StadiumPiece(room_size, walls, textures) {
     // Bounds - N, S, W, and E - are created within as well.
 };
 
-var bX_ = this.size + 1.4; // back X coordinates
-var h_ = this.size;    // height of wall
-var bZ_ = this.size -1.5;  // back Z coordinate
-var bW_ = 3.0;  // width of back wall 
-
 StadiumPiece.prototype.FrontWall = function(texture) {
     var front = new SixSidedPrism(
-	[ bX_, h_, -(bZ_ + bW_)],
-	[ bX_,  0, -(bZ_ + bW_)],
-	[ bX_,  0, -(bZ_      )],
-	[ bX_, h_, -(bZ_      )],
-	[-bX_, h_, -(bZ_ + bW_)],
-	[-bX_,  0, -(bZ_ + bW_)],
-	[-bX_,  0, -(bZ_      )],
-	[-bX_, h_, -(bZ_      )]);
+	[ sbX_, sh_, -(sbZ_ + sbW_)],
+	[ sbX_,  0, -(sbZ_ + sbW_)],
+	[ sbX_,  0, -(sbZ_      )],
+	[ sbX_, sh_, -(sbZ_      )],
+	[-sbX_, sh_, -(sbZ_ + sbW_)],
+	[-sbX_,  0, -(sbZ_ + sbW_)],
+	[-sbX_,  0, -(sbZ_      )],
+	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
     this.objs.push(front);
-    this.north = -(bZ_ - 1);
+    this.north = -(sbZ_ - 1);
     return front;
 }
 
 StadiumPiece.prototype.LeftWall = function(texture) {
     var left = new SixSidedPrism(
-	[-(bZ_ + bW_), h_,-bX_],
-	[-(bZ_ + bW_),  0,-bX_],
-	[-(bZ_      ),  0,-bX_],
-	[-(bZ_      ), h_,-bX_],
-	[-(bZ_ + bW_), h_, bX_],
-	[-(bZ_ + bW_),  0, bX_],
-	[-(bZ_      ),  0, bX_],
-	[-(bZ_      ), h_, bX_]);
+	[-(sbZ_ + sbW_), sh_,-sbX_],
+	[-(sbZ_ + sbW_),  0,-sbX_],
+	[-(sbZ_      ),  0,-sbX_],
+	[-(sbZ_      ), sh_,-sbX_],
+	[-(sbZ_ + sbW_), sh_, sbX_],
+	[-(sbZ_ + sbW_),  0, sbX_],
+	[-(sbZ_      ),  0, sbX_],
+	[-(sbZ_      ), sh_, sbX_]).setTexture(texture);
     this.objs.push(left);
-    this.west = -(bZ_ - 1);
+    this.west = -(sbZ_ - 1);
     return left;
 }
 
 StadiumPiece.prototype.RightWall = function(texture) {
     var right = new SixSidedPrism(
-	[bZ_ + bW_, h_, -bX_],
-	[bZ_ + bW_,  0, -bX_],
-	[bZ_ + bW_,  0,  bX_],
-	[bZ_ + bW_, h_,  bX_],
-	[bZ_      , h_, -bX_],
-	[bZ_      ,  0, -bX_],
-	[bZ_      ,  0,  bX_],
-	[bZ_      , h_,  bX_]);
+	[sbZ_ + sbW_, sh_, -sbX_],
+	[sbZ_ + sbW_,  0, -sbX_],
+	[sbZ_ + sbW_,  0,  sbX_],
+	[sbZ_ + sbW_, sh_,  sbX_],
+	[sbZ_      , sh_, -sbX_],
+	[sbZ_      ,  0, -sbX_],
+	[sbZ_      ,  0,  sbX_],
+	[sbZ_      , sh_,  sbX_]).setTexture(texture);
     this.objs.push(right);
-    this.east = bZ_ - 1;
+    this.east = sbZ_ - 1;
     return right;
 }
 
 StadiumPiece.prototype.BackWall = function(texture) {
     var back = new SixSidedPrism(
-	[ bX_, h_, bZ_      ],
-	[ bX_,  0, bZ_      ],
-	[ bX_,  0, bZ_ + bW_],
-	[ bX_, h_, bZ_ + bW_],
-	[-bX_, h_, bZ_      ],
-	[-bX_,  0, bZ_      ],
-	[-bX_,  0, bZ_ + bW_],
-	[-bX_, h_, bZ_ + bW_]);
+	[ sbX_, sh_, sbZ_      ],
+	[ sbX_,  0, sbZ_      ],
+	[ sbX_,  0, sbZ_ + sbW_],
+	[ sbX_, sh_, sbZ_ + sbW_],
+	[-sbX_, sh_, sbZ_      ],
+	[-sbX_,  0, sbZ_      ],
+	[-sbX_,  0, sbZ_ + sbW_],
+	[-sbX_, sh_, sbZ_ + sbW_]).setTexture(texture);
     this.objs.push(back);
-    this.south = bZ_ - 1;
+    this.south = sbZ_ - 1;
     return back;
 }
 

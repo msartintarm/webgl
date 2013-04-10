@@ -20,6 +20,11 @@ Stadium.prototype.initBuffers = function(gl_) {
     this.Sphere.initBuffers(gl_);
 }
 
+var sbX_;
+var sh_;
+var sbZ_;
+var sbW_;
+
 Stadium.prototype.Field = function(){
     //# of maze pieces per side of the square floor
     //must be divisble by 5280
@@ -28,10 +33,15 @@ Stadium.prototype.Field = function(){
     this.size = pieceLength;
     this.width = pieceLength;
 
+    sbX_ = this.size/2 + 14.9; // back X coordinates
+    sh_ = this.size/2;    // height of wall                                      
+    sbZ_ = this.size/2 -15.1;  // back Z coordinate                                   
+    sbW_ = 30.0;  // width of back wall
+
+
     if(5280%piecesPerSide != 0)
 	alert("Not a proper selection of pieces per side");
 
-    piecesPerSide = 1;
     //stamp out square floor with proper variables
     for(var i=0;i<piecesPerSide; i++){
 	for(var j=0;j<piecesPerSide; j++){
@@ -39,15 +49,15 @@ Stadium.prototype.Field = function(){
 	    if(i==0)
 		wall |= BACK;
 	    if(j==0)
-		wall |= RIGHT;
+		wall |= LEFT;
 	    if(i==(piecesPerSide-1))
 		wall |= FRONT;
 	    if(j==(piecesPerSide-1))
-		wall |= LEFT;
+		wall |= RIGHT;
 
 
-	    console.log("putting out.... %d %d", i, j);
-	    this.Piece(0xf, BRICK_TEXTURE).atCoord(i,j);	    
+	    console.log("putting out.... %d", wall);
+	    this.Piece(wall, BRICK_TEXTURE).atCoord(j,i);	    
 	}
     }
 
@@ -55,7 +65,7 @@ Stadium.prototype.Field = function(){
 }
 
 Stadium.prototype.Piece = function(a,b) {
-    var newPiece = new MazePiece(this.size, a,b);
+    var newPiece = new StadiumPiece(this.size, a,b);
     this.pieces.push(newPiece);
     return newPiece;
 }
