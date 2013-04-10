@@ -91,7 +91,7 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
    `} else if(this.index == xxx_TEXTURE) { this.img.src = "data:image/png;base64,";`
 
 ####Convert the image into base64 encoding.
-- At this site: http://www.base64-image.de/step-1.php
+- At this site: demddasd
 - Upload the image
 - Copy the raw data of the string
 - Paste after the final comma within the string
@@ -108,3 +108,44 @@ For example: GLobject -> Torus -> Stool -> StoolPyramid
 - Add line to init your texture.
 
 And you're done! This gets passed to the buffer and set in GLobject.js. `NO_TEXTURE` is the default value loaded if none is set.
+
+##How to Use Git
+This isn't directly related to the project, but it's pretty important for the (two) 
+  contributors to know how to properly configure and use Git.
+
+####Checking the project out
+Within the base-level project directory:
+`git clone https://github.com/msartintarm/webgl.git .`
+- This command puts you on branch 'master'.
+- It also sets the remote (GitHub-hosted) branch 'master' as upstream.
+
+####Viewing changes after files are modified
+`git status`
+
+####Making Git ignore certain files
+Using emacs, we don't want backup files - those with a trailing `~` - to show during a `git status`:
+- Navigate to the project directory 
+- Create / append the new rule to Git's ignore file: `echo "*~" >> .gitignore`
+- Git will now print the filename '.gitignore' during a `git status` instead of the files the regexp syntax matches. 
+
+###Branching in Git
+This subsection is, by far, the most important part of Git.
+
+####Create a new branch: `git branch new_branch`
+
+####See which branches (local and remote) exist: `git branch -a`
+
+####Switch to another branch: `git checkout new_branch`
+This step will change the content of your directories if the branches are different. It
+ can't be done without first committing or removing any files (in the current branch) that would be changed by this.
+
+####See which changes are in the current branch: `git log [--oneline]` 
+
+####See all changes in every branch at once: `git log --graph --all --oneline`
+
+####Send changes to master branch on remote rep: ``
+
+###Misc. Git stuff
+
+####Marking an important milestone in your project: `git tag -a v_1.0 -m 'version 1 out'`
+####Showing important milestones: `git tag` or `git show v_1.0`
