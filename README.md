@@ -133,7 +133,12 @@ To do a task
 - commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
 - `git status` - if your branch is behind its upstream version, do a rebase
-- Send commit to origin/master to close it: `git push`
+- ...Create a new branch on origin with your branch's name: `git push origin the_task`
+- ...Go to https://github.com/msartintarm/webgl/commits/the_task and make sure nothing\
+'s being erased. IMPORTANT
+- ...If some changes are unintended, undo them, `git commit --amend`,  and repeat
+- Once it looks good, send commit to origin/master: `git push`
+- You can't use the current branch anymore. delete it: `git branch -d the_task`
 
 ###Git Rebase
 After you commit but before you push your changes to the remote branch, you have to
