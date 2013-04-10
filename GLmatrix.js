@@ -97,9 +97,6 @@ GLmatrix.prototype.vMul = function(v) {
     this.vMatrixChanged = true;
 }
 
-const lookDist = 1 / 20;
-const moveDist = 2.1;
-
 GLmatrix.prototype.lookUp = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
 		 [1, 0, 0]); 

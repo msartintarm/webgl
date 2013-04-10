@@ -1,21 +1,3 @@
-// Locations of Wall
-
-const FRONT = 0x1; // 0001
-const BACK = 0x2; // 0010
-const RIGHT = 0x4; // 0100
-const LEFT = 0x8; // 1000
-
-const NO_FRONT = BACK | RIGHT | LEFT;
-const NO_LEFT = BACK | RIGHT | FRONT;
-const BACK_LEFT = BACK | LEFT;
-const NO_WALLS = 0x0;
-const FRONT_BACK = FRONT | BACK;
-const FRONT_RIGHT = RIGHT | FRONT;
-const BACK_RIGHT = RIGHT | BACK;
-const LEFT_RIGHT = RIGHT | LEFT;
-const FRONT_LEFT = FRONT | LEFT;
-
-
 
 /* 
 this function stamps out the walls for one maze piece
