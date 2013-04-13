@@ -153,7 +153,7 @@ After you commit but before you push your changes to the remote branch, you have
 - Message
 
 ###Misc. Git stuff
-- Checking the project out: `git clone https://github.com/msartintarm/webgl.git .`
+- Checking the project out: `git clone GitHubUserName@https://github.com/msartintarm/webgl.git .`
 - Viewing changes after files are modified: `git status`
 - Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
 - See active repositories: `git remote -v`
