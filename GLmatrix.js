@@ -47,6 +47,11 @@ GLmatrix.prototype.viewMaze = function() {
     this.vRotate(Math.PI, [0, 1, 0]);
 }
 
+GLmatrix.prototype.viewStadium = function() {
+    this.vTranslate([0,2,0]);
+//    this.vRotate(Math.PI, [0, 1, 0]);
+}
+
 GLmatrix.prototype.translate = function(vector) {
     mat4.translate(this.mMatrix, this.mMatrix, vector); 
     this.mMatrixChanged = true;
@@ -144,7 +149,10 @@ GLmatrix.prototype.moveDown = function() {
 }
 
 GLmatrix.prototype.newViewAllowed = function() {
-    return myMaze.checkPosition();
+    if(mazeMode)
+	return myMaze.checkPosition();
+    if(stadiumMode)
+	return myStadium.checkPosition();
 }
 
 GLmatrix.prototype.moveForward = function() {

@@ -1,4 +1,5 @@
 function Light() {
+    colorVec = [0,0,0];
     this.o = new Sphere(-0.05)
 	.translate(lightPos);
 }

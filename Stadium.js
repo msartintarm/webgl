@@ -1,5 +1,3 @@
-var start;
-
 function Stadium() {  
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
@@ -7,17 +5,35 @@ function Stadium() {
     this.width = 5;
     this.height = 7;
     this.size = 20;
+    this.balls = [];
+
+    //# of maze pieces per side of the square floor
+    //must be divisble by 5280
+    var piecesPerSide = 24;
+    var pieceLength = 5280/24;
+    this.size = pieceLength;
+    this.width = piecesPerSide;
+
+    if(5280%piecesPerSide != 0)
+	alert("Not a proper selection of pieces per side");
 
     //initializes the field...floor and walls
     this.Field();
-    this.Sphere = new Sphere(2);
+    this.InitBalls();
 }
 
 Stadium.prototype.initBuffers = function(gl_) {
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
-    this.Sphere.initBuffers(gl_);
+
+    for(var i=0; i < this.balls.length; ++i){
+	this.balls[i].initBuffers(gl_);
+    }
+}
+
+Stadium.prototype.InitBalls = function(){
+    this.balls.push(new Ball([100,-100]));
 }
 
 var sbX_;
@@ -26,42 +42,27 @@ var sbZ_;
 var sbW_;
 
 Stadium.prototype.Field = function(){
-    //# of maze pieces per side of the square floor
-    //must be divisble by 5280
-    var piecesPerSide = 24;
-    var pieceLength = 5280/24;
-    this.size = pieceLength;
-    this.width = pieceLength;
-
     sbX_ = this.size/2 + 14.9; // back X coordinates
     sh_ = this.size/2;    // height of wall                                      
     sbZ_ = this.size/2 -15.1;  // back Z coordinate                                   
     sbW_ = 30.0;  // width of back wall
 
-
-    if(5280%piecesPerSide != 0)
-	alert("Not a proper selection of pieces per side");
-
     //stamp out square floor with proper variables
-    for(var i=0;i<piecesPerSide; i++){
-	for(var j=0;j<piecesPerSide; j++){
+    for(var i=0;i<this.width; i++){
+	for(var j=0;j<this.width; j++){
 	    var wall = 0;
 	    if(i==0)
 		wall |= BACK;
 	    if(j==0)
 		wall |= LEFT;
-	    if(i==(piecesPerSide-1))
+	    if(i==(this.width-1))
 		wall |= FRONT;
-	    if(j==(piecesPerSide-1))
+	    if(j==(this.width-1))
 		wall |= RIGHT;
 
-
-	    console.log("putting out.... %d", wall);
 	    this.Piece(wall, BRICK_TEXTURE).atCoord(j,i);	    
 	}
     }
-
-    start = true;
 }
 
 Stadium.prototype.Piece = function(a,b) {
@@ -71,12 +72,14 @@ Stadium.prototype.Piece = function(a,b) {
 }
 
 Stadium.prototype.draw = function(gl_,buffer_) {
+    for(var i = 0; i<this.balls.length; i++){
+	this.balls[i].draw(gl_, buffer_);
+    }
+
     for(var i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_, buffer_);
     }
 }
-
-var mazeDebug = false;
 
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
@@ -94,17 +97,18 @@ Stadium.prototype.checkPosition = function() {
     vec4.transformMat4(newPos, newPos, theMatrix.vMatrix);
     vec4.transformMat4(curPos, curPos, theMatrix.vMatrix);
 
-    pieceX = Math.round(curPos[0] / 20);
-    pieceZ = Math.round(curPos[2] /-20);
+    pieceX = Math.round(curPos[0] / this.size);
+    pieceZ = Math.round(curPos[2] /-this.size);
     curPiece = (this.width * pieceZ) + pieceX;
-    pieceX = Math.round(newPos[0] / 20);
-    pieceZ = Math.round(newPos[2] /-20);
+
+    pieceX = Math.round(newPos[0] / this.size);
+    pieceZ = Math.round(newPos[2] /-this.size);
     newPiece = (this.width * pieceZ) + pieceX;
 
-    var piecePosX = newPos[0] % 20;
-    var piecePosZ = newPos[2] % 20;
+    var piecePosX = newPos[0] % this.size;
+    var piecePosZ = newPos[2] % this.size;
 
-    if(mazeDebug == true) {
+    if(1==1) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 
@@ -115,7 +119,7 @@ Stadium.prototype.checkPosition = function() {
 	    parseFloat(newPos[0]).toFixed(2) + "," + 
 	    parseFloat(newPos[1]).toFixed(2) + "," +  
 	    parseFloat(newPos[2]).toFixed(2);
-	
+
 	posStats.innerHTML += "<br/> Stadium Piece: from " + 
 	    curPiece +
 	    " to " + newPiece;
@@ -129,26 +133,23 @@ Stadium.prototype.checkPosition = function() {
 	"<br/> Getting close to bottom wall..";
 	}
 
-    if(curPiece == 1) start = false;
-
-    if(!start){
-	if(newPiece < 0) { return false; }
-	
-	if((curPiece >= 0) && 
-	   (!this.pieces[curPiece].positionLegal(newPos)) ||
-	   (!this.pieces[newPiece].positionLegal(newPos))) {
-
-	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
-	    if(curPiece == 30){
-		alert("You win the game, now I give you GOD mode..");
-		priveledgedMode.toggle();
-		mat4.translate(theMatrix.vMatrixNew, theMatrix.vMatrixNew, [0,2,-10]);
-		
-		return true;
-	    }
-	    else
-		return false;
-	}	
+    if(newPiece < 0) { return false; }
+    
+    var ballCollision = false;
+    //see if we collide with a ball
+    for(var i = 0; i<this.balls.length; i++){
+	if(!this.balls[i].detectCollision(curPos, newPos)){
+	    ballCollision = true;
+	    i = this.balls.length;
+	}
     }
+    
+    if((curPiece >= 0) && 
+       (!this.pieces[curPiece].positionLegal(newPos)) ||
+       (!this.pieces[newPiece].positionLegal(newPos)) ||
+       ballCollision
+      ) {
+	mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
+    }	
     return true;
 }

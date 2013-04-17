@@ -24,6 +24,7 @@ function Sphere(radius) {
 	    //not correct to add texture must set properly
 	    this.o.addTexture(0.0, 0.0);  
 	    
+	    colorVec = [x,y,z];
 	    this.o.addColors(x,y,z);
 	    //this.o.addColors(x/2, y/2, z/2);
 	}
