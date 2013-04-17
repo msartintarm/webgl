@@ -10,6 +10,8 @@ var theMatrix;
 var canvas2, gl2;
 var mazeMode;
 var myMaze;
+var myStadium;
+var stadiumMode;
 
 function GLcanvas() {
     this.objects = [];
@@ -57,8 +59,12 @@ GLcanvas.prototype.add = function(objToDraw) {
 	theMatrix.viewMaze();
     } 
     else if(objToDraw == "stadium") {
-	this.objects.push(new Stadium());
+	myStadium = new Stadium();
+	this.objects.push(myStadium);
 	this.objects.push(new Skybox());
+	theMatrix.viewStadium();
+	stadiumMode = 1;
+	priveledgedMode.toggle();
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }

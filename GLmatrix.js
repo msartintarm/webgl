@@ -47,6 +47,11 @@ GLmatrix.prototype.viewMaze = function() {
     this.vRotate(Math.PI, [0, 1, 0]);
 }
 
+GLmatrix.prototype.viewStadium = function() {
+    this.vTranslate([0,2,0]);
+//    this.vRotate(Math.PI, [0, 1, 0]);
+}
+
 GLmatrix.prototype.translate = function(vector) {
     mat4.translate(this.mMatrix, this.mMatrix, vector); 
     this.mMatrixChanged = true;
@@ -98,7 +103,7 @@ GLmatrix.prototype.vMul = function(v) {
 }
 
 const lookDist = 1 / 20;
-const moveDist = 200.1;
+const moveDist = 20.0;
 
 GLmatrix.prototype.lookUp = function() {
     this.vRotate(lookDist * 2 * Math.PI, 
@@ -147,7 +152,10 @@ GLmatrix.prototype.moveDown = function() {
 }
 
 GLmatrix.prototype.newViewAllowed = function() {
-    return myMaze.checkPosition();
+    if(mazeMode)
+	return myMaze.checkPosition();
+    if(stadiumMode)
+	return myStadium.checkPosition();
 }
 
 GLmatrix.prototype.moveForward = function() {

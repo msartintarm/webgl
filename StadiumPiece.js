@@ -8,8 +8,6 @@ probably can make this a variable parameter
 */
 //function StadiumPiece(walls, ft, bt, rt, lt) { 
 function StadiumPiece(room_size, walls, textures) { 
-    console.log("walls: %d room_size: %d textures: %d", walls, room_size, textures);
-
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
     this.b = walls & BACK;
@@ -154,7 +152,6 @@ StadiumPiece.prototype.Prism = _Prism;
  * 
  */
 StadiumPiece.prototype.positionLegal = function(position) {
-
     if(this.f && position[2] < this.north) { return false; }
     if(this.b && position[2] > this.south) { return false; }
     if(this.l && position[0] < this.west) { return false; }
