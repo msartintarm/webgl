@@ -152,10 +152,12 @@ GLcanvas.prototype.initGL = function() {
 
 GLcanvas.prototype.drawFrame = function() {
 
+    var fBuff = this.frameBuffs[0];
+
     this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, 
-			    this.frameBuffs[0]);
-    this.gl.viewport(0, 0, 800, 800);
+			    fBuff);
+    this.gl.viewport(0, 0, fBuff.width, fBuff.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
 
@@ -172,21 +174,31 @@ GLcanvas.prototype.drawFrame = function() {
     // Draw all our objects
     theMatrix.push();
 
-//    theMatrix.translate([0,0,-10]);
 
-    frameStool.draw();
+    theMatrix.translate([0,0,-10]);
+
+    frameStool.draw(this.gl, this.shaders);
+
+    theMatrix.translate([0,0,10]);
+
+    frameStool.draw(this.gl, this.shaders);
 
     theMatrix.pop();
 
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
 
+    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, frameTexture);
 }
 
 /**
  *  Draw the scene.
  */
 GLcanvas.prototype.drawScene = function() {
+
+    this.drawFrame();
+
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
     while (error != this.gl.NO_ERROR) {
@@ -222,7 +234,6 @@ GLcanvas.prototype.drawScene = function() {
 
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
-    this.drawFrame();
 }
 
 GLcanvas.prototype.initSkybox = function() {
@@ -261,10 +272,10 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.bufferModels();
 }
 
-var frameStool;
+var frameStool, frameTexture;
 GLcanvas.prototype.initFramebuffers = function() {
 
-    frameStool = new Stool();
+    frameStool = new Stool().initBuffers(this.gl);
 
     var theFramebuff = this.gl.createFramebuffer();
     theFramebuff.width = 512;
@@ -273,8 +284,8 @@ GLcanvas.prototype.initFramebuffers = function() {
 
     this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
 
-    var theTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, theTexture);
+    frameTexture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, frameTexture);
    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 
 		  theFramebuff.width, theFramebuff.height, 
 		  0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
@@ -296,14 +307,24 @@ GLcanvas.prototype.initFramebuffers = function() {
     this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, 
 				 this.gl.COLOR_ATTACHMENT0, 
 				 this.gl.TEXTURE_2D, 
-				 theTexture, 0);
+				 frameTexture, 0);
     this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, 
 				    this.gl.DEPTH_ATTACHMENT, 
 				    this.gl.RENDERBUFFER, renderBuffer);
 
+    // -- check to make sure everything is init'ed -- //
+    var status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
+
+    if(status != this.gl.FRAMEBUFFER_COMPLETE) {
+	alert("yo, framebuffer not working dawg");
+    }
+
     this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+
+    
+
 }
 		     
 GLcanvas.prototype.initShaders = function(frag, vert) {

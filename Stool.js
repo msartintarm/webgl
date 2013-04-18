@@ -51,6 +51,8 @@ function Stool() {
     this.cylinder8 = this.Cyl(0.01,0.01,0.16,30,30);
     colorVec = [.5,.5,.5];
     this.disk5 = this.Disk(0,0.003,30,30);
+
+    return this;
 }
 
 Stool.prototype.Prism = _Prism;
