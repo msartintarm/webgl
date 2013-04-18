@@ -16,13 +16,12 @@ const SKYBOX_TEXTURE_4 = zz++;
 const SKYBOX_TEXTURE_5 = zz++;
 const RUG_TEXTURE = zz++;
 const SKYBOX_TEXTURE_REAL = zz++;
-
 // -- Framebuffer -- // 
-const FRAME_BUFF = 16;
+const FRAME_BUFF = zz++;
 
 // -- Player movement -- //
 const lookDist = 1 / 20;
-const moveDist = 200.1; //maze 2.1 
+const moveDist = 2.1; //maze 2.1 
 
 // -- Maze Piece wall locations -- //
 const FRONT = 0x1; // 0001

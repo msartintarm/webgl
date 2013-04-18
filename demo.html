@@ -66,6 +66,7 @@ uniform sampler2D sky4U;
 uniform sampler2D sky5U;
 uniform sampler2D sky6U;
 uniform sampler2D skyRealU;
+uniform sampler2D framebufferU;
 uniform float uUseTexture;
 
 void main(void) {
@@ -172,6 +173,13 @@ if (textureNumV < 0.1) {
   textureColor = texture2D(
     skyRealU, 
     vec2(textureV.s, textureV.t));
+    //ambConst = 0;
+    specColor = textureColor.rgb;
+} else if (textureNumV < 16.1) {
+  textureColor = texture2D(
+   framebufferU,
+    vec2(textureV.s, textureV.t));
+//    textureColor.rgb = textureColor.rgb * 3.0;
     //ambConst = 0;
     specColor = textureColor.rgb;
 } else {
@@ -401,6 +409,11 @@ void main(void) {
             <input type="button" 
 		   onclick="expand('title2', 'webgl_object'); theCanvas.start('shadow');" 
 		   value="Shadows" 
+		   class="button_add"
+		   style="width:15%;"/>
+            <input type="button" 
+		   onclick="expand('title2', 'webgl_object'); theCanvas.start('framebuffer');" 
+		   value="Framebuffer" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 

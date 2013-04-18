@@ -65,6 +65,13 @@ GLcanvas.prototype.add = function(objToDraw) {
 	theMatrix.viewStadium();
 	stadiumMode = 1;
 	priveledgedMode.toggle();
+    } else if(objToDraw == "framebuffer") {
+	this.objects.push(new Quad(
+	    [-1, 1,-4],
+	    [-1,-1,-4],
+	    [ 1, 1,-4],
+	    [ 1,-1,-4]).invertNorms().setTexture(FRAME_BUFF));
+
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
@@ -143,6 +150,39 @@ GLcanvas.prototype.initGL = function() {
     }
 }
 
+GLcanvas.prototype.drawFrame = function() {
+
+    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, 
+			    this.frameBuffs[0]);
+    this.gl.viewport(0, 0, 800, 800);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
+		  this.gl.DEPTH_BUFFER_BIT);
+
+    theMatrix.perspective(zoom.val,
+			  this.gl.viewportWidth / 
+			  this.gl.viewportHeight,
+			  0.1, 30000.0);
+
+
+//    theMatrix.modelInit();
+//    if(!mazeMode)
+//	theMatrix.modelUpdate();
+
+    // Draw all our objects
+    theMatrix.push();
+
+//    theMatrix.translate([0,0,-10]);
+
+    frameStool.draw();
+
+    theMatrix.pop();
+
+    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+
+}
+
 /**
  *  Draw the scene.
  */
@@ -150,12 +190,12 @@ GLcanvas.prototype.drawScene = function() {
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
     while (error != this.gl.NO_ERROR) {
-	alert(error);
+	alert("error: " + error);
 	error = this.gl.getError();
 
     }
 
-    this.gl.viewport(0, 0, 800, 800);
+
     this.gl.viewport(0, 0, 800, 800);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
@@ -182,6 +222,7 @@ GLcanvas.prototype.drawScene = function() {
 
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
+    this.drawFrame();
 }
 
 GLcanvas.prototype.initSkybox = function() {
@@ -220,16 +261,17 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.bufferModels();
 }
 
+var frameStool;
 GLcanvas.prototype.initFramebuffers = function() {
 
-    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
+    frameStool = new Stool();
 
     var theFramebuff = this.gl.createFramebuffer();
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, theFramebuff);
     theFramebuff.width = 512;
     theFramebuff.height = 512;
     this.frameBuffs.push(theFramebuff);
 
+    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
 
     var theTexture = this.gl.createTexture();
     this.gl.bindTexture(this.gl.TEXTURE_2D, theTexture);
@@ -250,9 +292,14 @@ GLcanvas.prototype.initFramebuffers = function() {
 			   theFramebuff.width, 
 			   theFramebuff.height);
 
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, theFramebuff);
     this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, 
-			    this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, theTexture, 0);
-    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, this.gl.DEPTH_ATTACHMENT, this.gl.RENDERBUFFER, renderBuffer);
+				 this.gl.COLOR_ATTACHMENT0, 
+				 this.gl.TEXTURE_2D, 
+				 theTexture, 0);
+    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER, 
+				    this.gl.DEPTH_ATTACHMENT, 
+				    this.gl.RENDERBUFFER, renderBuffer);
 
     this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
@@ -305,6 +352,8 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.shaders, "rugU"), RUG_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shaders, "skyRealU"), SKYBOX_TEXTURE_REAL);
+    this.gl.uniform1i(this.gl.getUniformLocation(
+	this.shaders, "framebufferU"), FRAME_BUFF);
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shaders, "heavenU"), HEAVEN_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
