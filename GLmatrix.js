@@ -123,17 +123,58 @@ GLmatrix.prototype.lookRight = function() {
 }
 
 GLmatrix.prototype.moveRight = function() {
-    this.vTranslate([-moveDist, 0, 0]); 
+    distToMove = [-moveDist/10,0,0];
+    moveCount = 10;
+//    this.vTranslate([-moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveLeft = function() {
-    this.vTranslate([moveDist, 0, 0]); 
+    distToMove = [moveDist/10,0,0];
+    moveCount = 10;
+//    this.vTranslate([moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveUp = function() {
-    this.vTranslate([0, moveDist, 0]); 
+    distToMove = [0,moveDist/10,0];
+    moveCount = 10;
+//    this.vTranslate([0, moveDist, 0]); 
 }
 
+GLmatrix.prototype.moveDown = function() {
+    distToMove = [0,-moveDist/10,0];
+    moveCount = 10;
+//    this.vTranslate([0, -moveDist, 0]); 
+}
+
+GLmatrix.prototype.moveForward = function() {
+    distToMove = [0,0,-moveDist/10];
+    moveCount = 10;
+//    this.vTranslate([0, 0, -moveDist]); 
+}
+
+GLmatrix.prototype.moveBack = function() {
+    distToMove = [0,0,moveDist/10];
+    moveCount = 10;
+//    this.vTranslate([0, 0, moveDist]); 
+}
+
+var moveCount = 0;
+var distToMove = [0,0,0];
+GLmatrix.prototype.gradualMove = function() {
+    if(moveCount > 0) {
+	this.vTranslate(distToMove);
+	moveCount -= 1;
+    }
+}
+/*
+var rotateCount = 0;
+var distToRotate = [0,0,0];
+GLmatrix.prototype.gradualRotate = function() {
+    if(rotateCount-- > 0) {
+	this.vTranslate(distToRotate);
+    }
+}
+*/
 GLmatrix.prototype.jump = function() {
     this.up3 = 2;
     this.up2 = 4;
@@ -144,10 +185,6 @@ GLmatrix.prototype.jump = function() {
     this.inJump = true;
 }
 
-GLmatrix.prototype.moveDown = function() {
-    this.vTranslate([0, -moveDist, 0]); 
-}
-
 GLmatrix.prototype.newViewAllowed = function() {
     if(mazeMode)
 	return myMaze.checkPosition();
@@ -155,18 +192,11 @@ GLmatrix.prototype.newViewAllowed = function() {
 	return myStadium.checkPosition();
 }
 
-GLmatrix.prototype.moveForward = function() {
-    this.vTranslate([0, 0, -moveDist]); 
-}
-
-GLmatrix.prototype.moveBack = function() {
-    this.vTranslate([0, 0, moveDist]); 
-}
-
 /**
  * Input: amount of time to go up for x squares.
  */
 GLmatrix.prototype.update = function() {
+    this.gradualMove();
     const x = 0.1;
     if(this.inJump == false) {
 	if(this.vMatrixNewChanged == false) { return; }
