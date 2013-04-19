@@ -171,11 +171,13 @@ clue how long it'll take to find and fix. The way to proceed is narrow down the 
 between your branch and origin/master, one-by-one.
 I wouldn't spend more than half an hour doing either of the following.
 Start at `1` and work your way down - each step is increasingly complex.
-1. Remove your changes one-by-one until something's fixed.
+
+###1. Remove your changes one-by-one until something's fixed.
 - Push changes to GitHub on your 'test' branch: `git push origin mistaken_branch`
 - See what you've changed.
 - Start removing changes from your local copy to unbreak head.
-2. Add your changes one-by-one until something's broken.
+
+###2. Add your changes one-by-one until something's broken.
 - Check out a new branch from origin/master: `git checkout -b mistake_fixer origin/master`
 - Start adding suspicious changes you see on GitHub to this branch.
 - Something that DOESN'T break code, you can directly put on master: `git push`
