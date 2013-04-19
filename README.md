@@ -129,7 +129,7 @@ To do a task
 - make changes ...
 - commit changes: `git commit -am "i did something good"`
 - notice you forgot something: `git commit -a --amend`
-- `git status` - if your branch is behind its upstream version, do a [https://github.com/msartintarm/webgl/blob/master/README.md#git-rebase](rebase)
+- `git status` - if your branch is behind its upstream version, do a [rebase](README.md#git-rebase)
 - If you do a rebase, you have to make sure your changes don't erase anything intended.:
 - ...Create a new branch on origin with your branch's name: `git push origin the_task`
 - ...Go to https://github.com/msartintarm/webgl/commits/the_task and make sure nothing\
