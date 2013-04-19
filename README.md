@@ -163,3 +163,4 @@ After you commit but before you push your changes to the remote branch, you have
 - See which branches (local and remote) exist: `git branch -a`
 - Marking a version in your project: `git tag -a v_1.0 -m "version 1 out"`
 - Showing important versions: `git tag` or `git show v_1.0`
+- `git diff --color changedFile.js`
