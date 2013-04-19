@@ -16,7 +16,7 @@ var stadiumMode;
 function GLcanvas() {
     this.objects = [];
     this.textures = [];
-    this.frameBuffs = [];
+    this.frames = [];
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
     theMatrix = new GLmatrix();
@@ -75,11 +75,12 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	stadiumMode = 1;
 	priveledgedMode.toggle();
     } else if(objToDraw == "framebuffer") {
+	this.frames.push(new GLframe);
 	this.objects.push(new Quad(
 	    [-1, 1,-4],
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
-	    [ 1,-1,-4]).invertNorms().setTexture(FRAME_BUFF));
+	    [ 1,-1,-4]).invertNorms().setTexture(this.frames[0].num));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -114,7 +115,6 @@ GLcanvas.prototype.start = function(theScene) {
 	this.initGL();
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
-	this.initFramebuffers();
 	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shaders);
 
@@ -125,6 +125,11 @@ GLcanvas.prototype.start = function(theScene) {
 
 	// Instantiate models
 	this.createScene(theScene);
+
+	// Instantiate any framebuffers created
+	for(var i = 0; i < this.frames.length; ++i) {
+	    this.frames[i].init(this.gl);
+	}
 	this.bufferModels();
 
 	// Set background color, clear everything, and
@@ -211,8 +216,6 @@ GLcanvas.prototype.drawFrame = function() {
  */
 GLcanvas.prototype.drawScene = function() {
 
-    this.drawFrame();
-
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
     while (error != this.gl.NO_ERROR) {
@@ -221,6 +224,9 @@ GLcanvas.prototype.drawScene = function() {
 
     }
 
+    for(var i = 0; i < this.frames.length; ++i) {
+	this.frames[i].drawScene(this.gl, this.shader);
+    }
 
     this.gl.viewport(0, 0, 800, 800);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
@@ -281,7 +287,6 @@ GLcanvas.prototype.initTextures = function() {
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.initTextures();
-    this.initFramebuffers();
     this.initSkybox();
     this.bufferModels();
 }
