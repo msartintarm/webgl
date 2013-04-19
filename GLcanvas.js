@@ -96,10 +96,10 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
-    theMatrix.setViewUniforms(this.gl,this.shaders);
+    theMatrix.setViewUniforms(this.gl,this.shader);
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
-	this.objects[i].draw(this.gl, this.shaders); 
+	this.objects[i].draw(this.gl, this.shader); 
     } 
 }
 
@@ -116,7 +116,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
 	this.initSkybox();
-	theMatrix.setConstUniforms(this.gl, this.shaders);
+	theMatrix.setConstUniforms(this.gl, this.shader);
 
 	theMatrix.viewInit();
 	this.objects = [];
@@ -159,8 +159,6 @@ GLcanvas.prototype.start = function(theScene) {
 GLcanvas.prototype.initGL = function() {
     try {
 	this.gl = this.canvas.getContext("experimental-webgl");
-	this.gl.viewportWidth = this.canvas.width;
-	this.gl.viewportHeight = this.canvas.height;
     }
     catch(e) {}
     // If we don't have a GL context, give up now
@@ -169,47 +167,6 @@ GLcanvas.prototype.initGL = function() {
     }
 }
 
-GLcanvas.prototype.drawFrame = function() {
-
-    var fBuff = this.frameBuffs[0];
-
-    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, 
-			    fBuff);
-    this.gl.viewport(0, 0, fBuff.width, fBuff.height);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
-		  this.gl.DEPTH_BUFFER_BIT);
-
-    theMatrix.perspective(zoom.val,
-			  this.gl.viewportWidth / 
-			  this.gl.viewportHeight,
-			  0.1, 30000.0);
-
-
-//    theMatrix.modelInit();
-//    if(!mazeMode)
-//	theMatrix.modelUpdate();
-
-    // Draw all our objects
-    theMatrix.push();
-
-
-    theMatrix.translate([0,0,-10]);
-
-    frameStool.draw(this.gl, this.shaders);
-
-    theMatrix.translate([0,0,10]);
-
-    frameStool.draw(this.gl, this.shaders);
-
-    theMatrix.pop();
-
-    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-
-    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, frameTexture);
-}
 
 /**
  *  Draw the scene.
@@ -290,156 +247,105 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initSkybox();
     this.bufferModels();
 }
-
-var frameStool, frameTexture;
-GLcanvas.prototype.initFramebuffers = function() {
-
-    frameStool = new Stool().initBuffers(this.gl);
-
-    var theFramebuff = this.gl.createFramebuffer();
-    theFramebuff.width = 512;
-    theFramebuff.height = 512;
-    this.frameBuffs.push(theFramebuff);
-
-    this.gl.activeTexture(this.gl.TEXTURE0 + FRAME_BUFF);
-
-    frameTexture = this.gl.createTexture();
-    this.gl.bindTexture(this.gl.TEXTURE_2D, frameTexture);
-   this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 
-		  theFramebuff.width, theFramebuff.height, 
-		  0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, 
-		     this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, 
-		     this.gl.TEXTURE_MIN_FILTER, 
-		     this.gl.LINEAR_MIPMAP_NEAREST);
-    this.gl.generateMipmap(this.gl.TEXTURE_2D);
-    
-    var renderBuffer = this.gl.createRenderbuffer();
-    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, renderBuffer);
-    this.gl.renderbufferStorage(this.gl.RENDERBUFFER, 
-			   this.gl.DEPTH_COMPONENT16, 
-			   theFramebuff.width, 
-			   theFramebuff.height);
-
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, theFramebuff);
-    this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, 
-				 this.gl.COLOR_ATTACHMENT0,
-				 this.gl.TEXTURE_2D, 
-				 frameTexture, 0);
-    this.gl.framebufferRenderbuffer(this.gl.FRAMEBUFFER,
-				    this.gl.DEPTH_ATTACHMENT,
-				    this.gl.RENDERBUFFER, renderBuffer);
-
-    // -- check to make sure everything is init'ed -- //
-    var status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
-
-    if(status != this.gl.FRAMEBUFFER_COMPLETE) {
-	alert("yo, framebuffer not working dawg");
-    }
-
-    this.gl.bindRenderbuffer(this.gl.RENDERBUFFER, null);
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-
-
-
-}
 		     
 GLcanvas.prototype.initShaders = function(frag, vert) {
     var fragmentShader = getShader(this.gl, frag);
     var vertexShader = getShader(this.gl, vert);
     
-    this.shaders = this.gl.createProgram();
-    this.gl.attachShader(this.shaders, vertexShader);
-    this.gl.attachShader(this.shaders, fragmentShader);
-    this.gl.linkProgram(this.shaders);
+    this.shader = this.gl.createProgram();
+    this.gl.attachShader(this.shader, vertexShader);
+    this.gl.attachShader(this.shader, fragmentShader);
+    this.gl.linkProgram(this.shader);
 
     if (!this.gl.getProgramParameter(
-	this.shaders, this.gl.LINK_STATUS)) {
+	this.shader, this.gl.LINK_STATUS)) {
         alert("Could not initialise shaders");
     }
 
-    this.gl.useProgram(this.shaders);
+    this.gl.useProgram(this.shader);
 
-    this.shaders.vPosA = 
+    this.shader.vPosA = 
 	this.gl.getAttribLocation(
-	    this.shaders, "vPosA");
+	    this.shader, "vPosA");
     this.gl.enableVertexAttribArray(
-	this.shaders.vPosA);
+	this.shader.vPosA);
 
-    this.shaders.vNormA = 
+    this.shader.vNormA = 
 	this.gl.getAttribLocation(
-	    this.shaders, "vNormA");
+	    this.shader, "vNormA");
     this.gl.enableVertexAttribArray(
-	this.shaders.vNormA);
+	this.shader.vNormA);
 
-    this.shaders.vColA = 
-	this.gl.getAttribLocation(this.shaders, "vColA");
-    this.gl.enableVertexAttribArray(this.shaders.vColA);
+    this.shader.vColA = 
+	this.gl.getAttribLocation(this.shader, "vColA");
+    this.gl.enableVertexAttribArray(this.shader.vColA);
 
-    this.shaders.textureA = 
-	this.gl.getAttribLocation(this.shaders, "textureA");
-    this.gl.enableVertexAttribArray(this.shaders.textureA);
+    this.shader.textureA = 
+	this.gl.getAttribLocation(this.shader, "textureA");
+    this.gl.enableVertexAttribArray(this.shader.textureA);
 
-    this.shaders.textureNumA = 
-	this.gl.getAttribLocation(this.shaders, "textureNumA");
-    this.gl.enableVertexAttribArray(this.shaders.textureNumA);
+    this.shader.textureNumA = 
+	this.gl.getAttribLocation(this.shader, "textureNumA");
+    this.gl.enableVertexAttribArray(this.shader.textureNumA);
 
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "woodU"), WOOD_TEXTURE);
+	this.shader, "woodU"), WOOD_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "rugU"), RUG_TEXTURE);
+	this.shader, "rugU"), RUG_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "skyRealU"), SKYBOX_TEXTURE_REAL);
+	this.shader, "skyRealU"), SKYBOX_TEXTURE_REAL);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "framebufferU"), FRAME_BUFF);
+	this.shader, "heavenU"), HEAVEN_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "heavenU"), HEAVEN_TEXTURE);
+	this.shader, "hellU"), HELL_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "hellU"), HELL_TEXTURE);
+	this.shader, "floorU"), FLOOR_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "floorU"), FLOOR_TEXTURE);
+	this.shader, "operaU"), OPERA_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "operaU"), OPERA_TEXTURE);
+	this.shader, "brickU"), BRICK_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "brickU"), BRICK_TEXTURE);
+	this.shader, "tileU"), TILE_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "tileU"), TILE_TEXTURE);
+	this.shader, "noU"), NO_TEXTURE);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "noU"), NO_TEXTURE);
+	this.shader, "sky1U"), SKYBOX_TEXTURE_1);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky1U"), SKYBOX_TEXTURE_1);
+	this.shader, "sky2U"), SKYBOX_TEXTURE_2);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky2U"), SKYBOX_TEXTURE_2);
+	this.shader, "sky3U"), SKYBOX_TEXTURE_3);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky3U"), SKYBOX_TEXTURE_3);
+	this.shader, "sky4U"), SKYBOX_TEXTURE_4);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky4U"), SKYBOX_TEXTURE_4);
+	this.shader, "sky5U"), SKYBOX_TEXTURE_5);
     this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky5U"), SKYBOX_TEXTURE_5);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shaders, "sky6U"), SKYBOX_TEXTURE_0);
+	this.shader, "sky6U"), SKYBOX_TEXTURE_0);
 
     // Perspecctive matrix
-    this.shaders.pMatU = 
-	this.gl.getUniformLocation(this.shaders, "pMatU");
+    this.shader.pMatU = 
+	this.gl.getUniformLocation(
+	    this.shader, "pMatU");
     // Model matrix
-    this.shaders.mMatU = 
-	this.gl.getUniformLocation(this.shaders, "mMatU");
+    this.shader.mMatU = 
+	this.gl.getUniformLocation(
+	    this.shader, "mMatU");
     // Viewing matrix
-    this.shaders.vMatU = 
-	this.gl.getUniformLocation(this.shaders, "vMatU");
+    this.shader.vMatU = 
+	this.gl.getUniformLocation(
+	    this.shader, "vMatU");
     // Model's normal matrix
-    this.shaders.nMatU = 
-	this.gl.getUniformLocation(this.shaders, "nMatU");
+    this.shader.nMatU = 
+	this.gl.getUniformLocation(
+	    this.shader, "nMatU");
     // Lighting matrix
-    this.shaders.lMatU = 
-	this.gl.getUniformLocation(this.shaders, "lMatU");
+    this.shader.lMatU = 
+	this.gl.getUniformLocation(
+	    this.shader, "lMatU");
     // Initial light's position
-    this.shaders.lightPosU = 
-	this.gl.getUniformLocation(this.shaders, "lightPosU");
+    this.shader.lightPosU = 
+	this.gl.getUniformLocation(
+	    this.shader, "lightPosU");
 
-    theMatrix.setConstUniforms(this.gl, this.shaders);
+    theMatrix.setConstUniforms(this.gl, this.shader);
 }
 var theCanvas;

@@ -280,7 +280,8 @@ var FLATNORMS = false;
    the norms -can- be calculated solely through their
    positions. 
 
-   All position data must be stable before this point.*/
+   All position data must be stable before this point.
+*/
 GLobject.prototype.initFlatNorms = function() {
     
     if(FLATNORMS == false || this.hasFlatNorms == true) return;

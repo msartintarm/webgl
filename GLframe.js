@@ -5,7 +5,6 @@ function GLframe() {
 
 GLframe.prototype.drawScene = function(gl_, shader_) {
     
-    return;
     gl_.uniform1i(gl_.getUniformLocation(
 	shader_, "framebufferU"), this.num);
 
@@ -37,7 +36,6 @@ GLframe.prototype.drawScene = function(gl_, shader_) {
 
 GLframe.prototype.init = function(gl_) {
 
-    return;
     this.stool = new Stool().initBuffers(gl_);
 
     this.frameBuff = gl_.createFramebuffer();
