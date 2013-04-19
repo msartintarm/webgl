@@ -135,24 +135,30 @@ GLmatrix.prototype.vMul = function(v) {
 }
 
 GLmatrix.prototype.lookUp = function() {
-    this.vRotate(lookDist * 2 * Math.PI, 
-		 [1, 0, 0]); 
+    radiansToRotate = (lookDist * 2 * Math.PI)/10;
+    rotateCount = 10;
+    vectorRotation = [1,0,0];
 }
 
 GLmatrix.prototype.lookDown = function() {
-    this.vRotate(lookDist * 2 * Math.PI, 
-		 [-1, 0, 0]); 
+    radiansToRotate = (lookDist * 2 * Math.PI)/10;
+    rotateCount = 10;
+    vectorRotation = [-1,0,0];
 }
 
 GLmatrix.prototype.lookLeft = function() {
-    this.vRotate(lookDist * 2 * Math.PI, 
-		 [ 0, 1, 0]);
+    radiansToRotate = (lookDist * 2 * Math.PI)/10;
+    rotateCount = 10;
+    vectorRotation = [0,1,0];
 }
 
 GLmatrix.prototype.lookRight = function() {
-    this.vRotate(lookDist * 2 * Math.PI, 
-		 [ 0,-1, 0]);
+    radiansToRotate = (lookDist * 2 * Math.PI)/10;
+    rotateCount = 10;
+    vectorRotation = [0,-1,0];
 }
+
+var moveDist = 2.1; //default to maze
 
 GLmatrix.prototype.moveRight = function() {
     distToMove = [-moveDist/10,0,0];
@@ -191,15 +197,16 @@ GLmatrix.prototype.gradualMove = function() {
 	moveCount -= 1;
     }
 }
-/*
+
 var rotateCount = 0;
-var distToRotate = [0,0,0];
+var radiansToRotate = 0; 
+var vectorRotation = [0,0,0];
 GLmatrix.prototype.gradualRotate = function() {
-    if(rotateCount-- > 0) {
-	this.vTranslate(distToRotate);
+    if(rotateCount > 0) {
+	this.vRotate(radiansToRotate, vectorRotation);
+	rotateCount -= 1;
     }
 }
-*/
 
 GLmatrix.prototype.jump = function() {
     this.up3 = 2;
@@ -223,12 +230,16 @@ GLmatrix.prototype.newViewAllowed = function() {
  */
 GLmatrix.prototype.update = function() {
     this.gradualMove();
+    this.gradualRotate();
     const x = 0.1;
     if(this.inJump == false) {
 	if(this.vMatrixNewChanged == false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
 	    // We only check the view if we are
 	    //  not in 'god mode'
+
+	    //Multiplies vMatrixNew * vMatrix
+	    //therefore if vMatrixNew==identity we have no movement
 	    this.vMul(this.vMatrixNew);
 	    this.vMatrixChanged = true;
 	}

@@ -1,4 +1,6 @@
 function Stadium() {  
+    moveDist = 100.1;
+
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
@@ -144,8 +146,7 @@ Stadium.prototype.checkPosition = function() {
 	}
     }
     
-    if((curPiece >= 0) && 
-       (!this.pieces[curPiece].positionLegal(newPos)) ||
+    if((!this.pieces[curPiece].positionLegal(newPos)) ||
        (!this.pieces[newPiece].positionLegal(newPos)) ||
        ballCollision
       ) {

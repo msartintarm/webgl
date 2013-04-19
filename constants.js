@@ -21,7 +21,6 @@ const FRAME_BUFF = zz++;
 
 // -- Player movement -- //
 const lookDist = 1 / 20;
-const moveDist = 2.1; //maze 2.1 
 
 // -- Maze Piece wall locations -- //
 const FRONT = 0x1; // 0001

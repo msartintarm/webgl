@@ -1,6 +1,7 @@
 var start;
 
 function Maze() {  
+    moveDist = 2.1;
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
