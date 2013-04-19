@@ -227,8 +227,11 @@ GLobject.prototype.rotate = function(vec) {
     this.rotation[0] += vec[0]; 
 }
 
-GLobject.prototype.scale = function(number) {
-    this.scale *= number; 
+GLobject.prototype.scale = function(num) {
+    for(var i = 0; i < this.posData.length; ++i) {
+	this.posData[i] *= num; 
+    }
+    return this;
 }
 
 GLobject.prototype.translate = function(vec) {

@@ -3,6 +3,9 @@ function GLmatrix() {
     this.vMatrix = mat4.create();
     this.vMatrixNew = mat4.create();
 
+    this.lightMatrix = mat4.create();
+    mat4.identity(this.lightMatrix);
+
     this.ivMatrix = mat4.create();
     mat4.identity(this.vMatrix);
     this.pMatrix = mat4.create();
@@ -13,11 +16,13 @@ function GLmatrix() {
     this.mMatrixChanged = true;
     this.vMatrixChanged = true;
     this.vMatrixNewChanged = false;
+    this.mMatrix.changed = true;
+    this.vMatrix.changed = true;
+    this.vMatrixNew.changed = false;
 }
 
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
-    mat4.perspective(
-	this.pMatrix, zoom, aRatio, zNear, zFar); 
+    mat4.perspective(this.pMatrix, zoom, aRatio, zNear, zFar); 
 }
 
 GLmatrix.prototype.modelInit = function() {
@@ -67,6 +72,33 @@ GLmatrix.prototype.vTranslate = function(vector) {
 		   this.vMatrixNew, 
 		   vector); 
     this.vMatrixNewChanged = true;
+}
+
+GLmatrix.prototype.lightTranslate = function(vector) {
+    mat4.translate(this.lightMatrix,
+		   this.lightMatrix, 
+		   vector); 
+    this.lightMatrixChanged = true;
+}
+
+var transLightMatrix = mat4.create();
+
+GLmatrix.prototype.lightRotate = function(x_change, y_change) {
+
+    mat4.identity(transLightMatrix);
+    mat4.rotate(
+	transLightMatrix,
+	transLightMatrix,
+	y_change,
+	[0, 1, 0]);
+    mat4.rotate(transLightMatrix,
+		transLightMatrix,
+		x_change,
+		[1, 0, 0]);
+    mat4.multiply(this.lightMatrix, 
+		  transLightMatrix,
+		  this.lightMatrix);
+    this.lightMatrixChanged = true;
 }
 
 GLmatrix.prototype.translateN = function(vector) {
@@ -125,37 +157,30 @@ GLmatrix.prototype.lookRight = function() {
 GLmatrix.prototype.moveRight = function() {
     distToMove = [-moveDist/10,0,0];
     moveCount = 10;
-//    this.vTranslate([-moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveLeft = function() {
     distToMove = [moveDist/10,0,0];
     moveCount = 10;
-//    this.vTranslate([moveDist, 0, 0]); 
 }
 
 GLmatrix.prototype.moveUp = function() {
     distToMove = [0,moveDist/10,0];
     moveCount = 10;
-//    this.vTranslate([0, moveDist, 0]); 
 }
 
 GLmatrix.prototype.moveDown = function() {
     distToMove = [0,-moveDist/10,0];
     moveCount = 10;
-//    this.vTranslate([0, -moveDist, 0]); 
 }
 
 GLmatrix.prototype.moveForward = function() {
     distToMove = [0,0,-moveDist/10];
     moveCount = 10;
-//    this.vTranslate([0, 0, -moveDist]); 
 }
-
 GLmatrix.prototype.moveBack = function() {
     distToMove = [0,0,moveDist/10];
     moveCount = 10;
-//    this.vTranslate([0, 0, moveDist]); 
 }
 
 var moveCount = 0;
@@ -175,6 +200,7 @@ GLmatrix.prototype.gradualRotate = function() {
     }
 }
 */
+
 GLmatrix.prototype.jump = function() {
     this.up3 = 2;
     this.up2 = 4;
@@ -250,7 +276,7 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
     gl_.uniformMatrix4fv(shader_.vMatU, 
 			 false, this.ivMatrix);
 
-    mat4.mul(ilMatrix, this.vMatrix, lightMatrix);
+    mat4.mul(ilMatrix, this.vMatrix, this.lightMatrix);
     gl_.uniformMatrix4fv(shader_.lMatU, 
 			 false, ilMatrix);
     gl_.uniform3fv(shader_.lightPosU, 

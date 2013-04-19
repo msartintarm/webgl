@@ -40,3 +40,5 @@ const LEFT_RIGHT = RIGHT | LEFT;
 const FRONT_LEFT = FRONT | LEFT;
 
 
+// -- Environment Variables -- //
+const envDEBUG = true;

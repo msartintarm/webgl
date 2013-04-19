@@ -88,6 +88,11 @@ function _oTranslate(vec_) {
     return this;
 }
 
+function _oScale(vec_) {
+    this.o.scale(vec_);
+    return this;
+}
+
 function _oInvertNorms() {
     for(var i = 0; i < this.o.normData.length; ++i) {
 	this.o.normData[i] = -this.o.normData[i];
@@ -283,9 +288,6 @@ var mouseIsDown = false;
 var lastMouseX = null;
 var lastMouseY = null;
 
-var lightMatrix = mat4.create();
-mat4.identity(lightMatrix);
-
 function handleMouseDown(event) {
     mouseIsDown = true;
     mouseX = event.clientX;
@@ -303,29 +305,14 @@ function handleMouseMove(event) {
     var newY = event.clientY;
 
     if(lightWillRotate) {
-	var transLightMatrix = mat4.create();
-	mat4.identity(transLightMatrix);
-	mat4.rotate(
-	    transLightMatrix,
-	    transLightMatrix,
-	    Math.PI / 180 * 2 * (
-		(newX - mouseX) / 10),
-	    [0, 1, 0]);
-	mat4.rotate(transLightMatrix,
-		    transLightMatrix,
-		    Math.PI / 180 * 2 * (
-			(newY - mouseY) / 10),
-		    [1, 0, 0]);
-	mat4.multiply(lightMatrix, 
-		      transLightMatrix,
-		      lightMatrix);
+	theMatrix.lightRotate(
+	    Math.PI / 180 * 2 * ((newX - mouseX) / 10), 
+	    Math.PI / 180 * 2 * ((newY - mouseY) / 10));
     } else {
-	mat4.translate(lightMatrix,
-		       lightMatrix,
-		       [(newX - mouseX) / 30, 0, 0]);
-	mat4.translate(lightMatrix,
-		       lightMatrix,
-		       [0, (mouseY - newY) / 30, 0]);
+	theMatrix.lightTranslate(
+	    [(newX - mouseX) / 30, 
+	     (mouseY - newY) / 30, 
+	     0]);
     }
     mouseX = newX;
     mouseY = newY;
@@ -341,8 +328,6 @@ function handleKeyDown(theEvent) {
 	document.getElementById("keyboard").innerHTML = "";
     }
 
-	document.getElementById("keyboard").innerHTML = 
-	    "Key " + theEvent.keyCode + " is defined.";
     switch(theEvent.keyCode) {
 	
     case 16: // shift
@@ -434,4 +419,3 @@ function handleTextureLoaded(gl_, image, texture) {
 		      gl_.LINEAR_MIPMAP_NEAREST);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 }
-
