@@ -122,6 +122,9 @@ This isn't directly related to the project, but it's pretty important for the (t
 - Rebase from remote branches by default: `git config --global branch.autosetuprebase remote`
 
 ###Workflow in Git
+- Checking the project out: `git clone GitHubUserName@https://github.com/msartintarm/webgl.git .`
+- Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
+
 To do a task 
 - Update code to latest version: `git fetch; git rebase origin/master` OR `git pull` (config adds `--rebase` flag)
 - Create and switch to the new branch: `git checkout -b the_task origin/master`
@@ -153,9 +156,7 @@ After you commit but before you push your changes to the remote branch, you have
 - Message
 
 ###Misc. Git stuff
-- Checking the project out: `git clone GitHubUserName@https://github.com/msartintarm/webgl.git .`
 - Viewing changes after files are modified: `git status`
-- Create a new Github repository: `git remote add masterBranch git@github.com:msartintarm/the_project.git`
 - See active repositories: `git remote -v`
 - See which changes are in the current branch: `git log [--oneline]` 
 - See all changes in every branch at once: `git log --graph --all --oneline`
