@@ -159,6 +159,8 @@ GLcanvas.prototype.start = function(theScene) {
 GLcanvas.prototype.initGL = function() {
     try {
 	this.gl = this.canvas.getContext("experimental-webgl");
+	this.gl.viewportWidth = this.canvas.width;
+	this.gl.viewportHeight = this.canvas.height;
     }
     catch(e) {}
     // If we don't have a GL context, give up now
