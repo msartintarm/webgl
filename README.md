@@ -164,3 +164,22 @@ After you commit but before you push your changes to the remote branch, you have
 - Marking a version in your project: `git tag -a v_1.0 -m "version 1 out"`
 - Showing important versions: `git tag` or `git show v_1.0`
 - `git diff --color changedFile.js`
+
+##How To Debug
+You have a branch `mistaken_branch` with tons of changes and something's broken. You have no 
+clue how long it'll take to find and fix. The way to proceed is narrow down the differences
+between your branch and origin/master, one-by-one.
+I wouldn't spend more than half an hour doing either of the following.
+Start at `1` and work your way down - each step is increasingly complex.
+1. Remove your changes one-by-one until something's fixed.
+- Push changes to GitHub on your 'test' branch: `git push origin mistaken_branch`
+- See what you've changed.
+- Start removing changes from your local copy to unbreak head.
+2. Add your changes one-by-one until something's broken.
+- Check out a new branch from origin/master: `git checkout -b mistake_fixer origin/master`
+- Start adding suspicious changes you see on GitHub to this branch.
+- Something that DOESN'T break code, you can directly put on master: `git push`
+- Switch to your test branch and update with changes: `git checkout mistaken_branch; git pull`
+- Update remote branch (changes already on master will be reflected): `git push -f origin mistaken_branch`
+- Switch back to mistake fixer: `git checkout mistake_fixer`, and keep adding changes.
+This will be tedious, but attacking the problem from two angles rather than one will keep you from being stuck.
