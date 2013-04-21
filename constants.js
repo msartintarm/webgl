@@ -18,7 +18,7 @@ const RUG_TEXTURE = zz++;
 const SKYBOX_TEXTURE_REAL = zz++;
 // -- Framebuffer -- // 
 const FRAME_BUFF = zz++;
-
+const TEXT_TEXTURE = zz++;
 // -- Player movement -- //
 const lookDist = 1 / 20;
 

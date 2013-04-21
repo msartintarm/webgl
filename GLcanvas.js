@@ -80,7 +80,7 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [-1, 1,-4],
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
-	    [ 1,-1,-4]).invertNorms().setTexture(this.frames[0].num));
+	    [ 1,-1,-4]).invertNorms().setTexture(TEXT_TEXTURE));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -115,6 +115,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.initGL();
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
+	this.initText();
 	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shader);
 
@@ -222,6 +223,24 @@ GLcanvas.prototype.initSkybox = function() {
     }
 }
 
+
+GLcanvas.prototype.initText = function(){
+    var canvasTexture = this.gl.createTexture();
+    var textTexture = document.getElementById('textureCanvas');
+
+    this.gl.activeTexture(this.gl.TEXTURE0 + TEXT_TEXTURE);
+
+    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    this.gl.bindTexture(this.gl.TEXTURE_2D, canvasTexture);
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, textTexture); // This is the important line!
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
+    this.gl.generateMipmap(this.gl.TEXTURE_2D);
+
+    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+}
+
 GLcanvas.prototype.initTextures = function() {
     this.textures.push(new GLtexture(
 	this.gl, WOOD_TEXTURE));
@@ -322,6 +341,8 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	this.shader, "sky5U"), SKYBOX_TEXTURE_5);
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shader, "sky6U"), SKYBOX_TEXTURE_0);
+    this.gl.uniform1i(this.gl.getUniformLocation(
+	this.shader, "textTextureU"), TEXT_TEXTURE);
 
     // Perspecctive matrix
     this.shader.pMatU = 
