@@ -1,0 +1,36 @@
+//////////////////////////////////////////////////////////////////////////
+To do list for ECE 757 Project.  To be maintained per member.
+
+'o' means the project is being worked on, 'x' means it is completed.
+//////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////
+Michael
+
+	Task							Status
+	_________________________________________________________________
+	-Framebuffer work
+		     *Jumbotron view(similar to mirror)		o
+		     *Other stadium aspects			o
+		     *Warped textures				o
+		     *Blurred textures				o
+		     *Textures that change colors (w chris)	o	
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+//////////////////////////////////////////////////////////////////////////
+Chris
+
+	Task							Status
+	_________________________________________________________________
+	-Text working for above ball (debug w mike)		o
+	-Start placing variable numbers of balls		o
+	       -with timers					o
+	       -with texture that changes color			o
+	-Have pieces of maze be laid down through particle 	o
+	 filter	     	     	     	  	  	   
+	-Bonus feature: throw up walls (more difficult)		o
+	       implement bouncing balls				o
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
