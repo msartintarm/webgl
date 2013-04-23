@@ -107,6 +107,10 @@ GLcanvas.prototype.drawModels = function() {
  * Begins the canvas.
  */
 GLcanvas.prototype.start = function(theScene) {
+
+    // Instantiate the Div this canvas element is within.
+    expand("webgl_settings_button");
+
     if (this.gl == null) {
 	// One-time display methods
 	this.canvas.style.display = "inline-block";
