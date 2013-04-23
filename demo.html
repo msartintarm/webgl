@@ -325,30 +325,6 @@ void main(void) {
         <div class='one_third'>Demo</div>
       </div>
 
-      <script type="text/javascript">
-        function expand(contentID, titleID) {
-	document.getElementById("header").style.display = "none";
-	document.getElementById("title2").style.display = "none";
-	document.getElementById("footer").style.display = "none";
-
-	var content = document.getElementById(contentID);
-        if (content.style.display !== "inline-block") {
-	if(titleID) {
-        var title = document.getElementById(titleID);
-        title.style.color = '#555577';
-	}
-        content.style.display = 'inline-block';
-	} else {
-        content.style.display = 'none';
-	if(titleID) {
-        var title = document.getElementById(titleID);
-        title.style.width = '90%';
-        title.style.color = '#111144';
-	}
-        }
-        }
-      </script>
-
       <div class='padDiv'> 
 	<div id = "banner">       
 	  <div class="lowAcross" ></div>
@@ -393,8 +369,8 @@ void main(void) {
 	      -->
 	    <table style="width:100%;">
 	    <thead><tr>
-		<th>Shapes</th>
-		<th>Environments</th>
+		<th><u>Shapes</u></th>
+		<th><u>Environments</u></th>
 	    </tr></thead>
 	    <tbody><tr>
 		<td>
@@ -443,7 +419,7 @@ void main(void) {
           </div>
           <div id="webgl_settings_button" class="content">
 	    <input type="button"
-		   onclick="expand('settings', 'title2')" 
+		   onclick="expand('settings')" 
 		   value="Change settings!" 
 		   class="button_add" />
           </div>       

@@ -427,3 +427,25 @@ function getPowerOfTwo(value, pow) {
     }
     return pow;
 }
+
+function expand(contentID, titleID) {
+    document.getElementById("header").style.display = "none";
+    document.getElementById("title2").style.display = "none";
+    document.getElementById("footer").style.display = "none";
+
+    var content = document.getElementById(contentID);
+    if (content.style.display !== "inline-block") {
+        content.style.display = "inline-block";
+	if(titleID) {
+            var title = document.getElementById(titleID);
+            title.style.color = '#555577';
+	}
+    } else {
+        content.style.display = 'none';
+	if(titleID) {
+            var title = document.getElementById(titleID);
+            title.style.width = '90%';
+            title.style.color = '#111144';
+	}
+    }
+}
