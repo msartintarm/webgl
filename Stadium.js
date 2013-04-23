@@ -1,5 +1,6 @@
 function Stadium() {  
     moveDist = 100.1;
+    lookDist = 1/15;
 
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
@@ -8,7 +9,7 @@ function Stadium() {
     this.height = 7;
     this.size = 20;
     this.balls = [];
-
+    this.numberBalls = 50;
     //# of maze pieces per side of the square floor
     //must be divisble by 5280
     var piecesPerSide = 24;
@@ -35,7 +36,12 @@ Stadium.prototype.initBuffers = function(gl_) {
 }
 
 Stadium.prototype.InitBalls = function(){
-    this.balls.push(new Ball([100,-100]));
+    for(var i=0; i < this.numberBalls; ++i){
+	var x_dist = Math.round(Math.random()*5000);
+	var z_dist = Math.round(Math.random()*-5000);
+	console.log("x: %d z: %d", x_dist, z_dist);
+	this.balls.push(new Ball([x_dist,0,z_dist]));
+    }
 }
 
 var sbX_;

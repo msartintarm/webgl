@@ -2,11 +2,36 @@ function Ball(position) {
 //    this.velocity;
 //    this.position;
 //    this.color;
-    this.radius = 5;
+    this.radius = 25;
     this.timeLeft = 100;
     this.hit = false;
     this.sphere = new Sphere(this.radius);
-    this.position = position;
+    this.position = [50,this.radius,-50];
+    this.init = true;
+    this.velocityVec = vec3.create();
+    vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
+    this.startPosition = position;
+
+    console.log("x:%f y:%f z:%f ", this.velocityVec[0], this.velocityVec[1], this.velocityVec[2]);
+}
+
+var timeStep = 0;
+Ball.prototype.initBalls = function(){
+    timeStep++;
+    var y_position = ( ((Math.abs(this.position[0]-this.startPosition[0]))/20) *
+	Math.abs(Math.sin(timeStep/(3*Math.PI)))) + this.radius;
+
+    if(Math.abs(this.position[0]-this.startPosition[0]) +
+       Math.abs(this.position[2] < this.startPosition[2]) > 10){
+
+	this.position[1] = Math.abs(y_position);
+
+	this.position[0] += this.velocityVec[0]*20;
+	this.position[2] += this.velocityVec[2]*20;
+    }
+    else{
+	this.init = false;
+    }
 }
 
 Ball.prototype.initBuffers = function (gl_){
@@ -14,8 +39,9 @@ Ball.prototype.initBuffers = function (gl_){
 }
 
 Ball.prototype.draw = function(gl_,buffer_) {
+    if(this.init) this.initBalls();
     theMatrix.push();
-    theMatrix.translate([this.position[0],this.radius,this.position[1]]);
+    theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     this.sphere.draw(gl_,buffer_);
     theMatrix.pop();
 }
@@ -29,7 +55,7 @@ Ball.prototype.detectCollision = function(oldPosition, newPosition){
 
     //check to see if we cross sphere on z axis
     var newPos = vec2.fromValues(newPosition[0],newPosition[2]);
-    var ballPos = vec2.fromValues(this.position[0], this.position[1]);
+    var ballPos = vec2.fromValues(this.position[0], this.position[2]);
 
     //calculate distance
     var distance = vec2.distance(newPos, ballPos);

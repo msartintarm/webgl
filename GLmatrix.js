@@ -53,8 +53,8 @@ GLmatrix.prototype.viewMaze = function() {
 }
 
 GLmatrix.prototype.viewStadium = function() {
-    this.vTranslate([0,2,0]);
-//    this.vRotate(Math.PI, [0, 1, 0]);
+    this.vTranslate([0,12.5,0]);
+    this.vRotate(-Math.PI/4, [0, 1, 0]);
 }
 
 GLmatrix.prototype.translate = function(vector) {
@@ -159,6 +159,7 @@ GLmatrix.prototype.lookRight = function() {
 }
 
 var moveDist = 2.1; //default to maze
+var lookDist = 1/20; //default to maze
 
 GLmatrix.prototype.moveRight = function() {
     distToMove = [-moveDist/10,0,0];
