@@ -320,32 +320,31 @@ void main(void) {
   <body onload="theCanvas = new GLcanvas();">
     <div id='wrap'>
       <div id='header'>
-        <div class='one_third'>
-          <input type="button" 
-		 onclick="expand('title2', 'content2')" 
-		 value="WebGL:" 
-		 class="button_add" />
-	</div>
+        <div class='one_third'>WebGL:</div>
         <div class='one_third'>A</div>
         <div class='one_third'>Demo</div>
       </div>
 
       <script type="text/javascript">
-        function expand() {
+        function expand(contentID, titleID) {
 	document.getElementById("header").style.display = "none";
 	document.getElementById("title2").style.display = "none";
 	document.getElementById("footer").style.display = "none";
-        var id_ = document.getElementById(arguments[1]);
-        var notOpen_ = (id_.style.display !== "inline-block");
-        if (notOpen_ == true) {
-        var cont_ = document.getElementById(arguments[0]);
-        id_.style.display = 'inline-block';
-        cont_.style.color = '#555577';
+
+	var content = document.getElementById(contentID);
+        if (content.style.display !== "inline-block") {
+	if(titleID) {
+        var title = document.getElementById(titleID);
+        title.style.color = '#555577';
+	}
+        content.style.display = 'inline-block';
 	} else {
-        id_.style.display = 'none';
-        var cont_ = document.getElementById(arguments[0]);
-        cont_.style.width = '90%';
-        cont_.style.color = '#111144';
+        content.style.display = 'none';
+	if(titleID) {
+        var title = document.getElementById(titleID);
+        title.style.width = '90%';
+        title.style.color = '#111144';
+	}
         }
         }
       </script>
@@ -389,55 +388,55 @@ void main(void) {
 	    </canvas>
           <div class="title" id="title2">            
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('cylinder');" 
+		   onclick="theCanvas.start('cylinder');" 
 		   value="Cylinder" 
 		   class="button_add" 
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('sphere');" 
+		   onclick="theCanvas.start('sphere');" 
 		   value="Sphere" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('skybox');" 
+		   onclick="theCanvas.start('skybox');" 
 		   value="Skybox" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('torus');" 
+		   onclick="theCanvas.start('torus');" 
 		   value="Torus" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('stool');" 
+		   onclick="theCanvas.start('stool');" 
 		   value="Stool" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('maze');" 
+		   onclick="theCanvas.start('maze');" 
 		   value="Maze" 
 		   class="button_add"
 		   style="width:15%;"/>
 	    <br/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('shadow');" 
+		   onclick="theCanvas.start('shadow');" 
 		   value="Shadows" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('framebuffer');" 
+		   onclick="theCanvas.start('framebuffer');" 
 		   value="Framebuffer" 
 		   class="button_add"
 		   style="width:15%;"/>
             <input type="button" 
-		   onclick="expand('title2', 'webgl_object'); theCanvas.start('stadium');" 
+		   onclick="theCanvas.start('stadium');" 
 		   value="Stadium" 
 		   class="button_add"
 		   style="width:15%;"/>
           </div>
-          <div id="webgl_object" class="content">
+          <div id="webgl_settings_button" class="content">
 	    <input type="button"
-		   onclick="expand('title2', 'settings')" 
+		   onclick="expand('settings', 'title2')" 
 		   value="Change settings!" 
 		   class="button_add" />
           </div>       
@@ -472,7 +471,7 @@ onclick="theCanvas.changeShaders('shader-fs', 'vertex-shader-bad')"/>
       
     <div id="footer"> 
       <input type="button" 
-	     onclick="expand('title4', 'content4')" 
+	     onclick="expand('content4')" 
 	     value="(c) 2013 Batman and Robin" 
 	     class="button_add" />
       <div id="content4" class="content">
