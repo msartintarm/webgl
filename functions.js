@@ -419,3 +419,11 @@ function handleTextureLoaded(gl_, image, texture) {
 		      gl_.LINEAR_MIPMAP_NEAREST);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 }
+
+function getPowerOfTwo(value, pow) {
+    var pow = pow || 1;
+    while(pow<value) {
+	pow *= 2;
+    }
+    return pow;
+}

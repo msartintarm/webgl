@@ -33,31 +33,7 @@
     <script src="Cagebox.js" type="text/javascript"></script>
     <script src="Ball.js" type="text/javascript"></script>
 
-<canvas id="textureCanvas">I'm sorry your browser does not support the HTML5 canvas element.</canvas>
-<script>
-  function getPowerOfTwo(value, pow) {
-      var pow = pow || 1;
-      while(pow<value) {
-	 pow *= 2;
-      }
-      return pow;
-  }
-
-  var canvas = document.getElementById('textureCanvas');
-  var ctx = canvas.getContext('2d');
-  var textToWrite = "HTML5 Rocks!";
-  var textSize = 12;
-  ctx.font = textSize+"px monospace"; // Set the font of the text before measuring the width!
-  canvas.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
-  canvas.height = getPowerOfTwo(2*textSize);
-
-  ctx.fillStyle = "#333333"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
-  ctx.textAlign = "center";// This determines the alignment of text, e.g. left, center, right
-  ctx.textBaseline = "middle";// This determines the baseline of the text, e.g. top, middle, bottom
-  ctx.font = "12px monospace";// This determines the size of the text and the font family used
-  ctx.fillText("HTML5 Rockss!", canvas.width/2, canvas.height/2);
-  
-</script>
+<canvas id="textureCanvas" style="display:none;">I'm sorry your browser does not support the HTML5 canvas element.</canvas>
 
     <script id="shader-fs" type="x-shader/x-fragment">
 precision mediump float;

@@ -225,8 +225,23 @@ GLcanvas.prototype.initSkybox = function() {
 
 
 GLcanvas.prototype.initText = function(){
+
     var canvasTexture = this.gl.createTexture();
     var textTexture = document.getElementById('textureCanvas');
+    var ctx = textTexture.getContext('2d');
+    var textToWrite = "HTML5 Rocks!";
+    var textSize = 12;
+    ctx.font = textSize+"px monospace"; // Set the font of the text before measuring the width!
+    textTexture.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
+    textTexture.height = getPowerOfTwo(2*textSize);
+//    textTexture.style.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
+//    textTexture.style.height = getPowerOfTwo(2*textSize);
+
+    ctx.fillStyle = "#333333"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
+    ctx.textAlign = "center";// This determines the alignment of text, e.g. left, center, right
+    ctx.textBaseline = "middle";// This determines the baseline of the text, e.g. top, middle, bottom
+    ctx.font = "12px monospace";// This determines the size of the text and the font family used
+    ctx.fillText("HTML5 Rockss!", textTexture.width/2, textTexture.height/2);
 
     this.gl.activeTexture(this.gl.TEXTURE0 + TEXT_TEXTURE);
 
