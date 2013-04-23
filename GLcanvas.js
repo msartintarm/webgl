@@ -78,12 +78,12 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	//privledged toggled in glmatrix now(go thro start sequence first)
 	//priveledgedMode.toggle();
     } else if(objToDraw == "framebuffer") {
-	this.frames.push(new GLframe);
+	this.frames.push(new GLframe(FRAME_BUFF));
 	this.objects.push(new Quad(
 	    [-1, 1,-4],
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
-	    [ 1,-1,-4]).invertNorms().setTexture(TEXT_TEXTURE));
+	    [ 1,-1,-4]).setTexture(this.frames[0].num));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -99,7 +99,6 @@ GLcanvas.prototype.bufferModels = function() {
 }
 
 GLcanvas.prototype.drawModels = function() {
-    theMatrix.setViewUniforms(this.gl,this.shader);
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
 	this.objects[i].draw(this.gl, this.shader); 
@@ -211,6 +210,7 @@ GLcanvas.prototype.drawScene = function() {
 
     // Draw all our objects
     theMatrix.push();
+    theMatrix.setViewUniforms(this.gl,this.shader);
     this.drawModels();
     theMatrix.pop();
     // Update viewer's matrix

@@ -1,6 +1,17 @@
-function GLframe() {
-    this.num = FRAME_BUFF;
+function GLframe(texture_num) {
+    this.num = texture_num;
     this.frameBuff = null;
+    this.debugHTML = document.getElementById("frameDebug");
+}
+
+GLframe.prototype.debug = function() {
+
+    if(envDEBUG == false) { return; } 
+    this.debugHTML.style.display = "inline-block";
+    this.debugHTML.innerHTML = 
+	"<b>FrameBuffer Info </b><br/>" +
+	"Width: " + this.frameBuff.width +
+	"Height: " + this.frameBuff.height;
 }
 
 GLframe.prototype.drawScene = function(gl_, shader_) {
@@ -15,23 +26,33 @@ GLframe.prototype.drawScene = function(gl_, shader_) {
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
 
-    theMatrix.perspective(zoom.val,
-			  gl_.viewportWidth / 
-			  gl_.viewportHeight,
-			  0.1, 30000.0);
+    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
+
+    var tempMatrix = mat4.clone(theMatrix.vMatrix);
+    mat4.identity(theMatrix.vMatrix);
+    theMatrix.vMatrixChanged = true;
+
+    theMatrix.setViewUniforms(gl_, shader_);
 
     theMatrix.push();
+    theMatrix.modelInit();
+
     theMatrix.translate([0,0,-10]);
     this.stool.draw(gl_, shader_);
-    theMatrix.translate([0,0,10]);
-    this.stool.draw(gl_, shader_);
+
     theMatrix.pop();
 
-    gl_.clear(gl_.STENCIL_BUFFER_BIT);
+    mat4.copy(theMatrix.vMatrix, tempMatrix);
+    theMatrix.vMatrixChanged = true;
+
+//    gl_.clear(gl_.STENCIL_BUFFER_BIT);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.num);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
+    gl_.generateMipmap(gl_.TEXTURE_2D);
+//    gl_.bindTexture(gl_.TEXTURE_2D, null);
+//    this.debug;
 }
 
 GLframe.prototype.init = function(gl_) {

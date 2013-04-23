@@ -80,7 +80,7 @@ function _oInitBuffers(gl_) {
 }
 
 function _oDraw(gl_, shader_) {
-    this.o.drawBuffers(gl_, shader_);
+    this.o.draw(gl_, shader_);
 }
 
 function _oTranslate(vec_) {
@@ -206,6 +206,7 @@ function drawDashboard() {
 	    rotateY.html.innerHTML = "Rotation - Y: " + rotateY.val + "&deg;";
 	}
     }
+
     zoom.inc();
 }
 
@@ -328,6 +329,8 @@ function handleKeyDown(theEvent) {
 	document.getElementById("keyboard").innerHTML = "";
     }
 
+    theMatrix.shiftDown = theEvent.shiftKey? true: false;
+
     switch(theEvent.keyCode) {
 	
     case 16: // shift
@@ -437,9 +440,8 @@ function expand(contentID, titleID) {
     if (content.style.display !== "inline-block") {
         content.style.display = "inline-block";
 	if(titleID) {
-            var title = document.getElementById(titleID);
-            title.style.color = '#555577';
-	}
+            document.getElementById(titleID).style.color = '#555577';
+        }
     } else {
         content.style.display = 'none';
 	if(titleID) {

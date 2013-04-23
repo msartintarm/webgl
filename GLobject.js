@@ -244,33 +244,50 @@ GLobject.prototype.translate = function(vec) {
 }
 
 /**
- * Point to, and draw, the buffered triangles
- */
-GLobject.prototype.drawBuffers = function(gl_, shader_) {
-
-    theMatrix.setVertexUniforms(gl_, shader_);
-
+   Link GL's pre-loaded attributes to the shader program
+*/
+GLobject.prototype.linkAttribs = function(gl_, shader_) {
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.vNormA, 
-	this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
+			    this.normBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(shader_.vPosA, this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
-    
+    gl_.vertexAttribPointer(shader_.vPosA, 
+			    this.posBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.vertexAttribPointer(shader_.vColA, 
-	this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
-
+			    this.colBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
     gl_.vertexAttribPointer(shader_.textureA, 
-	this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
-
+			    this.textureBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
     gl_.vertexAttribPointer(shader_.textureNumA, 
-        this.textureNumBuff.itemSize, gl_.FLOAT, false, 0, 0);
+			    this.textureNumBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
+    return this;
+}
 
+/**
+   Send the divide-and-conquer 'draw' signal to the GPU
+   Attributes must first be linked (as above).
+*/
+GLobject.prototype.drawElements = function(gl_) {
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.drawElements(gl_.TRIANGLES, 
         this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
+}
+
+/**
+ * Point to, and draw, the buffered triangles
+ */
+GLobject.prototype.draw = function(gl_, shader_) {
+
+    theMatrix.setVertexUniforms(gl_, shader_);
+    this.linkAttribs(gl_, shader_)
+	.drawElements(gl_);
 }
 
 var FLATNORMS = false;

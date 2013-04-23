@@ -1,28 +1,60 @@
+/**
+   Internally handles matrixes that will be loaded to GL
+
+   Functions manipulating these matrices set flags, ensuring we
+   do not perform expensive matrix operations unless necessary
+ */
 function GLmatrix() {
+
+    // Model, viewing, and light matrix
     this.mMatrix = mat4.create();
     this.vMatrix = mat4.create();
-    this.vMatrixNew = mat4.create();
-
-    this.lightMatrix = mat4.create();
-    mat4.identity(this.lightMatrix);
-
-    this.ivMatrix = mat4.create();
-    mat4.identity(this.vMatrix);
     this.pMatrix = mat4.create();
+    this.lightMatrix = mat4.create();
+
+    // Contains rotation or translation that is applied to 
+    // viewing matrix upon next frame (set externally)
+    this.vMatrixNew = mat4.create();
+    
+    // Inverted viewing matrix, must be recomputed each
+    // time the viewing matrix changes
+    this.ivMatrix = mat4.create();
+
+    // Ditto wit hinverted lighting matrix
+    this.ilMatrix = mat4.create();
+
+    // Normal and modelview matrices, which need to be
+    // recomputed each time the model matrix changes
+    this.nMatrix = mat4.create();   // normal
+    this.mvMatrix = mat4.create();  // modelview
+
+    // These flags tell us whether to update the matrixes above
+    this.mMatrixChanged = true;
+    this.vMatrixChanged = true;
+    this.pMatrixChanged = true;
+    this.vMatrixNewChanged = false;
+
+    // Here is some random, unrelated stuff.
     this.r2 = Math.sqrt(2);
     this.mStack = [];
     this.inJump = false;
-
-    this.mMatrixChanged = true;
-    this.vMatrixChanged = true;
-    this.vMatrixNewChanged = false;
-    this.mMatrix.changed = true;
-    this.vMatrix.changed = true;
-    this.vMatrixNew.changed = false;
+    this.shiftDown = false;
 }
 
+/**
+   Writes a perspective view into internal perspective matrix
+*/
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
     mat4.perspective(this.pMatrix, zoom, aRatio, zNear, zFar); 
+    this.pMatrixChanged = true;
+}
+
+/**
+   Writes an orthogonal view into internal perspective matrix
+*/
+GLmatrix.prototype.ortho = function(left, right, bottom, top, near, far) {
+    mat4.ortho(this.pMatrix, left, right, bottom, top, near, far); 
+    this.pMatrixChanged = true;
 }
 
 GLmatrix.prototype.modelInit = function() {
@@ -237,10 +269,17 @@ GLmatrix.prototype.dropIn = function() {
 
 
 var moveCount = 0;
-var distToMove = [0,0,0];
+var distToMove = vec3.create();
 GLmatrix.prototype.gradualMove = function() {
     if(moveCount > 0) {
-	this.vTranslate(distToMove);
+	// If user is holding down on shift, move slower!!
+	if (this.shiftDown == true) {
+	    this.vTranslate(
+		vec3.scale(vec3.create(), distToMove, 0.1),
+		distToMove);
+	} else {
+	    this.vTranslate(distToMove);
+	}
 	moveCount -= 1;
     }
 }
@@ -340,46 +379,71 @@ GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {}
 */
 GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
 
+    if (this.pMatrixChanged) {
+	gl_.uniformMatrix4fv(shader_.pMatU, 
+			     false, this.pMatrix);
+	this.pMatrixChanged = false;
+    }
     if (!this.vMatrixChanged) { return; }
     // models and lights are transformed by 
     //  inverse of viewing matrix
-    var ilMatrix = mat4.create();
     mat4.invert(this.ivMatrix, this.vMatrix);
 
-    gl_.uniformMatrix4fv(shader_.pMatU, 
-			 false, this.pMatrix);
     gl_.uniformMatrix4fv(shader_.vMatU, 
 			 false, this.ivMatrix);
 
-    mat4.mul(ilMatrix, this.vMatrix, this.lightMatrix);
+    mat4.mul(this.ilMatrix, this.vMatrix, this.lightMatrix);
     gl_.uniformMatrix4fv(shader_.lMatU, 
-			 false, ilMatrix);
+			 false, this.ilMatrix);
     gl_.uniform3fv(shader_.lightPosU, 
 		   lightPos);
     this.vMatrixChanged = false;
 }
 
+/**
+ * View / model / normal ops I got from:
+ http://www.songho.ca/opengl/gl_transform.html
+*/
+GLmatrix.prototype.setFrameUniforms = function(gl_, shader_) {
 
-var nMatrix = mat4.create();   // normal
-var mvMatrix = mat4.create();  // modelview
+    if (this.pMatrixChanged) {
+	gl_.uniformMatrix4fv(shader_.pMatU, 
+			     false, this.pMatrix);
+	this.pMatrixChanged = false;
+    }
+    if (!this.vMatrixChanged) { return; }
+    // models and lights are transformed by 
+    //  inverse of viewing matrix
+    mat4.invert(this.ivMatrix, this.vMatrix);
+
+    gl_.uniformMatrix4fv(shader_.vMatU, 
+			 false, this.ivMatrix);
+
+    mat4.mul(this.ilMatrix, this.vMatrix, this.lightMatrix);
+    gl_.uniformMatrix4fv(shader_.lMatU, 
+			 false, this.ilMatrix);
+    gl_.uniform3fv(shader_.lightPosU, 
+		   lightPos);
+    this.vMatrixChanged = false;
+}
 
 /**
  * Per-vertex uniforms must be set each time.
  */
 GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 
-
     if (!this.mMatrixChanged) { return; }
-    gl_.uniformMatrix4fv(shader_.mMatU, 
-			 false, this.mMatrix);
     // perceived normals: (inverse of modelview
     //  transposed) * object normals
-    mat4.mul(mvMatrix, this.ivMatrix, this.mMatrix);
+    mat4.mul(this.mvMatrix, this.ivMatrix, this.mMatrix);
 
-    mat4.invert(nMatrix, mvMatrix);
-    mat4.transpose(nMatrix, nMatrix);
+    mat4.invert(this.nMatrix, this.mvMatrix);
+    mat4.transpose(this.nMatrix, this.nMatrix);
+
+    gl_.uniformMatrix4fv(shader_.mMatU, 
+			 false, this.mMatrix);
     gl_.uniformMatrix4fv(shader_.nMatU, 
-			 false, nMatrix);
+			 false, this.nMatrix);
     this.mMatrixChanged = false;
 }
 
