@@ -24,8 +24,7 @@ Ball.prototype.initBalls = function(){
     if(Math.abs(this.position[0]-this.startPosition[0]) +
        Math.abs(this.position[2] < this.startPosition[2]) > 10){
 
-	this.position[1] = Math.abs(y_position);
-
+	//this.position[1] = Math.abs(y_position);
 	this.position[0] += this.velocityVec[0]*20;
 	this.position[2] += this.velocityVec[2]*20;
     }

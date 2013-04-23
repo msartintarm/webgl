@@ -7,12 +7,18 @@ each wall consists of 4 quads (right now at least)
 probably can make this a variable parameter
 */
 //function StadiumPiece(walls, ft, bt, rt, lt) { 
-function StadiumPiece(room_size, walls, textures) { 
+function StadiumPiece(room_size, walls, movingWalls, textures) { 
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
     this.b = walls & BACK;
     this.r = walls & RIGHT;
     this.l = walls & LEFT;
+
+
+    this.fM = movingWalls & FRONT;
+    this.bM = movingWalls & BACK;
+    this.rM = movingWalls & RIGHT;
+    this.lM = movingWalls & LEFT;
 
     // only affects translate at the moment: TODO (mst)
     this.size = room_size;
@@ -26,14 +32,14 @@ function StadiumPiece(room_size, walls, textures) {
 	    this.lt = textures;
     } else {
 	var texNum = 0;
-	if(this.f) { this.ft = textures[texNum++] };
-	if(this.b) { this.bt = textures[texNum++] };
-	if(this.r) { this.rt = textures[texNum++] };
-	if(this.l) { this.lt = textures[texNum] };
+	if(this.f || this.fM) { this.ft = textures[texNum++] };
+	if(this.b || this.bM) { this.bt = textures[texNum++] };
+	if(this.r || this.rM) { this.rt = textures[texNum++] };
+	if(this.l || this.lM) { this.lt = textures[texNum] };
     }
 
     this.objs = [];
-
+    this.objsMove = [];
     var a,b,c,d,at,bt,ct,dt;
 
     //always draw the tiled floor
@@ -51,14 +57,14 @@ function StadiumPiece(room_size, walls, textures) {
    you see lengths of 11.4 that is to give the long wall texture preference
    over the short edge(looks crappy) when those conflicts do occur.
 */
-    if(this.f){ this.qFront = this.FrontWall(this.ft); }
-    if(this.l){ this.qLeft = this.LeftWall(this.lt); }
-    if(this.r){ this.qRight = this.RightWall(this.rt); }
-    if(this.b){ this.qBack = this.BackWall(this.bt); }
+    if(this.f || this.fM){ this.qFront = this.FrontWall(this.ft, this.fM); }
+    if(this.l || this.lM){ this.qLeft = this.LeftWall(this.lt, this.lM); }
+    if(this.r || this.rM){ this.qRight = this.RightWall(this.rt, this.rM); }
+    if(this.b || this.bM){ this.qBack = this.BackWall(this.bt, this.bM); }
     // Bounds - N, S, W, and E - are created within as well.
 };
 
-StadiumPiece.prototype.FrontWall = function(texture) {
+StadiumPiece.prototype.FrontWall = function(texture, move) {
     var front = new SixSidedPrism(
 	[ sbX_, sh_, -(sbZ_ + sbW_)],
 	[ sbX_,  0, -(sbZ_ + sbW_)],
@@ -68,12 +74,13 @@ StadiumPiece.prototype.FrontWall = function(texture) {
 	[-sbX_,  0, -(sbZ_ + sbW_)],
 	[-sbX_,  0, -(sbZ_      )],
 	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
-    this.objs.push(front);
+    if(move) this.objsMove.push(front);
+    else this.objs.push(front);
     this.north = -(sbZ_ - 1);
     return front;
 }
 
-StadiumPiece.prototype.LeftWall = function(texture) {
+StadiumPiece.prototype.LeftWall = function(texture, move) {
     var left = new SixSidedPrism(
 	[-(sbZ_ + sbW_), sh_,-sbX_],
 	[-(sbZ_ + sbW_),  0,-sbX_],
@@ -83,12 +90,13 @@ StadiumPiece.prototype.LeftWall = function(texture) {
 	[-(sbZ_ + sbW_),  0, sbX_],
 	[-(sbZ_      ),  0, sbX_],
 	[-(sbZ_      ), sh_, sbX_]).setTexture(texture);
-    this.objs.push(left);
+    if(move) this.objsMove.push(left);
+    else this.objs.push(left);
     this.west = -(sbZ_ - 1);
     return left;
 }
 
-StadiumPiece.prototype.RightWall = function(texture) {
+StadiumPiece.prototype.RightWall = function(texture, move) {
     var right = new SixSidedPrism(
 	[sbZ_ + sbW_, sh_, -sbX_],
 	[sbZ_ + sbW_,  0, -sbX_],
@@ -98,12 +106,13 @@ StadiumPiece.prototype.RightWall = function(texture) {
 	[sbZ_      ,  0, -sbX_],
 	[sbZ_      ,  0,  sbX_],
 	[sbZ_      , sh_,  sbX_]).setTexture(texture);
-    this.objs.push(right);
+    if(move) this.objsMove.push(right);
+    else this.objs.push(right);
     this.east = sbZ_ - 1;
     return right;
 }
 
-StadiumPiece.prototype.BackWall = function(texture) {
+StadiumPiece.prototype.BackWall = function(texture, move) {
     var back = new SixSidedPrism(
 	[ sbX_, sh_, sbZ_      ],
 	[ sbX_,  0, sbZ_      ],
@@ -113,12 +122,20 @@ StadiumPiece.prototype.BackWall = function(texture) {
 	[-sbX_,  0, sbZ_      ],
 	[-sbX_,  0, sbZ_ + sbW_],
 	[-sbX_, sh_, sbZ_ + sbW_]).setTexture(texture);
-    this.objs.push(back);
+    if(move) this.objsMove.push(back);
+    else this.objs.push(back);
     this.south = sbZ_ - 1;
     return back;
 }
 
-StadiumPiece.prototype.initBuffers = _objsInitBuffers;
+StadiumPiece.prototype.initBuffers = function(gl_){
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].initBuffers(gl_);
+    }
+    for(var i = 0; i < this.objsMove.length; ++i) {
+	this.objsMove[i].initBuffers(gl_);
+    }
+}
 
 /**
  *  Translation will be done right after the object
@@ -130,10 +147,15 @@ StadiumPiece.prototype.translate = function(vec_) {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].translate(vec_);
     }
-    if(this.f){ this.north += vec_[2]; }
-    if(this.l){ this.west += vec_[0]; }
-    if(this.r){ this.east += vec_[0]; }
-    if(this.b){ this.south += vec_[2]; }
+
+    for(var i = 0; i < this.objsMove.length; ++i) {
+	this.objsMove[i].translate(vec_);
+    }
+
+    if(this.f || this.fM){ this.north += vec_[2]; }
+    if(this.l || this.lM){ this.west += vec_[0]; }
+    if(this.r || this.rM){ this.east += vec_[0]; }
+    if(this.b || this.bM){ this.south += vec_[2]; }
     return this;
 }
 
@@ -160,9 +182,20 @@ StadiumPiece.prototype.positionLegal = function(position) {
     return true;
 }
 
+var timeStep = 0;
 StadiumPiece.prototype.draw = function(gl_, shaders_) {
 
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].draw(gl_, shaders_);
+    }
+
+    var y_position = 100*Math.abs(Math.sin(timeStep/(1000*Math.PI)));
+    if(timeStep == 540) timeStep = 0;
+    else timeStep++;
+    for(var i = 0; i < this.objsMove.length; ++i) {
+	theMatrix.push();
+	theMatrix.translate([0,y_position,0]);
+	this.objsMove[i].draw(gl_, shaders_);
+	theMatrix.pop();
     }
 };

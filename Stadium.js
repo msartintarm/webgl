@@ -59,6 +59,7 @@ Stadium.prototype.Field = function(){
     for(var i=0;i<this.width; i++){
 	for(var j=0;j<this.width; j++){
 	    var wall = 0;
+	    var movingWall = 0;
 	    if(i==0)
 		wall |= BACK;
 	    if(j==0)
@@ -68,13 +69,16 @@ Stadium.prototype.Field = function(){
 	    if(j==(this.width-1))
 		wall |= RIGHT;
 
-	    this.Piece(wall, BRICK_TEXTURE).atCoord(j,i);	    
+	    if(i==((this.width/2)-1) )
+		movingWall |= FRONT;
+
+	    this.Piece(wall, movingWall, BRICK_TEXTURE).atCoord(j,i);	    
 	}
     }
 }
 
-Stadium.prototype.Piece = function(a,b) {
-    var newPiece = new StadiumPiece(this.size, a,b);
+Stadium.prototype.Piece = function(a,b,c) {
+    var newPiece = new StadiumPiece(this.size, a,b,c);
     this.pieces.push(newPiece);
     return newPiece;
 }
