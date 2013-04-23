@@ -1,9 +1,7 @@
-###This page uses (Github-flavored) Markdown. 
-(Here is a useful web-based Markdown editor.)[notepag.es]
+#####This page uses Github-flavored Markdown. 
+- http://notepag.es is a useful browser-based Markdown editor.
 
 #  CS 559 Spring 2013: Project #2
-
-
 
 **Title:** Caged
 
@@ -25,7 +23,7 @@
          The code in this project was created from scratch by us.
 
 **Movement:**  To move through the maze use the up, down, left, right, keys in
-  	                     order to move forward, backwards, left, and right respectively.
+                         order to move forward, backwards, left, and right respectively.
 			     	                The 'a' and 'd' keys will cause the camera to look left and 
 						    	            right respectively.  Once you complete the maze you get GOD 
 
