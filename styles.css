@@ -6,6 +6,9 @@ h1 {
 }
 h2 { text-align: center; }
 
+thead { color: green; }
+tbody { color: blue; }
+
 a:link {text-decoration: none; }
 a:visited {color: #880000; }
 a:active {color: red; }
@@ -14,6 +17,12 @@ a:hover {text-decoration: underline; color: red;}
 div#map_canvas {
     width: 400px;
     height: 400px;
+}
+
+canvas#glcanvas {
+    position: absolute 0px 0px;
+    background-color: red;
+    display: none;
 }
 
 body {

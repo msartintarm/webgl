@@ -382,57 +382,64 @@ void main(void) {
           <div class="border topRight" ></div>
 	  <div class="border lowLeft" ></div>
           <div class="border lowRight" ></div>
-            <canvas id="glcanvas" width="1100" height="800" style="position: absolute 0px 0px; background-color:red; display:none;">
+            <canvas id="glcanvas" width="1100" height="800">
 			Your browser doesn't appear to support the HTML5 
 			<code>&lt;canvas&gt;</code> element.
 	    </canvas>
           <div class="title" id="title2">            
-            <input type="button" 
-		   onclick="theCanvas.start('cylinder');" 
-		   value="Cylinder" 
-		   class="button_add" 
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('sphere');" 
-		   value="Sphere" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('skybox');" 
-		   value="Skybox" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('torus');" 
-		   value="Torus" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('stool');" 
-		   value="Stool" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('maze');" 
-		   value="Maze" 
-		   class="button_add"
-		   style="width:15%;"/>
-	    <br/>
-            <input type="button" 
-		   onclick="theCanvas.start('shadow');" 
-		   value="Shadows" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('framebuffer');" 
-		   value="Framebuffer" 
-		   class="button_add"
-		   style="width:15%;"/>
-            <input type="button" 
-		   onclick="theCanvas.start('stadium');" 
-		   value="Stadium" 
-		   class="button_add"
-		   style="width:15%;"/>
+	    <!-- 
+		 We use a table with 2x2 cells, 
+		 lumping all the links into their own cells..
+	      -->
+	    <table style="width:100%;">
+	    <thead><tr>
+		<th>Shapes</th>
+		<th>Environments</th>
+	    </tr></thead>
+	    <tbody><tr>
+		<td>
+		  <input type="button" 
+			 onclick="theCanvas.start('cylinder');" 
+			 value="Cylinder" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('sphere');" 
+			 value="Sphere" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('skybox');" 
+			 value="Skybox" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('torus');" 
+			 value="Torus" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('stool');" 
+			 value="Stool" 
+			 class="button_add"/>
+		</td>
+		<td>
+		  <input type="button" 
+			 onclick="theCanvas.start('maze');" 
+			 value="Maze" 
+			 class="button_add"/>
+		  <br/>
+		  <input type="button" 
+			 onclick="theCanvas.start('shadow');" 
+			 value="Shadows" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('framebuffer');" 
+			 value="Framebuffer" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('stadium');" 
+			 value="Stadium" 
+			 class="button_add"/>
+		</td>
+	    </tr></tbody>
+	    </table>
           </div>
           <div id="webgl_settings_button" class="content">
 	    <input type="button"
