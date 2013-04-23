@@ -21,8 +21,18 @@ function GLmatrix() {
     this.vMatrixNew.changed = false;
 }
 
+/**
+   Writes a perspective view into internal perspective matrix
+*/
 GLmatrix.prototype.perspective = function(zoom, aRatio, zNear, zFar) {
     mat4.perspective(this.pMatrix, zoom, aRatio, zNear, zFar); 
+}
+
+/**
+   Writes an orthogonal view into internal perspective matrix
+*/
+GLmatrix.prototype.ortho = function(left, right, bottom, top, near, far) {
+    mat4.ortho(this.pMatrix, left, right, bottom, top, near, far); 
 }
 
 GLmatrix.prototype.modelInit = function() {

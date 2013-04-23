@@ -75,12 +75,12 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	stadiumMode = 1;
 	priveledgedMode.toggle();
     } else if(objToDraw == "framebuffer") {
-	this.frames.push(new GLframe);
+	this.frames.push(new GLframe(FRAME_BUFF));
 	this.objects.push(new Quad(
 	    [-1, 1,-4],
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
-	    [ 1,-1,-4]).invertNorms().setTexture(TEXT_TEXTURE));
+	    [ 1,-1,-4]).invertNorms().setTexture(this.frames[0].num));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));

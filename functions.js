@@ -206,6 +206,7 @@ function drawDashboard() {
 	    rotateY.html.innerHTML = "Rotation - Y: " + rotateY.val + "&deg;";
 	}
     }
+
     zoom.inc();
 }
 

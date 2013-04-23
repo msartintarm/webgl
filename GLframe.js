@@ -1,6 +1,17 @@
-function GLframe() {
-    this.num = FRAME_BUFF;
+function GLframe(texture_num) {
+    this.num = texture_num;
     this.frameBuff = null;
+    this.debugHTML = document.getElementById("frameDebug");
+}
+
+GLframe.prototype.debug = function() {
+
+    if(envDEBUG == false) { return; } 
+    this.debugHTML.style.display = "inline-block";
+    this.debugHTML.innerHTML = 
+	"<b>FrameBuffer Info </b><br/>" +
+	"Width: " + this.frameBuff.width +
+	"Height: " + this.frameBuff.height;
 }
 
 GLframe.prototype.drawScene = function(gl_, shader_) {
@@ -15,23 +26,21 @@ GLframe.prototype.drawScene = function(gl_, shader_) {
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
 
-    theMatrix.perspective(zoom.val,
-			  gl_.viewportWidth / 
-			  gl_.viewportHeight,
-			  0.1, 30000.0);
+    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
 
-    theMatrix.push();
+    theMatrix.modelInit();
     theMatrix.translate([0,0,-10]);
     this.stool.draw(gl_, shader_);
     theMatrix.translate([0,0,10]);
     this.stool.draw(gl_, shader_);
-    theMatrix.pop();
 
     gl_.clear(gl_.STENCIL_BUFFER_BIT);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.num);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
+
+    this.debug;
 }
 
 GLframe.prototype.init = function(gl_) {
