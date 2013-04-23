@@ -158,6 +158,12 @@ GLmatrix.prototype.lookRight = function() {
     vectorRotation = [0,-1,0];
 }
 
+GLmatrix.prototype.turnAround = function(rads){
+    radiansToRotate = rads/10;
+    rotateCount = 10;
+    vectorRotation = [0,1,0];
+}
+
 var moveDist = 2.1; //default to maze
 var lookDist = 1/20; //default to maze
 

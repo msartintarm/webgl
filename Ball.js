@@ -11,20 +11,19 @@ function Ball(position) {
     this.velocityVec = vec3.create();
     vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
     this.startPosition = position;
-
-    console.log("x:%f y:%f z:%f ", this.velocityVec[0], this.velocityVec[1], this.velocityVec[2]);
 }
 
 var timeStep = 0;
 Ball.prototype.initBalls = function(){
+    var y_position = ( ((Math.abs(this.position[0]-this.startPosition[0]))/5) *
+	Math.abs(Math.cos(timeStep/(300*Math.PI)))) + this.radius;
+
     timeStep++;
-    var y_position = ( ((Math.abs(this.position[0]-this.startPosition[0]))/20) *
-	Math.abs(Math.sin(timeStep/(3*Math.PI)))) + this.radius;
 
     if(Math.abs(this.position[0]-this.startPosition[0]) +
-       Math.abs(this.position[2] < this.startPosition[2]) > 10){
+       Math.abs(this.position[2] < this.startPosition[2]) > 50){
 
-	//this.position[1] = Math.abs(y_position);
+	this.position[1] = Math.abs(y_position);
 	this.position[0] += this.velocityVec[0]*20;
 	this.position[2] += this.velocityVec[2]*20;
     }

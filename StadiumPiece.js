@@ -8,6 +8,9 @@ probably can make this a variable parameter
 */
 //function StadiumPiece(walls, ft, bt, rt, lt) { 
 function StadiumPiece(room_size, walls, movingWalls, textures) { 
+    this.y_positionF = 0;
+    this.y_positionR = 0;
+
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
     this.b = walls & BACK;
@@ -16,9 +19,8 @@ function StadiumPiece(room_size, walls, movingWalls, textures) {
 
 
     this.fM = movingWalls & FRONT;
-    this.bM = movingWalls & BACK;
     this.rM = movingWalls & RIGHT;
-    this.lM = movingWalls & LEFT;
+   
 
     // only affects translate at the moment: TODO (mst)
     this.size = room_size;
@@ -33,13 +35,15 @@ function StadiumPiece(room_size, walls, movingWalls, textures) {
     } else {
 	var texNum = 0;
 	if(this.f || this.fM) { this.ft = textures[texNum++] };
-	if(this.b || this.bM) { this.bt = textures[texNum++] };
+	if(this.b) { this.bt = textures[texNum++] };
 	if(this.r || this.rM) { this.rt = textures[texNum++] };
-	if(this.l || this.lM) { this.lt = textures[texNum] };
+	if(this.l) { this.lt = textures[texNum] };
     }
 
     this.objs = [];
-    this.objsMove = [];
+    this.objsMoveFront = [];
+    this.objsMoveRight = [];
+
     var a,b,c,d,at,bt,ct,dt;
 
     //always draw the tiled floor
@@ -74,7 +78,7 @@ StadiumPiece.prototype.FrontWall = function(texture, move) {
 	[-sbX_,  0, -(sbZ_ + sbW_)],
 	[-sbX_,  0, -(sbZ_      )],
 	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
-    if(move) this.objsMove.push(front);
+    if(move) this.objsMoveFront.push(front);
     else this.objs.push(front);
     this.north = -(sbZ_ - 1);
     return front;
@@ -90,8 +94,7 @@ StadiumPiece.prototype.LeftWall = function(texture, move) {
 	[-(sbZ_ + sbW_),  0, sbX_],
 	[-(sbZ_      ),  0, sbX_],
 	[-(sbZ_      ), sh_, sbX_]).setTexture(texture);
-    if(move) this.objsMove.push(left);
-    else this.objs.push(left);
+    this.objs.push(left);
     this.west = -(sbZ_ - 1);
     return left;
 }
@@ -106,7 +109,7 @@ StadiumPiece.prototype.RightWall = function(texture, move) {
 	[sbZ_      ,  0, -sbX_],
 	[sbZ_      ,  0,  sbX_],
 	[sbZ_      , sh_,  sbX_]).setTexture(texture);
-    if(move) this.objsMove.push(right);
+    if(move) this.objsMoveRight.push(right);
     else this.objs.push(right);
     this.east = sbZ_ - 1;
     return right;
@@ -122,8 +125,7 @@ StadiumPiece.prototype.BackWall = function(texture, move) {
 	[-sbX_,  0, sbZ_      ],
 	[-sbX_,  0, sbZ_ + sbW_],
 	[-sbX_, sh_, sbZ_ + sbW_]).setTexture(texture);
-    if(move) this.objsMove.push(back);
-    else this.objs.push(back);
+    this.objs.push(back);
     this.south = sbZ_ - 1;
     return back;
 }
@@ -132,8 +134,11 @@ StadiumPiece.prototype.initBuffers = function(gl_){
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].initBuffers(gl_);
     }
-    for(var i = 0; i < this.objsMove.length; ++i) {
-	this.objsMove[i].initBuffers(gl_);
+    for(var i = 0; i < this.objsMoveFront.length; ++i) {
+	this.objsMoveFront[i].initBuffers(gl_);
+    }
+    for(var i = 0; i < this.objsMoveRight.length; ++i) {
+	this.objsMoveRight[i].initBuffers(gl_);
     }
 }
 
@@ -148,14 +153,18 @@ StadiumPiece.prototype.translate = function(vec_) {
 	this.objs[i].translate(vec_);
     }
 
-    for(var i = 0; i < this.objsMove.length; ++i) {
-	this.objsMove[i].translate(vec_);
+    for(var i = 0; i < this.objsMoveFront.length; ++i) {
+	this.objsMoveFront[i].translate(vec_);
+    }
+
+    for(var i = 0; i < this.objsMoveRight.length; ++i) {
+	this.objsMoveRight[i].translate(vec_);
     }
 
     if(this.f || this.fM){ this.north += vec_[2]; }
-    if(this.l || this.lM){ this.west += vec_[0]; }
+    if(this.l){ this.west += vec_[0]; }
     if(this.r || this.rM){ this.east += vec_[0]; }
-    if(this.b || this.bM){ this.south += vec_[2]; }
+    if(this.b){ this.south += vec_[2]; }
     return this;
 }
 
@@ -173,11 +182,58 @@ StadiumPiece.prototype.Prism = _Prism;
  *  This is the area it encompasses, plus a buffer zone.
  * 
  */
-StadiumPiece.prototype.positionLegal = function(position) {
-    if(this.f && position[2] < this.north) { return false; }
-    if(this.b && position[2] > this.south) { return false; }
-    if(this.l && position[0] < this.west) { return false; }
-    if(this.r && position[0] > this.east) { return false; }
+StadiumPiece.prototype.reflect = function(currentPosition, newPosition, index, flip){
+   var hypt, oppo, angle;
+    hypt = vec3.distance(
+	vec3.fromValues(currentPosition[0], currentPosition[1], currentPosition[2]),
+	vec3.fromValues(newPosition[0],newPosition[1],newPosition[2]));
+    oppo = Math.abs(currentPosition[index]-newPosition[index]);
+    
+    angle = 2*Math.sin(oppo/hypt);
+    
+    //flip x or z for direction of angle
+    if(index == 2) index = 0;
+    else if(index == 0) index = 2;
+
+    if(flip) angle = -1*angle;
+
+    //heading in -x direction
+    if(currentPosition[index]-newPosition[index] > 0){
+	angle = angle*-1;
+    }
+    
+    theMatrix.turnAround(angle);
+}
+StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
+    if(this.f && newPosition[2] < this.north) { 
+	this.reflect(currentPosition, newPosition, 2, true);
+	return false; 
+    }
+    if(this.b && newPosition[2] > this.south) { 
+	this.reflect(currentPosition, newPosition, 2, false);
+	return false; 
+    }
+    if(this.l && newPosition[0] < this.west) { 
+	this.reflect(currentPosition, newPosition, 0, false);
+	return false; 
+    }
+    if(this.r && newPosition[0] > this.east) { 
+	this.reflect(currentPosition, newPosition, 0, true);
+	return false; 
+    }
+
+
+    if(this.fM && newPosition[2] < this.north &&
+      this.y_positionF >= -125) { 
+	this.reflect(currentPosition, newPosition, 2, true);
+	return false; 
+    }
+
+    if(this.rM && newPosition[0] < this.east &&
+       this.y_positionR >= -125){
+	this.reflect(currentPosition, newPosition, 0, true);
+	return false; 
+      }
 
     return true;
 }
@@ -189,13 +245,31 @@ StadiumPiece.prototype.draw = function(gl_, shaders_) {
 	this.objs[i].draw(gl_, shaders_);
     }
 
-    var y_position = 100*Math.abs(Math.sin(timeStep/(1000*Math.PI)));
-    if(timeStep == 540) timeStep = 0;
-    else timeStep++;
-    for(var i = 0; i < this.objsMove.length; ++i) {
-	theMatrix.push();
-	theMatrix.translate([0,y_position,0]);
-	this.objsMove[i].draw(gl_, shaders_);
-	theMatrix.pop();
+    
+    if(stadiumInit == 1){
+	this.y_positionF = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
+	this.y_positionR = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
+	
+	if(timeStep == 540) timeStep = 0;
+	else timeStep++;
+
+	if(this.y_positionF >= -125){
+	    for(var i = 0; i < this.objsMoveFront.length; ++i) {
+		theMatrix.push();
+		theMatrix.translate([0,this.y_positionF,0]);
+		this.objsMoveFront[i].draw(gl_, shaders_);
+		theMatrix.pop();
+	    }
+	}
+	
+	if(this.y_positionR >= -125){
+	    for(var i = 0; i < this.objsMoveRight.length; ++i) {
+		theMatrix.push();
+		theMatrix.translate([0,this.y_positionR,0]);
+		this.objsMoveRight[i].draw(gl_, shaders_);
+		theMatrix.pop();
+	    }
+	}
+    
     }
 };

@@ -1,13 +1,14 @@
+var stadiumInit;
 function Stadium() {  
     moveDist = 100.1;
     lookDist = 1/15;
+    stadiumInit = 0;
 
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
-    this.width = 5;
     this.height = 7;
-    this.size = 20;
+
     this.balls = [];
     this.numberBalls = 50;
     //# of maze pieces per side of the square floor
@@ -39,7 +40,6 @@ Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
 	var x_dist = Math.round(Math.random()*5000);
 	var z_dist = Math.round(Math.random()*-5000);
-	console.log("x: %d z: %d", x_dist, z_dist);
 	this.balls.push(new Ball([x_dist,0,z_dist]));
     }
 }
@@ -69,8 +69,17 @@ Stadium.prototype.Field = function(){
 	    if(j==(this.width-1))
 		wall |= RIGHT;
 
-	    if(i==((this.width/2)-1) )
-		movingWall |= FRONT;
+	    if(i==((this.width/2)-1) ){
+		if(j != (this.width/4) &&
+		   j != (this.width*3/4) )
+		    movingWall |= FRONT;
+	    }
+	    
+	    if(j==((this.width/2)-1) ){
+		if(i != (this.width/4) &&
+		   i != (this.width*3/4) )		
+		movingWall |= RIGHT;
+	    }
 
 	    this.Piece(wall, movingWall, BRICK_TEXTURE).atCoord(j,i);	    
 	}
@@ -84,9 +93,12 @@ Stadium.prototype.Piece = function(a,b,c) {
 }
 
 Stadium.prototype.draw = function(gl_,buffer_) {
+    var ballInitOver = true;
     for(var i = 0; i<this.balls.length; i++){
+	if(this.balls[i].init) ballInitOver = false;
 	this.balls[i].draw(gl_, buffer_);
     }
+    if(ballInitOver) stadiumInit = 1;
 
     for(var i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_, buffer_);
@@ -155,12 +167,10 @@ Stadium.prototype.checkPosition = function() {
 	    i = this.balls.length;
 	}
     }
-    
-    if((!this.pieces[curPiece].positionLegal(newPos)) ||
-       (!this.pieces[newPiece].positionLegal(newPos)) ||
-       ballCollision
-      ) {
+
+    if(!this.pieces[newPiece].positionLegal(curPos, newPos) ||
+       !this.pieces[curPiece].positionLegal(curPos, newPos)){
 	mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
-    }	
+    }
     return true;
 }
