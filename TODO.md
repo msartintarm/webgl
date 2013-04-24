@@ -17,7 +17,8 @@
 |Task         |Status      |
 |-------------|:----------:|
 | Framebuffer work | x |
-| Jumbotron View (similar to mirror) | o |
+| Jumbotron View (similar to mirror) | x |
+| Integrate Jumbotron into stadium | o |
 | Other stadium aspects | o |
 | Warped textures | o |
 | Blurred textures | o |
@@ -38,11 +39,11 @@
 | - Implement bouncing balls | o |
 
 ####Outstanding bugs
-|Task         |Status      |
+|Task         |Fixed?      |
 |-------------|:----------:|
 | 'Disk' crashes if slices > loops | o |
 | Skybox has visible seams | o |
-| GL viewport retains dimensions of GLframe (512 x 512) when GLframe is used | o |
+| GL viewport retains dimensions of GLframe (512 x 512) when GLframe is used | x |
 
 ####Unclaimed (bonus features)
 |Task         |Status      |
