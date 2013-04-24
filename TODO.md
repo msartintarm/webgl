@@ -37,8 +37,16 @@
 | - Bonus feature: throw up walls (more difficult) | o |
 | - Implement bouncing balls | o |
 
+####Outstanding bugs
+|Task         |Status      |
+|-------------|:----------:|
+| 'Disk' crashes if slices > loops | o |
+| Skybox has visible seams | o |
+| GL viewport retains dimensions of GLframe (512 x 512) when GLframe is used | o |
+
 ####Unclaimed (bonus features)
 |Task         |Status      |
 |-------------|:----------:|
 | Background music | o |
 | Sound effects | o |
+| Text wrapping to Jumbotron cylinders (see pic) | o |
