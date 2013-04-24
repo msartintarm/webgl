@@ -13,11 +13,6 @@
  */
 function SixSidedPrism(a, b, c, d, e, f, g, h) { 
     this.objs = [];
-    var at,bt,ct,dt;
-    at = vec2.fromValues(0.0,0.0);
-    bt = vec2.fromValues(1.0,0.0);
-    ct = vec2.fromValues(0.0,1.0);
-    dt = vec2.fromValues(1.0,1.0);
 
     // Front and back faces.
     this.q1 = this.Quad(a,b,d,c);
@@ -32,6 +27,14 @@ function SixSidedPrism(a, b, c, d, e, f, g, h) {
     this.q6 = this.Quad(h,e,d,a);
     return this;
 };
+
+/**
+   When given the top left and bottom right coord 
+   for a prism, constructs one
+*/
+function RectangularPrism(topL, botR, height) {
+    return new SixSidedPrism([
+	
 
 SixSidedPrism.prototype.Quad = _Quad;
 SixSidedPrism.prototype.translate = _objsTranslate;

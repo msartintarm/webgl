@@ -55,22 +55,19 @@ varying vec3 vertNorm;
 varying vec2 textureV;
 varying vec2 shadowV;
 
-uniform sampler2D samplerU;
 uniform sampler2D woodU;
-uniform sampler2D rugU;
 uniform sampler2D heavenU;
 uniform sampler2D hellU;
 uniform sampler2D floorU;
-uniform sampler2D operaU;
 uniform sampler2D brickU;
 uniform sampler2D tileU;
-uniform sampler2D noU;
 uniform sampler2D sky1U;
 uniform sampler2D sky2U;
 uniform sampler2D sky3U;
 uniform sampler2D sky4U;
 uniform sampler2D sky5U;
 uniform sampler2D sky6U;
+uniform sampler2D rugU;
 uniform sampler2D skyRealU;
 uniform sampler2D framebufferU;
 uniform sampler2D textTextureU;
@@ -119,10 +116,6 @@ if (textureNumV < 0.1) {
     vec2(textureV.s, textureV.t));
     specColor = textureColor.rgb * specularV2;
     ambConst = 0.2;
-} else if (textureNumV < 4.1) {
-  textureColor = texture2D(
-    operaU, 
-    vec2(textureV.s, textureV.t));
 } else if (textureNumV < 5.1) {
   textureColor = texture2D(
     brickU, 
