@@ -57,6 +57,8 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.objects.push(new Skybox());
     } else if(objToDraw == "stool") {
 	this.objects.push(new Stool());
+    } else if(objToDraw == "jumbotron") {
+	this.objects.push(new Jumbotron());
     } else if(objToDraw == "shadow") {
 	this.objects.push(new MazePiece(5, NO_LEFT, TILE_TEXTURE));
 	this.objects.push(new Stool());
@@ -199,7 +201,7 @@ GLcanvas.prototype.drawScene = function() {
     }
 
     for(var i = 0; i < this.frames.length; ++i) {
-	this.frames[i].drawScene(this.gl, this.shader);
+	this.frames[i].drawScene(this.gl);
     }
 
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);

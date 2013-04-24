@@ -68,5 +68,6 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 //}
 
 Disk.prototype.initBuffers = _oInitBuffers;
+Disk.prototype.invertNorms = _oInvertNorms;
 Disk.prototype.translate = _oTranslate;
 Disk.prototype.draw = _oDraw;

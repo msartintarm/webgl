@@ -2,6 +2,7 @@ function GLframe(texture_num) {
     this.num = texture_num;
     this.frameBuff = null;
     this.debugHTML = document.getElementById("frameDebug");
+    this.stool = new Stool();
 }
 
 GLframe.prototype.debug = function() {
@@ -57,7 +58,7 @@ GLframe.prototype.drawScene = function(gl_) {
 
 GLframe.prototype.init = function(gl_) {
 
-    this.stool = new Stool().initBuffers(gl_);
+    this.stool.initBuffers(gl_);
 
     this.frameBuff = gl_.createFramebuffer();
     this.frameBuff.width = 512;
