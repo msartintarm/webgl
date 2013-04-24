@@ -40,5 +40,5 @@
 ####Unclaimed (bonus features)
 |Task         |Status      |
 |-------------|:----------:|
-| Background music | x |
-| Sound effects | x |
+| Background music | o |
+| Sound effects | o |
