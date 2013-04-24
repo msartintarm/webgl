@@ -336,19 +336,10 @@ function handleKeyDown(theEvent) {
 	document.getElementById("keyboard").innerHTML = "";
     }
 
-    theMatrix.shiftDown = theEvent.shiftKey? true: false;
-
     switch(theEvent.keyCode) {
 	
     case 16: // shift
-	lightWillRotate = !lightWillRotate;
-	if(lightWillRotate) {
-	    document.getElementById("keyboard").innerHTML = 
-		"Light movement: TRANSLATION --> ROTATION";
-	} else {
-	    document.getElementById("keyboard").innerHTML = 
-		"Light movement: TRANSLATION <-- ROTATION";
-	}
+	theMatrix.toggleSpeed();
 	break;
     case 32: // spacebar
 	theMatrix.jump();

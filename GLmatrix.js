@@ -38,7 +38,9 @@ function GLmatrix() {
     this.r2 = Math.sqrt(2);
     this.mStack = [];
     this.inJump = false;
-    this.shiftDown = false;
+
+    // Toggled by member function 'toggleSpeed'
+    this.speedMode = 0;
 }
 
 /**
@@ -267,18 +269,49 @@ GLmatrix.prototype.dropIn = function() {
     StadiumInitSeqNum = 2;
 }
 
+/**
+   Rotate between supported speed modes:
+   0 = normal
+   1 = slow (.1x)
+   2 = fast (10x)
+   'Shift' toggles between the modes
+*/
+GLmatrix.prototype.toggleSpeed = function() {
+    this.speedMode += 1;
+    this.speedMode %= 3;
+    var keyboard = document.getElementById("keyboard");
+    switch (this.speedMode) {
+    case 1: // Slow speed
+	keyboard.innerHTML = "Speed mode: SLOW";
+	break;
+    case 2: // Fast speed
+	keyboard.innerHTML = "Speed mode: FAST";
+	break;
+    default:  // Normal speed
+	keyboard.innerHTML = "Speed mode: NORMAL";
+	break;
+    }
+}
 
 var moveCount = 0;
 var distToMove = vec3.create();
 GLmatrix.prototype.gradualMove = function() {
+
     if(moveCount > 0) {
-	// If user is holding down on shift, move slower!!
-	if (this.shiftDown == true) {
+	switch (this.speedMode) {
+	case 1: // Slow speed
 	    this.vTranslate(
 		vec3.scale(vec3.create(), distToMove, 0.1),
 		distToMove);
-	} else {
+	    break;
+	case 2: // Fast speed
+	    this.vTranslate(
+		vec3.scale(vec3.create(), distToMove, 10.0),
+		distToMove);
+	    break;
+	default:  // Normal speed
 	    this.vTranslate(distToMove);
+	    break;
 	}
 	moveCount -= 1;
     }

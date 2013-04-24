@@ -49,7 +49,6 @@ GLframe.prototype.drawScene = function(gl_) {
     theMatrix.vMatrixChanged = true;
     theMatrix.pMatrixChanged = true;
 
-//    gl_.clear(gl_.STENCIL_BUFFER_BIT);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.num);
