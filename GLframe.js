@@ -27,6 +27,7 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
 
+    var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
     theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
 
     var tempMatrix = mat4.clone(theMatrix.vMatrix);
@@ -44,7 +45,9 @@ GLframe.prototype.drawScene = function(gl_) {
     theMatrix.pop();
 
     mat4.copy(theMatrix.vMatrix, tempMatrix);
+    mat4.copy(theMatrix.pMatrix, tempMatrix1);
     theMatrix.vMatrixChanged = true;
+    theMatrix.pMatrixChanged = true;
 
 //    gl_.clear(gl_.STENCIL_BUFFER_BIT);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);

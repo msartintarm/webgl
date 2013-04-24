@@ -227,7 +227,6 @@ GLcanvas.prototype.drawScene = function() {
 
     // Draw all our objects
     theMatrix.push();
-    theMatrix.setViewUniforms(this.gl,this.shader);
     this.drawModels();
     theMatrix.pop();
     // Update viewer's matrix

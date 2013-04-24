@@ -286,6 +286,7 @@ GLobject.prototype.drawElements = function(gl_) {
  */
 GLobject.prototype.draw = function(gl_) {
 
+    theMatrix.setViewUniforms(gl_);
     theMatrix.setVertexUniforms(gl_);
     this.linkAttribs(gl_).drawElements(gl_);
 }

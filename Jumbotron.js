@@ -63,13 +63,13 @@ function Jumbotron() {
     this.frame = new GLframe(FRAME_BUFF);
 
     this.jumboScreen = SixSidedPrism.rectangle(a, b, c, d, widthScreen)
-	.setSixTextures(FRAME_BUFF, FRAME_BUFF, FRAME_BUFF,
-			FRAME_BUFF, FRAME_BUFF, FRAME_BUFF) ;
+	.setSixTextures(NO_TEXTURE, FRAME_BUFF, NO_TEXTURE,
+			NO_TEXTURE, NO_TEXTURE, NO_TEXTURE) ;
     return this;
 }
 
 Jumbotron.prototype.initBuffers = function(gl_) {
-//  this.frame.init(gl_);
+    this.frame.init(gl_);
     this.thickCylA.initBuffers(gl_);
     this.thickCylB.initBuffers(gl_);
     this.jumboScreen.initBuffers(gl_);
@@ -77,7 +77,7 @@ Jumbotron.prototype.initBuffers = function(gl_) {
 
 Jumbotron.prototype.draw = function(gl_) {
 
-//  this.frame.drawScene(gl_);
+    this.frame.drawScene(gl_);
     theMatrix.scale([0.05, 0.05, 0.05]);
     theMatrix.push();
     theMatrix.rotate(Math.PI / 2, [1, 0, 0]);
