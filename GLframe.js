@@ -20,9 +20,10 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.uniform1i(gl_.getUniformLocation(
 	gl_.shader, "framebufferU"), this.num);
 
-    gl_.activeTexture(gl_.TEXTURE0 + this.num);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
 			this.frameBuff);
+    gl_.viewportWidth = this.frameBuff.width;
+    gl_.viewportHeight = this.frameBuff.height;
     gl_.viewport(0, 0, this.frameBuff.width, this.frameBuff.height);
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
@@ -49,6 +50,9 @@ GLframe.prototype.drawScene = function(gl_) {
     theMatrix.vMatrixChanged = true;
     theMatrix.pMatrixChanged = true;
 
+    gl_.viewportWidth = theCanvas.canvas.width;
+    gl_.viewportHeight = theCanvas.canvas.height;
+    gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.num);
