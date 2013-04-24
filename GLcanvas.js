@@ -32,6 +32,8 @@ function GLcanvas() {
     stoolHeight = new MatrixData("stoolHeight");
     priveledgedMode = new booleanData("priveledgedStats");
 
+    this.resizeCounter = 0;
+
     return this;
 }
 
@@ -180,12 +182,17 @@ GLcanvas.prototype.initGL = function() {
     }
 
     window.onresize = function() {
-	theCanvas.canvas.width = theCanvas.canvas.offsetWidth - 16;
-	theCanvas.canvas.height = window.innerHeight - 150;
+	theCanvas.resizeCounter = 30;
     }
-
 }
 
+GLcanvas.prototype.resize = function() {
+	this.canvas.width = this.canvas.offsetWidth - 16;
+	this.canvas.height = window.innerHeight - 150;
+	this.gl.viewportWidth = this.canvas.width;
+	this.gl.viewportHeight = this.canvas.height;
+
+}
 
 /**
  *  Draw the scene.
@@ -228,6 +235,12 @@ GLcanvas.prototype.drawScene = function() {
     // Update side display as well
     drawDashboard();
 
+    if(this.resizeCounter > 0) {
+	this.resizeCounter -= 1;
+	if(this.resizeCounter == 0) {
+	    this.resize();
+	}
+    }
 
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
