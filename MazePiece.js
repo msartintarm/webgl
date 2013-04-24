@@ -168,9 +168,9 @@ MazePiece.prototype.positionLegal = function(position) {
     return true;
 }
 
-MazePiece.prototype.draw = function(gl_, shaders_) {
+MazePiece.prototype.draw = function(gl_) {
 
     for(var i = 0; i < this.objs.length; ++i) {
-	this.objs[i].draw(gl_, shaders_);
+	this.objs[i].draw(gl_);
     }
 };

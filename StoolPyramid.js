@@ -32,7 +32,7 @@ StoolPyramid.prototype.initBuffers = _objsInitBuffers;
 
 const d_ = 2.75; // Arbitrary const denoting dist betwen chairs
 
-StoolPyramid.prototype.draw = function(gl_, buffer_) {
+StoolPyramid.prototype.draw = function(gl_) {
 
     var seat_location = min_stool_height + 12*(stoolHeight.val/60)+12*0.02;
     if(rotateY.val > 180){
@@ -46,38 +46,38 @@ StoolPyramid.prototype.draw = function(gl_, buffer_) {
     theMatrix.push();
     theMatrix.translate([40,2,-100]);
     theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
-    this.disk.draw(gl_, buffer_);
+    this.disk.draw(gl_);
   
     theMatrix.translate([0,0,-0.001]);
     theMatrix.rotate(Math.PI,[0,1,0]);
-    this.disk.draw(gl_, buffer_);
+    this.disk.draw(gl_);
     theMatrix.pop();
 
     theMatrix.push();
     theMatrix.translate([80,2,-100]);
     theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
-    this.sphere.draw(gl_,buffer_);
+    this.sphere.draw(gl_);
     theMatrix.pop();
 
     theMatrix.push();
     theMatrix.translate([80,3,-80]);
     theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
-    this.torus.draw(gl_, buffer_);
+    this.torus.draw(gl_);
     theMatrix.pop();
 
     theMatrix.push();
     theMatrix.translate([40,4,-20]);
     theMatrix.rotate(rotateY.val*Math.PI/180, [r2,r2,0]);
-    this.cylinder.draw(gl_, buffer_);
+    this.cylinder.draw(gl_);
     theMatrix.pop();
 
     //place stool pyramid
     theMatrix.push();
     theMatrix.translate([-40,0,-110]);
-    this.floor.draw(gl_,buffer_);
+    this.floor.draw(gl_);
     for(var i = 5; i > 0; --i) {
 	theMatrix.push();
-	this.drawBase(gl_, buffer_, i);
+	this.drawBase(gl_, i);
 	theMatrix.pop();
 	theMatrix.translate([0, seat_location, -d_]);
     }
@@ -85,14 +85,14 @@ StoolPyramid.prototype.draw = function(gl_, buffer_) {
 }
 
 
-StoolPyramid.prototype.drawBase = function(gl_, buffer_, size) {
+StoolPyramid.prototype.drawBase = function(gl_, size) {
 
     for(var i = 0; i < size; ++i) {
 	for(var j = 0; j < size - 1; ++j) {
-	    this.sp.draw(gl_, buffer_);
+	    this.sp.draw(gl_);
 	    theMatrix.translate([-d_, 0, -d_]);
 	}
-	this.sp.draw(gl_, buffer_);
+	this.sp.draw(gl_);
 	theMatrix.translate([(size) * d_, 0,
 			     (size - 2) * d_]);
     }

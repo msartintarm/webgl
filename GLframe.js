@@ -14,10 +14,10 @@ GLframe.prototype.debug = function() {
 	"Height: " + this.frameBuff.height;
 }
 
-GLframe.prototype.drawScene = function(gl_, shader_) {
-    
+GLframe.prototype.drawScene = function(gl_) {
+
     gl_.uniform1i(gl_.getUniformLocation(
-	shader_, "framebufferU"), this.num);
+	gl_.shader, "framebufferU"), this.num);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.num);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
@@ -32,13 +32,13 @@ GLframe.prototype.drawScene = function(gl_, shader_) {
     mat4.identity(theMatrix.vMatrix);
     theMatrix.vMatrixChanged = true;
 
-    theMatrix.setViewUniforms(gl_, shader_);
+    theMatrix.setViewUniforms(gl_);
 
     theMatrix.push();
     theMatrix.modelInit();
 
     theMatrix.translate([0,0,-10]);
-    this.stool.draw(gl_, shader_);
+    this.stool.draw(gl_);
 
     theMatrix.pop();
 

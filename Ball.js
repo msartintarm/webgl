@@ -36,11 +36,11 @@ Ball.prototype.initBuffers = function (gl_){
     this.sphere.initBuffers(gl_);
 }
 
-Ball.prototype.draw = function(gl_,buffer_) {
+Ball.prototype.draw = function(gl_) {
     if(this.init) this.initBalls();
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
-    this.sphere.draw(gl_,buffer_);
+    this.sphere.draw(gl_);
     theMatrix.pop();
 }
 

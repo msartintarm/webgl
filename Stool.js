@@ -63,14 +63,14 @@ Stool.prototype.Torus = _Torus;
 Stool.prototype.initBuffers = _objsInitBuffers;
 
 var seat_location;
-Stool.prototype.draw = function(gl_, buffer_) {
+Stool.prototype.draw = function(gl_) {
     seat_height = stoolHeight.val;
     seat_location = min_stool_height + 12*(seat_height/60)+12*0.02;
 
     //draws the legs of the stool
     for (var i = 0; i < 4; ++i) {
 	theMatrix.rotate(Math.PI/2, [0, 1.0, 0]);
-	this.stoolLeg.draw(gl_, buffer_);
+	this.stoolLeg.draw(gl_);
     }
     
     //draw first fat cylinder
@@ -79,25 +79,25 @@ Stool.prototype.draw = function(gl_, buffer_) {
     theMatrix.scale([12,12,12]);    
     theMatrix.rotate(Math.PI/2, [1, 0, 0]);
 
-    this.disk1t.draw(gl_, buffer_);
-    this.cylinder1.draw(gl_, buffer_);
+    this.disk1t.draw(gl_);
+    this.cylinder1.draw(gl_);
     theMatrix.translate([0,0,0.015]);
-    this.disk1b.draw(gl_, buffer_);
+    this.disk1b.draw(gl_);
 
     //draw long cylinder between two fats
-    this.cylinder2.draw(gl_, buffer_);
+    this.cylinder2.draw(gl_);
 
     //draw bottom fat cylinder
     theMatrix.translate([0,0,0.06]);
-    this.disk3t.draw(gl_, buffer_);
-    this.cylinder3.draw(gl_, buffer_);
+    this.disk3t.draw(gl_);
+    this.cylinder3.draw(gl_);
     theMatrix.translate([0,0,0.015]);
-    this.disk3b.draw(gl_, buffer_);
+    this.disk3b.draw(gl_);
 
     //draw torus
     theMatrix.translate([0,0,0.2]);
     theMatrix.rotate(-Math.PI/2, [1, 0, 0]);
-    this.torus1.draw(gl_, buffer_);
+    this.torus1.draw(gl_);
 
     theMatrix.pop();
 
@@ -107,17 +107,17 @@ Stool.prototype.draw = function(gl_, buffer_) {
     theMatrix.rotate((seat_height/4.375)*100*Math.PI, [0, 1, 0]);
     theMatrix.rotate(Math.PI/2, [1, 0, 0]);
     theMatrix.scale([12,12,12]); 
-    this.disk4.draw(gl_, buffer_);
-    this.cylinder4.draw(gl_, buffer_);
+    this.disk4.draw(gl_);
+    this.cylinder4.draw(gl_);
 
     theMatrix.translate([0,0,0.005]);
-    this.cylinder5.draw(gl_, buffer_);
+    this.cylinder5.draw(gl_);
     theMatrix.translate([0,0,0.0075]);
-    this.cylinder6.draw(gl_, buffer_);
+    this.cylinder6.draw(gl_);
     theMatrix.translate([0,0,0.0015]);
-    this.cylinder7.draw(gl_, buffer_);
+    this.cylinder7.draw(gl_);
     theMatrix.translate([0,0,0.006]);
-    this.cylinder8.draw(gl_, buffer_);
+    this.cylinder8.draw(gl_);
 
     theMatrix.pop();
     

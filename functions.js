@@ -79,8 +79,8 @@ function _oInitBuffers(gl_) {
     return this;
 }
 
-function _oDraw(gl_, shader_) {
-    this.o.draw(gl_, shader_);
+function _oDraw(gl_) {
+    this.o.draw(gl_);
 }
 
 function _oTranslate(vec_) {

@@ -21,6 +21,4 @@ function Skybox() {
 }
 
 Skybox.prototype.initBuffers = _oInitBuffers;
-Skybox.prototype.draw = function(gl_, shader_) {
-    this.o.draw(gl_, shader_);
-}
+Skybox.prototype.draw = _oDraw;

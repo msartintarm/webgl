@@ -246,25 +246,26 @@ GLobject.prototype.translate = function(vec) {
 /**
    Link GL's pre-loaded attributes to the shader program
 */
-GLobject.prototype.linkAttribs = function(gl_, shader_) {
+GLobject.prototype.linkAttribs = function(gl_) {
+
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
-    gl_.vertexAttribPointer(shader_.vNormA, 
+    gl_.vertexAttribPointer(gl_.shader.vNormA, 
 			    this.normBuff.itemSize, 
 			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(shader_.vPosA, 
+    gl_.vertexAttribPointer(gl_.shader.vPosA, 
 			    this.posBuff.itemSize, 
 			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
-    gl_.vertexAttribPointer(shader_.vColA, 
+    gl_.vertexAttribPointer(gl_.shader.vColA, 
 			    this.colBuff.itemSize, 
 			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(shader_.textureA, 
+    gl_.vertexAttribPointer(gl_.shader.textureA, 
 			    this.textureBuff.itemSize,
 			    gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
-    gl_.vertexAttribPointer(shader_.textureNumA, 
+    gl_.vertexAttribPointer(gl_.shader.textureNumA, 
 			    this.textureNumBuff.itemSize,
 			    gl_.FLOAT, false, 0, 0);
     return this;
@@ -283,11 +284,10 @@ GLobject.prototype.drawElements = function(gl_) {
 /**
  * Point to, and draw, the buffered triangles
  */
-GLobject.prototype.draw = function(gl_, shader_) {
+GLobject.prototype.draw = function(gl_) {
 
-    theMatrix.setVertexUniforms(gl_, shader_);
-    this.linkAttribs(gl_, shader_)
-	.drawElements(gl_);
+    theMatrix.setVertexUniforms(gl_);
+    this.linkAttribs(gl_).drawElements(gl_);
 }
 
 var FLATNORMS = false;

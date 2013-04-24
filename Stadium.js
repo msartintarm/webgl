@@ -92,16 +92,16 @@ Stadium.prototype.Piece = function(a,b,c) {
     return newPiece;
 }
 
-Stadium.prototype.draw = function(gl_,buffer_) {
+Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
-	this.balls[i].draw(gl_, buffer_);
+	this.balls[i].draw(gl_);
     }
     if(ballInitOver) stadiumInit = 1;
 
     for(var i = 0; i<this.pieces.length; i++){
-	this.pieces[i].draw(gl_, buffer_);
+	this.pieces[i].draw(gl_);
     }
 }
 

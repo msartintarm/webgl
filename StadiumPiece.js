@@ -239,10 +239,10 @@ StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
 }
 
 var timeStep = 0;
-StadiumPiece.prototype.draw = function(gl_, shaders_) {
+StadiumPiece.prototype.draw = function(gl_) {
 
     for(var i = 0; i < this.objs.length; ++i) {
-	this.objs[i].draw(gl_, shaders_);
+	this.objs[i].draw(gl_);
     }
 
     
@@ -257,7 +257,7 @@ StadiumPiece.prototype.draw = function(gl_, shaders_) {
 	    for(var i = 0; i < this.objsMoveFront.length; ++i) {
 		theMatrix.push();
 		theMatrix.translate([0,this.y_positionF,0]);
-		this.objsMoveFront[i].draw(gl_, shaders_);
+		this.objsMoveFront[i].draw(gl_);
 		theMatrix.pop();
 	    }
 	}
@@ -266,7 +266,7 @@ StadiumPiece.prototype.draw = function(gl_, shaders_) {
 	    for(var i = 0; i < this.objsMoveRight.length; ++i) {
 		theMatrix.push();
 		theMatrix.translate([0,this.y_positionR,0]);
-		this.objsMoveRight[i].draw(gl_, shaders_);
+		this.objsMoveRight[i].draw(gl_);
 		theMatrix.pop();
 	    }
 	}

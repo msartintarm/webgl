@@ -72,9 +72,9 @@ Maze.prototype.Piece = function(a,b) {
     return newPiece;
 }
 
-Maze.prototype.draw = function(gl_,buffer_) {
+Maze.prototype.draw = function(gl_) {
     for(var i = 0; i<this.pieces.length; i++){
-	this.pieces[i].draw(gl_, buffer_);
+	this.pieces[i].draw(gl_);
     }
 }
 

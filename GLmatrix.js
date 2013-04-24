@@ -371,16 +371,16 @@ GLmatrix.prototype.update = function() {
  * Uniforms that are const over the lifetime
  *  of a shader only need to be set once.
 */
-GLmatrix.prototype.setConstUniforms = function(gl_, shader_) {}
+GLmatrix.prototype.setConstUniforms = function(gl_) {}
 
 /**
  * View / model / normal ops I got from:
  http://www.songho.ca/opengl/gl_transform.html
 */
-GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
+GLmatrix.prototype.setViewUniforms = function(gl_) {
 
     if (this.pMatrixChanged) {
-	gl_.uniformMatrix4fv(shader_.pMatU, 
+	gl_.uniformMatrix4fv(gl_.shader.pMatU, 
 			     false, this.pMatrix);
 	this.pMatrixChanged = false;
     }
@@ -389,13 +389,13 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
     //  inverse of viewing matrix
     mat4.invert(this.ivMatrix, this.vMatrix);
 
-    gl_.uniformMatrix4fv(shader_.vMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.vMatU, 
 			 false, this.ivMatrix);
 
     mat4.mul(this.ilMatrix, this.vMatrix, this.lightMatrix);
-    gl_.uniformMatrix4fv(shader_.lMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.lMatU, 
 			 false, this.ilMatrix);
-    gl_.uniform3fv(shader_.lightPosU, 
+    gl_.uniform3fv(gl_.shader.lightPosU, 
 		   lightPos);
     this.vMatrixChanged = false;
 }
@@ -404,10 +404,10 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
  * View / model / normal ops I got from:
  http://www.songho.ca/opengl/gl_transform.html
 */
-GLmatrix.prototype.setFrameUniforms = function(gl_, shader_) {
+GLmatrix.prototype.setFrameUniforms = function(gl_) {
 
     if (this.pMatrixChanged) {
-	gl_.uniformMatrix4fv(shader_.pMatU, 
+	gl_.uniformMatrix4fv(gl_.shader.pMatU, 
 			     false, this.pMatrix);
 	this.pMatrixChanged = false;
     }
@@ -416,13 +416,13 @@ GLmatrix.prototype.setFrameUniforms = function(gl_, shader_) {
     //  inverse of viewing matrix
     mat4.invert(this.ivMatrix, this.vMatrix);
 
-    gl_.uniformMatrix4fv(shader_.vMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.vMatU, 
 			 false, this.ivMatrix);
 
     mat4.mul(this.ilMatrix, this.vMatrix, this.lightMatrix);
-    gl_.uniformMatrix4fv(shader_.lMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.lMatU, 
 			 false, this.ilMatrix);
-    gl_.uniform3fv(shader_.lightPosU, 
+    gl_.uniform3fv(gl_.shader.lightPosU, 
 		   lightPos);
     this.vMatrixChanged = false;
 }
@@ -430,7 +430,7 @@ GLmatrix.prototype.setFrameUniforms = function(gl_, shader_) {
 /**
  * Per-vertex uniforms must be set each time.
  */
-GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
+GLmatrix.prototype.setVertexUniforms = function(gl_) {
 
     if (!this.mMatrixChanged) { return; }
     // perceived normals: (inverse of modelview
@@ -440,9 +440,9 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
     mat4.invert(this.nMatrix, this.mvMatrix);
     mat4.transpose(this.nMatrix, this.nMatrix);
 
-    gl_.uniformMatrix4fv(shader_.mMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.mMatU, 
 			 false, this.mMatrix);
-    gl_.uniformMatrix4fv(shader_.nMatU, 
+    gl_.uniformMatrix4fv(gl_.shader.nMatU, 
 			 false, this.nMatrix);
     this.mMatrixChanged = false;
 }

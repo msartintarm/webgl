@@ -26,6 +26,4 @@ function Cagebox() {
 }
 
 Cagebox.prototype.initBuffers = _oInitBuffers;
-Cagebox.prototype.draw = function(gl_, shader_) {
-    this.o.draw(gl_, shader_);
-}
+Cagebox.prototype.draw = _oDraw;

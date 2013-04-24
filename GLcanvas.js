@@ -300,12 +300,10 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
 }
 		     
 GLcanvas.prototype.initShaders = function(frag, vert) {
-    var fragmentShader = getShader(this.gl, frag);
-    var vertexShader = getShader(this.gl, vert);
     
     this.shader = this.gl.createProgram();
-    this.gl.attachShader(this.shader, vertexShader);
-    this.gl.attachShader(this.shader, fragmentShader);
+    this.gl.attachShader(this.shader, getShader(this.gl, frag));
+    this.gl.attachShader(this.shader, getShader(this.gl, vert));
     this.gl.linkProgram(this.shader);
 
     if (!this.gl.getProgramParameter(
@@ -314,6 +312,7 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     }
 
     this.gl.useProgram(this.shader);
+    this.gl.shader = this.shader;
 
     this.shader.vPosA = 
 	this.gl.getAttribLocation(

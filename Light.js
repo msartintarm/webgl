@@ -12,10 +12,10 @@ Light.prototype.initBuffers = function(gl_) {
     this.o.initBuffers(gl_);
 }
 
-Light.prototype.draw = function(gl_, shader_) {
+Light.prototype.draw = function(gl_) {
     theMatrix.push();
     theMatrix.mul(theMatrix.vMatrix);
     theMatrix.mul(theMatrix.lightMatrix);
-    this.o.draw(gl_, shader_);
+    this.o.draw(gl_);
     theMatrix.pop();
 }

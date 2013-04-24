@@ -72,13 +72,13 @@ SixSidedPrism.prototype.initBuffers = function(gl_) {
     this.q6.initBuffers(gl_);
 };
 
-SixSidedPrism.prototype.draw = function(gl_, shaders_) {
+SixSidedPrism.prototype.draw = function(gl_) {
 
-    this.q1.draw(gl_, shaders_);
-    this.q2.draw(gl_, shaders_);
-    this.q3.draw(gl_, shaders_);
-    this.q4.draw(gl_, shaders_);
-    this.q5.draw(gl_, shaders_);
-    this.q6.draw(gl_, shaders_);
+    this.q1.draw(gl_);
+    this.q2.draw(gl_);
+    this.q3.draw(gl_);
+    this.q4.draw(gl_);
+    this.q5.draw(gl_);
+    this.q6.draw(gl_);
 };
 
