@@ -1,5 +1,6 @@
 #####This page uses Github-flavored Markdown. 
 - http://notepag.es is a useful browser-based Markdown editor.
+- https://www.khronos.org/registry/webgl/specs/1.0/#2.1: Excellent WebGL specifications reference
 
 #  CS 559 Spring 2013: Project #2
 
