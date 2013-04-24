@@ -118,6 +118,8 @@ GLcanvas.prototype.start = function(theScene) {
 	this.canvas.style.display = "inline-block";
 	this.canvas.style.width = "100%";
 	this.canvas.width = this.canvas.offsetWidth - 16;
+	this.canvas.height = window.innerHeight - 150;
+
 	this.initGL();
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
@@ -174,6 +176,12 @@ GLcanvas.prototype.initGL = function() {
     if (!this.gl) {
 	alert("Unable to initialize WebGL. Your browser may not support it.");
     }
+
+    window.onresize = function() {
+	theCanvas.canvas.width = theCanvas.canvas.offsetWidth - 16;
+	theCanvas.canvas.height = window.innerHeight - 150;
+    }
+
 }
 
 
@@ -194,7 +202,7 @@ GLcanvas.prototype.drawScene = function() {
 	this.frames[i].drawScene(this.gl, this.shader);
     }
 
-    this.gl.viewport(0, 0, 800, 800);
+    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
 
