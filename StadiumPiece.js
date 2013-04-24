@@ -238,6 +238,42 @@ StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
     return true;
 }
 
+StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition, ball) {
+    if(this.f && newPosition[2] < this.north) { 
+       	alret("hit front wall");
+	//ball.reflect(currentPosition, newPosition, 2, true);
+	//return false; 
+    }
+    if(this.b && newPosition[2] > this.south) { 
+	//this.reflect(currentPosition, newPosition, 2, false);
+	//return false; 
+    }
+    if(this.l && newPosition[0] < this.west) { 
+	//this.reflect(currentPosition, newPosition, 0, false);
+	//return false; 
+    }
+    if(this.r && newPosition[0] > this.east) { 
+	//this.reflect(currentPosition, newPosition, 0, true);
+	//return false; 
+    }
+
+
+    if(this.fM && newPosition[2] < this.north &&
+      this.y_positionF >= -125) { 
+	//this.reflect(currentPosition, newPosition, 2, true);
+	//return false; 
+    }
+
+    if(this.rM && newPosition[0] < this.east &&
+       this.y_positionR >= -125){
+	//this.reflect(currentPosition, newPosition, 0, true);
+	//return false; 
+      }
+
+    return true;
+}
+
+
 var timeStep = 0;
 StadiumPiece.prototype.draw = function(gl_) {
 

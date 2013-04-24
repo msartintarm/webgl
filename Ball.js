@@ -9,6 +9,7 @@ function Ball(position) {
     this.position = [50,this.radius,-50];
     this.init = true;
     this.velocityVec = vec3.create();
+    this.velocity = 0;
     vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
     this.startPosition = position;
 }
@@ -29,22 +30,23 @@ Ball.prototype.initBalls = function(){
     }
     else{
 	this.init = false;
+	this.position[1] = this.radius;
     }
 }
-
 Ball.prototype.initBuffers = function (gl_){
     this.sphere.initBuffers(gl_);
 }
 
 Ball.prototype.draw = function(gl_) {
     if(this.init) this.initBalls();
+
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     this.sphere.draw(gl_);
     theMatrix.pop();
 }
 
-Ball.prototype.detectCollision = function(oldPosition, newPosition){
+Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     //sign of *_dir will tell you if you are heading in - or + resp direction
     // *_dir will also give you the vector of movement
     // vector will be necessary for bouncing
@@ -60,10 +62,20 @@ Ball.prototype.detectCollision = function(oldPosition, newPosition){
 
     //if we are within two radius' of ball we have a collision
     if(distance < 2*this.radius){
-	alert("HIT");
+	//alert("HIT");
+	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
+	this.velocity = 100;
 	return false;
     }
 
     return true;
+}
+
+Ball.prototype.updatePosition = function(){
+    if(this.velocity){
+	this.position[0] += this.velocityVec[0] * this.velocity;
+	this.position[2] += this.velocityVec[2] * this.velocity;
+	this.velocity--;
+    }
 }
 

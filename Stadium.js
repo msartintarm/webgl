@@ -96,7 +96,23 @@ Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
-	this.balls[i].draw(gl_);
+
+	var curPos = this.balls[i].position;
+	//update the ball position
+	this.balls[i].updatePosition();
+	var newPos = this.balls[i].position;
+
+	var pieceX, pieceZ;
+	pieceX = Math.round(curPos[0] / this.size);
+	pieceZ = Math.round(curPos[2] /-this.size);
+	curPiece = (this.width * pieceZ) + pieceX;
+	
+	pieceX = Math.round(newPos[0] / this.size);
+	pieceZ = Math.round(newPos[2] /-this.size);
+	newPiece = (this.width * pieceZ) + pieceX;
+	
+	this.pieces[curPiece].ballPositionLegal(curPos, newPos, this);
+	this.balls[i].draw(gl_, buffer_);
     }
     if(ballInitOver) stadiumInit = 1;
 
@@ -162,7 +178,7 @@ Stadium.prototype.checkPosition = function() {
     var ballCollision = false;
     //see if we collide with a ball
     for(var i = 0; i<this.balls.length; i++){
-	if(!this.balls[i].detectCollision(curPos, newPos)){
+	if(!this.balls[i].detectViewerCollision(curPos, newPos)){
 	    ballCollision = true;
 	    i = this.balls.length;
 	}

@@ -312,18 +312,20 @@ function handleMouseMove(event) {
     var newX = event.clientX;
     var newY = event.clientY;
 
-    if(lightWillRotate) {
-	theMatrix.lightRotate(
-	    Math.PI / 180 * 2 * ((newX - mouseX) / 10), 
-	    Math.PI / 180 * 2 * ((newY - mouseY) / 10));
-    } else {
-	theMatrix.lightTranslate(
-	    [(newX - mouseX) / 30, 
-	     (mouseY - newY) / 30, 
-	     0]);
+    if(!stadiumMode){
+	if(lightWillRotate) {
+	    theMatrix.lightRotate(
+		Math.PI / 180 * 2 * ((newX - mouseX) / 10), 
+		Math.PI / 180 * 2 * ((newY - mouseY) / 10));
+	} else {
+	    theMatrix.lightTranslate(
+		[(newX - mouseX) / 30, 
+		 (mouseY - newY) / 30, 
+		 0]);
+	}
+	mouseX = newX;
+	mouseY = newY;
     }
-    mouseX = newX;
-    mouseY = newY;
 }
 
 var wrongKey = false;
