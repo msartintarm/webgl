@@ -47,6 +47,8 @@ GLcanvas.prototype.debug = function() {
 }
 
 GLcanvas.prototype.createScene = function(objToDraw) {
+    mazeMode = 0;
+    stadiumMode = 0;
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
     } else if(objToDraw == "sphere") {
@@ -64,7 +66,7 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.objects.push(new StoolPyramid());
 	this.objects.push(new Cagebox());
 	mazeMode = 1;
-//	priveledgedMode.toggle();
+	priveledgedMode.toggle();
 	theMatrix.viewMaze();
     } 
     else if(objToDraw == "stadium") {
@@ -73,7 +75,8 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.objects.push(new Skybox());
 	theMatrix.viewStadium();
 	stadiumMode = 1;
-	priveledgedMode.toggle();
+	//privledged toggled in glmatrix now(go thro start sequence first)
+	//priveledgedMode.toggle();
     } else if(objToDraw == "framebuffer") {
 	this.frames.push(new GLframe);
 	this.objects.push(new Quad(
@@ -119,7 +122,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.initGL();
 	this.initShaders("shader-fs", "shader-vs");
 	this.initTextures();
-	this.initText();
+	//this.initText();
 	this.initSkybox();
 	theMatrix.setConstUniforms(this.gl, this.shader);
 
@@ -179,7 +182,7 @@ GLcanvas.prototype.initGL = function() {
  *  Draw the scene.
  */
 GLcanvas.prototype.drawScene = function() {
-
+    
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
     while (error != this.gl.NO_ERROR) {

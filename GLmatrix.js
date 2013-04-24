@@ -52,9 +52,11 @@ GLmatrix.prototype.viewMaze = function() {
     this.vRotate(Math.PI, [0, 1, 0]);
 }
 
+var StadiumInitSeqNum;
 GLmatrix.prototype.viewStadium = function() {
-    this.vTranslate([0,12.5,0]);
+    this.vTranslate([-1500,1000,1500]);
     this.vRotate(-Math.PI/4, [0, 1, 0]);
+    StadiumInitSeqNum = 0;
 }
 
 GLmatrix.prototype.translate = function(vector) {
@@ -135,27 +137,35 @@ GLmatrix.prototype.vMul = function(v) {
 }
 
 GLmatrix.prototype.lookUp = function() {
-    radiansToRotate = (lookDist * 2 * Math.PI)/10;
-    rotateCount = 10;
-    vectorRotation = [1,0,0];
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	rotateCount = 10;
+	vectorRotation = [1,0,0];
+    }
 }
 
 GLmatrix.prototype.lookDown = function() {
-    radiansToRotate = (lookDist * 2 * Math.PI)/10;
-    rotateCount = 10;
-    vectorRotation = [-1,0,0];
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	rotateCount = 10;
+	vectorRotation = [-1,0,0];
+    }
 }
 
 GLmatrix.prototype.lookLeft = function() {
-    radiansToRotate = (lookDist * 2 * Math.PI)/10;
-    rotateCount = 10;
-    vectorRotation = [0,1,0];
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	rotateCount = 10;
+	vectorRotation = [0,1,0];
+    }
 }
 
 GLmatrix.prototype.lookRight = function() {
-    radiansToRotate = (lookDist * 2 * Math.PI)/10;
-    rotateCount = 10;
-    vectorRotation = [0,-1,0];
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	rotateCount = 10;
+	vectorRotation = [0,-1,0];
+    }
 }
 
 GLmatrix.prototype.turnAround = function(rads){
@@ -164,37 +174,67 @@ GLmatrix.prototype.turnAround = function(rads){
     vectorRotation = [0,1,0];
 }
 
-var moveDist = 2.1; //default to maze
-var lookDist = 1/20; //default to maze
+var moveDist = 20.1; //default to maze
+var lookDist = 1/10; //default to maze
 
 GLmatrix.prototype.moveRight = function() {
-    distToMove = [-moveDist/10,0,0];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [-moveDist/10,0,0];
+	moveCount = 10;
+    }
 }
 
 GLmatrix.prototype.moveLeft = function() {
-    distToMove = [moveDist/10,0,0];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [moveDist/10,0,0];
+	moveCount = 10;
+    }
 }
 
 GLmatrix.prototype.moveUp = function() {
-    distToMove = [0,moveDist/10,0];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [0,moveDist/10,0];
+	moveCount = 10;
+    }
 }
 
 GLmatrix.prototype.moveDown = function() {
-    distToMove = [0,-moveDist/10,0];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [0,-moveDist/10,0];
+	moveCount = 10;
+    }
 }
 
 GLmatrix.prototype.moveForward = function() {
-    distToMove = [0,0,-moveDist/10];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [0,0,-moveDist/10];
+	moveCount = 10;
+    }
 }
 GLmatrix.prototype.moveBack = function() {
-    distToMove = [0,0,moveDist/10];
-    moveCount = 10;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+	distToMove = [0,0,moveDist/10];
+	moveCount = 10;
+    }
 }
+GLmatrix.prototype.moveInToPlay = function() {
+	distToMove = [0,-1,-50/10];
+	moveCount = 10;
+}
+GLmatrix.prototype.dropIn = function() {
+    var thePos = vec4.fromValues(0,0,0,1);
+    var newPos = vec4.fromValues(0,0,0,1);
+    var curPos = vec4.fromValues(0,0,0,1);
+
+    vec4.transformMat4(newPos, thePos, this.vMatrixNew);
+    vec4.transformMat4(newPos, newPos, this.vMatrix);
+    vec4.transformMat4(curPos, curPos, this.vMatrix);
+
+    distToMove = [0,(-curPos[1]/100)+(12.5/100),-(curPos[2]+400)/100];
+    moveCount = 100;
+    StadiumInitSeqNum = 2;
+}
+
 
 var moveCount = 0;
 var distToMove = [0,0,0];
@@ -236,6 +276,23 @@ GLmatrix.prototype.newViewAllowed = function() {
  * Input: amount of time to go up for x squares.
  */
 GLmatrix.prototype.update = function() {
+    if(stadiumMode && StadiumInitSeqNum == 0){
+	this.moveInToPlay();
+	if(stadiumInit == 1)
+	    StadiumInitSeqNum = 1;
+    }
+    else if(stadiumMode && StadiumInitSeqNum == 1){
+	this.dropIn(); 
+    }
+    else if(stadiumMode && StadiumInitSeqNum == 2){
+	if(moveCount == 0)
+	    StadiumInitSeqNum = 3;
+    }
+    else if(stadiumMode && StadiumInitSeqNum == 3){
+	priveledgedMode.toggle();
+	StadiumInitSeqNum = 4;
+    }
+
     this.gradualMove();
     this.gradualRotate();
     const x = 0.1;
