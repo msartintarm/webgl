@@ -16,17 +16,13 @@
 ####Michael
 |Task         |Status      |
 |-------------|:----------:|
-| Framebuffer work | o |
+| Framebuffer work | x |
 | Jumbotron View (similar to mirror) | o |
 | Other stadium aspects | o |
 | Warped textures | o |
 | Blurred textures | o |
 | Textures that change colors (w chris) | o |
 | Create a cool floor | o |
-|Jumbotron View (similar to mirror) | o |
-|Jumbotron View (similar to mirror) | o |
-|Jumbotron View (similar to mirror) | o |
-|Jumbotron View (similar to mirror) | o |
 
 
 ####Chris
@@ -40,3 +36,9 @@
 | - Have pieces of maze be laid down through particle filter | o |
 | - Bonus feature: throw up walls (more difficult) | o |
 | - Implement bouncing balls | o |
+
+####Unclaimed (bonus features)
+|Task         |Status      |
+|-------------|:----------:|
+| Background music | x |
+| Sound effects | x |
