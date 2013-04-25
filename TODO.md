@@ -34,9 +34,12 @@
 | Start placing variable numbers of balls | o |
 | - with timers | o |
 | - with texture that changes color | o |
-| - Have pieces of maze be laid down through particle filter | o |
-| - Bonus feature: throw up walls (more difficult) | o |
+| - Balls thrown out | x |
+| - Bonus feature: throw up walls (more difficult) | x |
 | - Implement bouncing balls | o |
+| - Implement balls bouncing off walls | x |
+| - Fix texture overlay on brick walls | o |
+| - Fix disk class | o |
 
 ####Outstanding bugs
 |Task         |Fixed?      |
