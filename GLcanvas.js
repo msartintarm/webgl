@@ -82,7 +82,7 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [-1, 1,-4],
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
-	    [ 1,-1,-4]).setTexture(this.frames[0].num));
+	    [ 1,-1,-4]).setTexture(FRAME_BUFF));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -328,40 +328,58 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 
     this.gl.textures = [];
 
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "woodU"), WOOD_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "rugU"), RUG_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "skyRealU"), SKYBOX_TEXTURE_REAL);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "heavenU"), HEAVEN_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "hellU"), HELL_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "floorU"), FLOOR_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "operaU"), OPERA_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "brickU"), BRICK_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "tileU"), TILE_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "noU"), NO_TEXTURE);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky1U"), SKYBOX_TEXTURE_1);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky2U"), SKYBOX_TEXTURE_2);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky3U"), SKYBOX_TEXTURE_3);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky4U"), SKYBOX_TEXTURE_4);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky5U"), SKYBOX_TEXTURE_5);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "sky6U"), SKYBOX_TEXTURE_0);
-    this.gl.uniform1i(this.gl.getUniformLocation(
-	this.shader, "textTextureU"), TEXT_TEXTURE);
+    this.shader.textures = [];
+
+    this.shader.textures[WOOD_TEXTURE] =
+	this.gl.getUniformLocation(this.shader, "woodU");
+    this.shader.textures[RUG_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "rugU");
+    this.shader.textures[SKYBOX_TEXTURE_REAL] =
+	this.gl.getUniformLocation(
+	    this.shader, "skyRealU");
+    this.shader.textures[HEAVEN_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "heavenU");
+    this.shader.textures[HELL_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "hellU");
+    this.shader.textures[FLOOR_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "floorU");
+    this.shader.textures[OPERA_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "operaU");
+    this.shader.textures[BRICK_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "brickU");
+    this.shader.textures[TILE_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "tileU");
+    this.shader.textures[NO_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "noU");
+    this.shader.textures[SKYBOX_TEXTURE_1] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky1U");
+    this.shader.textures[SKYBOX_TEXTURE_2] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky2U");
+    this.shader.textures[SKYBOX_TEXTURE_3] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky3U");
+    this.shader.textures[SKYBOX_TEXTURE_4] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky4U");
+    this.shader.textures[SKYBOX_TEXTURE_5] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky5U");
+    this.shader.textures[SKYBOX_TEXTURE_0] =
+	this.gl.getUniformLocation(
+	    this.shader, "sky6U");
+    this.shader.textures[TEXT_TEXTURE] =
+	this.gl.getUniformLocation(
+	    this.shader, "textTextureU");
 
     // Perspecctive matrix
     this.shader.pMatU = 
@@ -387,7 +405,5 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.shader.lightPosU = 
 	this.gl.getUniformLocation(
 	    this.shader, "lightPosU");
-
-    theMatrix.setConstUniforms(this.gl, this.shader);
 };
 var theCanvas;
