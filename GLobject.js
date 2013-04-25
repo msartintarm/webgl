@@ -37,22 +37,22 @@ function GLobject() {
 GLobject.prototype.addNorms = function(x,y,z) {     
     this.normData.push(x);
     this.normData.push(y);
-    this.normData.push(z); }
+    this.normData.push(z); };
 GLobject.prototype.addPos = function(x,y,z) {
     this.posData.push(x);
     this.posData.push(y);
-    this.posData.push(z); }
+    this.posData.push(z); };
 GLobject.prototype.addColors = function(x,y,z) {
     this.colData.push(x);
     this.colData.push(y);
-    this.colData.push(z); }
+    this.colData.push(z); };
 GLobject.prototype.addTexture = function(x,y) {
     this.textureData.push(x);
-    this.textureData.push(y); }
+    this.textureData.push(y); };
 GLobject.prototype.addIndexes = function(x,y,z) {
     this.indexData.push(x);
     this.indexData.push(y);
-    this.indexData.push(z); }
+    this.indexData.push(z); };
 
 /**
  * Or, pass a vec3 
@@ -61,15 +61,15 @@ GLobject.prototype.addIndexes = function(x,y,z) {
 GLobject.prototype.addNormVec = 
     function(vec) { this.normData.push(vec[0]);
 		    this.normData.push(vec[1]);
-		    this.normData.push(vec[2]); }
+		    this.normData.push(vec[2]); };
 GLobject.prototype.addPosVec = 
     function(vec) { this.posData.push(vec[0]);
 		    this.posData.push(vec[1]);
-		    this.posData.push(vec[2]); }
+		    this.posData.push(vec[2]); };
 GLobject.prototype.addColorVec = 
     function(vec) { this.colData.push(vec[0]);
 		    this.colData.push(vec[1]);
-		    this.colData.push(vec[2]); }
+		    this.colData.push(vec[2]); };
 
 /**
  * Sometimes, we'll have to invert the norms 
@@ -80,7 +80,7 @@ GLobject.prototype.invertNorms = function() {
     for (var i = 0; i < this.normData.length; ++i) {
 	this.normData[i] = -this.normData[i];
     }
-}
+};
 
 /**
  * Sometimes, we'll have to invert the norms 
@@ -90,7 +90,7 @@ GLobject.prototype.invertFlatNorms = function() {
     for (var i = 0; i < this.normData_.length; ++i) {
 	this.normData_[i] = -this.normData_[i];
     }
-}
+};
 
 /** 
  *  A---C 
@@ -105,7 +105,7 @@ GLobject.prototype.addQuadIndexes = function(a, c) {
     this.indexData.push(c+1);
     this.indexData.push(c);
     this.indexData.push(a+1);
-}
+};
 
 /**
    Buffers a quadrilateral.
@@ -124,26 +124,26 @@ GLobject.prototype.Quad = function(a, b, c, d) {
 
     for (var i = 0; i < 4; ++i) {
 	this.addNormVec(normV);
-	this.addColors(.3, .5, .7);
+	this.addColors(0.3, 0.5, 0.7);
     }
     this.addQuadIndexes(this.indexPos,
 			this.indexPos + 2);
     this.indexPos += 4;
-}
+};
 
 GLobject.prototype.initTextures = function(at, bt, ct, dt) { 
     this.addTexture(at[0], at[1]);
     this.addTexture(bt[0], bt[1]);
     this.addTexture(ct[0], ct[1]); 
     this.addTexture(dt[0], dt[1]);
-}
+};
 
 GLobject.prototype.setTexture = function(theTexture) { 
     for(var i = 0; i < this.normData.length / 3; ++i) {
 	this.textureNum[i] = theTexture;
     }
     return this;
-}
+};
 
 /**
  * Once the arrays are full, call to 
@@ -151,19 +151,17 @@ GLobject.prototype.setTexture = function(theTexture) {
  */
 GLobject.prototype.initBuffers = function(gl_) {
 
+    var i, max;
     if(this.textureData.length < 1) {
-	var i = 0;
-	var max = this.normData.length / 3;
-	for(; i < max; ++i) {
+	
+	for(i = 0, max = this.normData.length / 3; i < max; ++i) {
 	    this.textureData.push(0);
 	    this.textureData.push(0);
 	}
     }
 
     if(this.textureNum.length < 1) {
-	var i = 0;
-	var max = this.normData.length / 3;
-	for(; i < max; ++i) {
+	for(i = 0, max = this.normData.length / 3; i < max; ++i) {
 	    this.textureNum.push(NO_TEXTURE);
 	}
     }
@@ -178,7 +176,7 @@ GLobject.prototype.initBuffers = function(gl_) {
     this.textureNumBuff = gl_.createBuffer();
 
     // If we have flat norms, use them
-    if(FLATNORMS == true) {
+    if(FLATNORMS === true) {
 	this.bufferData(gl_, this.normBuff, this.normData_, 3);
 	this.bufferData(gl_, this.posBuff, this.posData_, 3);
 	this.bufferData(gl_, this.colBuff, this.colData_, 3);
@@ -193,7 +191,7 @@ GLobject.prototype.initBuffers = function(gl_) {
 	this.bufferData(gl_, this.textureNumBuff, this.textureNum, 1);
 	this.bufferElements(gl_, this.indexBuff, this.indexData);
     }
-}
+};
 
 /**
    Buffer data fpr a single vertex attribute array.
@@ -206,7 +204,7 @@ GLobject.prototype.bufferData = function(gl_, theBuff, theData, theSize) {
 		   gl_.STATIC_DRAW);
     theBuff.itemSize = theSize; 
     theBuff.numItems = theData.length / theSize;
-}
+};
 
 /**
    Buffer data fpr vertex elements.
@@ -219,20 +217,20 @@ GLobject.prototype.bufferElements = function(gl_, theBuff, theData, theSize) {
 		   gl_.STATIC_DRAW);
     theBuff.itemSize = 1;
     theBuff.numItems = theData.length;
-}
+};
 
 GLobject.prototype.rotate = function(vec) {
     this.rotation[2] += vec[2]; 
     this.rotation[1] += vec[1]; 
     this.rotation[0] += vec[0]; 
-}
+};
 
 GLobject.prototype.scale = function(num) {
     for(var i = 0; i < this.posData.length; ++i) {
 	this.posData[i] *= num; 
     }
     return this;
-}
+};
 
 GLobject.prototype.translate = function(vec) {
     for(var i = 0; i < this.posData.length; i += 3) {
@@ -241,7 +239,7 @@ GLobject.prototype.translate = function(vec) {
 	this.posData[i+2] += vec[2]; 
     }
     return this;
-}
+};
 
 /**
    Link GL's pre-loaded attributes to the shader program
@@ -268,8 +266,7 @@ GLobject.prototype.linkAttribs = function(gl_) {
     gl_.vertexAttribPointer(gl_.shader.textureNumA, 
 			    this.textureNumBuff.itemSize,
 			    gl_.FLOAT, false, 0, 0);
-    return this;
-}
+};
 
 /**
    Send the divide-and-conquer 'draw' signal to the GPU
@@ -279,7 +276,7 @@ GLobject.prototype.drawElements = function(gl_) {
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.drawElements(gl_.TRIANGLES, 
         this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
-}
+};
 
 /**
  * Point to, and draw, the buffered triangles
@@ -288,8 +285,9 @@ GLobject.prototype.draw = function(gl_) {
 
     theMatrix.setViewUniforms(gl_);
     theMatrix.setVertexUniforms(gl_);
-    this.linkAttribs(gl_).drawElements(gl_);
-}
+    this.linkAttribs(gl_);
+    this.drawElements(gl_);
+};
 
 var FLATNORMS = false;
 
@@ -302,7 +300,7 @@ var FLATNORMS = false;
 */
 GLobject.prototype.initFlatNorms = function() {
     
-    if(FLATNORMS == false || this.hasFlatNorms == true) return;
+    if(FLATNORMS === false || this.hasFlatNorms === true) return;
     this.hasFlatNorms = true;
 
     var a, b, c, d;
@@ -397,4 +395,4 @@ GLobject.prototype.initFlatNorms = function() {
     if(this.normsInverted) { this.invertFlatNorms(); }
 
 
-}
+};

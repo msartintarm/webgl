@@ -1,9 +1,4 @@
 /**
- * Most variables used here are
- *  defined in 'functions.js'
- */
-
-/**
  * Object holding modelview and perspective matrices.
  */
 var theMatrix;
@@ -41,12 +36,12 @@ function GLcanvas() {
    Debug mode for the canvas. Currently calls a stool.
 **/
 GLcanvas.prototype.debug = function() {
-    if (envDEBUG == false) { return; }
+    if (envDEBUG === false) { return; }
     expand('title2', 'webgl_object'); 
     this.start('shadow');
 
-    return this;
-}
+    return;
+};
 
 GLcanvas.prototype.createScene = function(objToDraw) {
     mazeMode = 0;
@@ -93,21 +88,21 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.objects.push(new Torus(0.2, 2));
     }
     this.objects.push(new Light());
-}
+};
 
 GLcanvas.prototype.bufferModels = function() {
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
 	this.objects[i].initBuffers(this.gl); 
     }
-}
+};
 
 GLcanvas.prototype.drawModels = function() {
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
 	this.objects[i].draw(this.gl, this.shader); 
     } 
-}
+};
 
 /**
  * Begins the canvas.
@@ -117,7 +112,7 @@ GLcanvas.prototype.start = function(theScene) {
     // Instantiate the Div this canvas element is within.
     expand("webgl_settings_button");
 
-    if (this.gl == null) {
+    if (this.gl === null) {
 	// One-time display methods
 	this.canvas.style.display = "inline-block";
 	this.canvas.style.width = "100%";
@@ -163,7 +158,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.createScene(theScene);
 	this.bufferModels();
     }
-}
+};
 
 /*
  * Initialize WebGL, returning the GL context or null if
@@ -183,8 +178,8 @@ GLcanvas.prototype.initGL = function() {
 
     window.onresize = function() {
 	theCanvas.resizeCounter = 30;
-    }
-}
+    };
+};
 
 GLcanvas.prototype.resize = function() {
 	this.canvas.width = this.canvas.offsetWidth - 16;
@@ -192,7 +187,7 @@ GLcanvas.prototype.resize = function() {
 	this.gl.viewportWidth = this.canvas.width;
 	this.gl.viewportHeight = this.canvas.height;
 
-}
+};
 
 /**
  *  Draw the scene.
@@ -211,7 +206,7 @@ GLcanvas.prototype.drawScene = function() {
 	this.frames[i].drawScene(this.gl);
     }
 
-    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+//    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
 
@@ -236,21 +231,21 @@ GLcanvas.prototype.drawScene = function() {
 
     if(this.resizeCounter > 0) {
 	this.resizeCounter -= 1;
-	if(this.resizeCounter == 0) {
+	if(this.resizeCounter === 0) {
 	    this.resize();
 	}
     }
 
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
-}
+};
 
 GLcanvas.prototype.initSkybox = function() {
     for(var i= 0; i < 6; ++i) {
 	this.textures.push(new GLtexture(
 	    this.gl, SKYBOX_TEXTURE_0 + i));
     }
-}
+};
 
 
 GLcanvas.prototype.initText = function(){
@@ -283,7 +278,7 @@ GLcanvas.prototype.initText = function(){
     this.gl.generateMipmap(this.gl.TEXTURE_2D);
 
     this.gl.bindTexture(this.gl.TEXTURE_2D, null);
-}
+};
 
 GLcanvas.prototype.initTextures = function() {
     this.textures.push(new GLtexture(
@@ -304,14 +299,14 @@ GLcanvas.prototype.initTextures = function() {
 	this.gl, TILE_TEXTURE));
     this.textures.push(new GLtexture(
 	this.gl, SKYBOX_TEXTURE_REAL));
-}
+};
 
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.initTextures();
     this.initSkybox();
     this.bufferModels();
-}
+};
 		     
 GLcanvas.prototype.initShaders = function(frag, vert) {
     
@@ -413,5 +408,5 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
 	    this.shader, "lightPosU");
 
     theMatrix.setConstUniforms(this.gl, this.shader);
-}
+};
 var theCanvas;

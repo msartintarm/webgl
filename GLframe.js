@@ -7,13 +7,13 @@ function GLframe(texture_num) {
 
 GLframe.prototype.debug = function() {
 
-    if(envDEBUG == false) { return; } 
+    if(envDEBUG === false) { return; } 
     this.debugHTML.style.display = "inline-block";
     this.debugHTML.innerHTML = 
 	"<b>FrameBuffer Info </b><br/>" +
 	"Width: " + this.frameBuff.width +
 	"Height: " + this.frameBuff.height;
-}
+};
 
 GLframe.prototype.drawScene = function(gl_) {
 
@@ -60,7 +60,7 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.generateMipmap(gl_.TEXTURE_2D);
 //    gl_.bindTexture(gl_.TEXTURE_2D, null);
 //    this.debug;
-}
+};
 
 GLframe.prototype.init = function(gl_) {
 
@@ -102,7 +102,7 @@ GLframe.prototype.init = function(gl_) {
 				gl_.RENDERBUFFER, this.renderBuff);
 
     // -- check to make sure everything is init'ed -- //
-    if(gl_.checkFramebufferStatus(gl_.FRAMEBUFFER) != 
+    if(gl_.checkFramebufferStatus(gl_.FRAMEBUFFER) !== 
        gl_.FRAMEBUFFER_COMPLETE) {
 	alert("yo, framebuffer not working dawg");
     }
@@ -111,4 +111,4 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
-}
+};
