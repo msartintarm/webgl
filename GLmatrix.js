@@ -412,8 +412,9 @@ GLmatrix.prototype.setConstUniforms = function(gl_) {}
 */
 GLmatrix.prototype.setViewUniforms = function(gl_) {
 
+    var shader_ = gl_.shader;
     if (this.pMatrixChanged) {
-	gl_.uniformMatrix4fv(gl_.shader.pMatU, 
+	gl_.uniformMatrix4fv(shader_.pMatU, 
 			     false, this.pMatrix);
 	this.pMatrixChanged = false;
     }
@@ -422,13 +423,13 @@ GLmatrix.prototype.setViewUniforms = function(gl_) {
     //  inverse of viewing matrix
     mat4.invert(this.ivMatrix, this.vMatrix);
 
-    gl_.uniformMatrix4fv(gl_.shader.vMatU, 
+    gl_.uniformMatrix4fv(shader_.vMatU, 
 			 false, this.ivMatrix);
 
     mat4.mul(this.ilMatrix, this.vMatrix, this.lightMatrix);
-    gl_.uniformMatrix4fv(gl_.shader.lMatU, 
+    gl_.uniformMatrix4fv(shader_.lMatU, 
 			 false, this.ilMatrix);
-    gl_.uniform3fv(gl_.shader.lightPosU, 
+    gl_.uniform3fv(shader_.lightPosU, 
 		   lightPos);
     this.vMatrixChanged = false;
 };

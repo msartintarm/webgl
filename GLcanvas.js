@@ -121,10 +121,6 @@ GLcanvas.prototype.start = function(theScene) {
 
 	this.initGL();
 	this.initShaders("shader-fs", "shader-vs");
-	this.initTextures();
-	//this.initText();
-	this.initSkybox();
-	theMatrix.setConstUniforms(this.gl, this.shader);
 
 	theMatrix.viewInit();
 	this.objects = [];
@@ -139,6 +135,9 @@ GLcanvas.prototype.start = function(theScene) {
 	    this.frames[i].init(this.gl);
 	}
 	this.bufferModels();
+
+	this.initTextures();
+	//this.initText();
 
 	// Set background color, clear everything, and
 	//  enable depth testing
@@ -240,14 +239,6 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.initSkybox = function() {
-    for(var i= 0; i < 6; ++i) {
-	this.textures.push(new GLtexture(
-	    this.gl, SKYBOX_TEXTURE_0 + i));
-    }
-};
-
-
 GLcanvas.prototype.initText = function(){
 
     var canvasTexture = this.gl.createTexture();
@@ -281,31 +272,19 @@ GLcanvas.prototype.initText = function(){
 };
 
 GLcanvas.prototype.initTextures = function() {
-    this.textures.push(new GLtexture(
-	this.gl, WOOD_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, RUG_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, HEAVEN_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, HELL_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, FLOOR_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, OPERA_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, BRICK_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, TILE_TEXTURE));
-    this.textures.push(new GLtexture(
-	this.gl, SKYBOX_TEXTURE_REAL));
+    this.gl.textures.forEach(function(val, index) {
+	if(index != FRAME_BUFF &&
+	   index != NO_TEXTURE &&
+	   index != TEXT_TEXTURE) {
+	    var theTexture = new GLtexture(val, index);
+	}
+    });
 };
 
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
-    this.initTextures();
-    this.initSkybox();
     this.bufferModels();
+    this.initTextures();
 };
 		     
 GLcanvas.prototype.initShaders = function(frag, vert) {
@@ -346,6 +325,8 @@ GLcanvas.prototype.initShaders = function(frag, vert) {
     this.shader.textureNumA = 
 	this.gl.getAttribLocation(this.shader, "textureNumA");
     this.gl.enableVertexAttribArray(this.shader.textureNumA);
+
+    this.gl.textures = [];
 
     this.gl.uniform1i(this.gl.getUniformLocation(
 	this.shader, "woodU"), WOOD_TEXTURE);

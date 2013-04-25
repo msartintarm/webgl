@@ -217,23 +217,6 @@ function drawDashboard() {
     zoom.inc();
 }
 
-Array.prototype.push2 = function(a, b) {
-    this.push(a);
-    this.push(b);
-}
-
-Array.prototype.push3 = function(a, b, c) {
-    this.push(a);
-    this.push(b);
-    this.push(c); 
-}
-
-Array.prototype.pushV = function(vector) {
-    this.push(vector[0]);
-    this.push(vector[1]);
-    this.push(vector[2]); 
-}
-
 //
 // getShader
 //

@@ -160,7 +160,9 @@ GLobject.prototype.initBuffers = function(gl_) {
 	}
     }
 
-    if(this.textureNum.length < 1) {
+    if(this.textureNum.length >= 1) {
+	gl_.textures[this.textureNum[0]] = gl_;
+    } else {
 	for(i = 0, max = this.normData.length / 3; i < max; ++i) {
 	    this.textureNum.push(NO_TEXTURE);
 	}
@@ -245,7 +247,7 @@ GLobject.prototype.translate = function(vec) {
    Link GL's pre-loaded attributes to the shader program
 */
 GLobject.prototype.linkAttribs = function(gl_) {
-
+    
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(gl_.shader.vNormA, 
 			    this.normBuff.itemSize, 
