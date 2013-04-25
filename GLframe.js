@@ -1,5 +1,6 @@
 function GLframe(texture_num) {
     this.num = texture_num;
+    this.active = GLactiveTexture();
     this.frameBuff = null;
     this.debugHTML = document.getElementById("frameDebug");
     this.stool = new Stool();
@@ -18,7 +19,7 @@ GLframe.prototype.debug = function() {
 GLframe.prototype.drawScene = function(gl_) {
 
     gl_.uniform1i(gl_.getUniformLocation(
-	gl_.shader, "framebufferU"), this.num);
+	gl_.shader, "sampler" + this.num), this.active);
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
 			this.frameBuff);
@@ -55,7 +56,7 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
-    gl_.activeTexture(gl_.TEXTURE0 + this.num);
+    gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 //    gl_.bindTexture(gl_.TEXTURE_2D, null);
@@ -72,7 +73,8 @@ GLframe.prototype.init = function(gl_) {
     
     this.texture = gl_.createTexture();
 
-    gl_.activeTexture(gl_.TEXTURE0 + this.num);
+    // don't really need this unless it's overwriting another texture
+    gl_.activeTexture(gl_.TEXTURE0 + this.active);
 
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.texImage2D(gl_.TEXTURE_2D, 0, gl_.RGBA, 
@@ -84,7 +86,7 @@ GLframe.prototype.init = function(gl_) {
 		      gl_.TEXTURE_MIN_FILTER, 
 		      gl_.LINEAR_MIPMAP_NEAREST);
     gl_.generateMipmap(gl_.TEXTURE_2D);
-    
+
     this.renderBuff = gl_.createRenderbuffer();
     gl_.bindRenderbuffer(gl_.RENDERBUFFER, this.renderBuff);
     gl_.renderbufferStorage(gl_.RENDERBUFFER, 
