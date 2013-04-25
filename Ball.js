@@ -12,6 +12,7 @@ function Ball(position) {
     this.velocity = 0;
     vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
     this.startPosition = position;
+    this.oldPosition = position;
 }
 
 var timeStep = 0;
@@ -46,6 +47,18 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.pop();
 }
 
+Ball.prototype.reflect = function(flip_x){
+    //handles reflections when we hitting a wall flipping the velocity
+    if(flip_x){
+	this.velocityVec[0] = this.velocityVec[0] * -1;
+    }
+    else{
+	this.velocityVec[2] = this.velocityVec[2] * -1;
+    }
+    //revert back to old position(don't move past wall)
+    this.updatePosition(true);
+}
+
 Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     //sign of *_dir will tell you if you are heading in - or + resp direction
     // *_dir will also give you the vector of movement
@@ -64,18 +77,27 @@ Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     if(distance < 2*this.radius){
 	//alert("HIT");
 	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
-	this.velocity = 100;
+	this.velocity = 500;
 	return false;
     }
 
     return true;
 }
 
-Ball.prototype.updatePosition = function(){
-    if(this.velocity){
-	this.position[0] += this.velocityVec[0] * this.velocity;
-	this.position[2] += this.velocityVec[2] * this.velocity;
-	this.velocity--;
+Ball.prototype.updatePosition = function(revert){
+    //updates position if we have a velocity
+    //gives the option to revert the position (not make the move)
+    if(revert){
+	this.position[0] = this.oldPosition[0];
+	this.position[2] = this.oldPosition[2];
     }
+    else{
+	this.oldPosition[0] = this.position[0];
+	this.oldPosition[2] = this.position[2];
+    }
+    this.position[0] += this.velocityVec[0] * this.velocity/10;
+    this.position[2] += this.velocityVec[2] * this.velocity/10;
+
+    this.velocity--;
 }
 

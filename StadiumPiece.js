@@ -8,8 +8,8 @@ probably can make this a variable parameter
 */
 //function StadiumPiece(walls, ft, bt, rt, lt) { 
 function StadiumPiece(room_size, walls, movingWalls, textures) { 
-    this.y_positionF = 0;
-    this.y_positionR = 0;
+    this.y_positionF = -200;
+    this.y_positionR = -200;
 
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
@@ -239,35 +239,27 @@ StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
 }
 
 StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition, ball) {
+    //check to see if we are hitting a wall 
+    //if we are reflect the balls velocity vector accordingly
     if(this.f && newPosition[2] < this.north) { 
-       	alret("hit front wall");
-	//ball.reflect(currentPosition, newPosition, 2, true);
-	//return false; 
+	ball.reflect(false);
     }
     if(this.b && newPosition[2] > this.south) { 
-	//this.reflect(currentPosition, newPosition, 2, false);
-	//return false; 
+	ball.reflect(false);
     }
     if(this.l && newPosition[0] < this.west) { 
-	//this.reflect(currentPosition, newPosition, 0, false);
-	//return false; 
+	ball.reflect(true);
     }
     if(this.r && newPosition[0] > this.east) { 
-	//this.reflect(currentPosition, newPosition, 0, true);
-	//return false; 
+	ball.reflect(true);
     }
-
-
     if(this.fM && newPosition[2] < this.north &&
       this.y_positionF >= -125) { 
-	//this.reflect(currentPosition, newPosition, 2, true);
-	//return false; 
+	ball.reflect(false);
     }
-
     if(this.rM && newPosition[0] < this.east &&
        this.y_positionR >= -125){
-	//this.reflect(currentPosition, newPosition, 0, true);
-	//return false; 
+	ball.reflect(true);
       }
 
     return true;
@@ -285,7 +277,6 @@ StadiumPiece.prototype.draw = function(gl_) {
     if(stadiumInit == 1){
 	this.y_positionF = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
 	this.y_positionR = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
-	
 	if(timeStep == 540) timeStep = 0;
 	else timeStep++;
 
