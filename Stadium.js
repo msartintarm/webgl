@@ -96,22 +96,30 @@ Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
-
-	var curPos = this.balls[i].position;
-	//update the ball position
-	this.balls[i].updatePosition();
-	var newPos = this.balls[i].position;
-
-	var pieceX, pieceZ;
-	pieceX = Math.round(curPos[0] / this.size);
-	pieceZ = Math.round(curPos[2] /-this.size);
-	curPiece = (this.width * pieceZ) + pieceX;
 	
-	pieceX = Math.round(newPos[0] / this.size);
-	pieceZ = Math.round(newPos[2] /-this.size);
-	newPiece = (this.width * pieceZ) + pieceX;
-	
-	this.pieces[curPiece].ballPositionLegal(curPos, newPos, this);
+	//check to see if balls hit something
+	if(this.balls[i].velocity != 0){
+	    //update the ball position
+	    this.balls[i].updatePosition(false);
+	    var curPos = this.balls[i].oldPosition;
+	    var newPos = this.balls[i].position;
+	    
+	    //calculate the pieces we need to check
+	    var pieceX, pieceZ;
+	    pieceX = Math.round(curPos[0] / this.size);
+	    pieceZ = Math.round(curPos[2] /-this.size);
+	    curPiece = (this.width * pieceZ) + pieceX;
+	    
+	    pieceX = Math.round(newPos[0] / this.size);
+	    pieceZ = Math.round(newPos[2] /-this.size);
+	    newPiece = (this.width * pieceZ) + pieceX;
+	    
+	    //check both current and new piece
+	    if(this.pieces[curPiece])
+		this.pieces[curPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
+	    if(this.pieces[newPiece])
+		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
+	}
 	this.balls[i].draw(gl_, buffer_);
     }
     if(ballInitOver) stadiumInit = 1;
