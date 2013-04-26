@@ -246,6 +246,34 @@ GLobject.prototype.translate = function(vec) {
 /**
    Link GL's pre-loaded attributes to the shader program
 */
+GLobject.prototype.linkSomeAttribs = function(gl_) {
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
+    gl_.vertexAttribPointer(gl_.shader.vPosA, 
+			    this.posBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
+/*    
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
+    gl_.vertexAttribPointer(gl_.shader.vNormA, 
+			    this.normBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
+    gl_.vertexAttribPointer(gl_.shader.vColA, 
+			    this.colBuff.itemSize, 
+			    gl_.FLOAT, false, 0, 0);
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
+    gl_.vertexAttribPointer(gl_.shader.textureA, 
+			    this.textureBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
+    gl_.vertexAttribPointer(gl_.shader.textureNumA, 
+			    this.textureNumBuff.itemSize,
+			    gl_.FLOAT, false, 0, 0);
+*/
+};
+
+/**
+   Link GL's pre-loaded attributes to the shader program
+*/
 GLobject.prototype.linkAttribs = function(gl_) {
     
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
@@ -274,6 +302,15 @@ GLobject.prototype.linkAttribs = function(gl_) {
    Send the divide-and-conquer 'draw' signal to the GPU
    Attributes must first be linked (as above).
 */
+GLobject.prototype.drawSomeElements = function(gl_) {
+    gl_.drawElements(gl_.TRIANGLES, 
+        this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
+};
+
+/**
+   Send the divide-and-conquer 'draw' signal to the GPU
+   Attributes must first be linked (as above).
+*/
 GLobject.prototype.drawElements = function(gl_) {
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
     gl_.drawElements(gl_.TRIANGLES, 
@@ -289,6 +326,17 @@ GLobject.prototype.draw = function(gl_) {
     theMatrix.setVertexUniforms(gl_);
     this.linkAttribs(gl_);
     this.drawElements(gl_);
+};
+
+/**
+ * Some data we will not need this time.
+ */
+GLobject.prototype.drawAgain = function(gl_) {
+
+    theMatrix.setViewUniforms(gl_);
+    theMatrix.setVertexUniforms(gl_);
+    this.linkSomeAttribs(gl_);
+    this.drawSomeElements(gl_);
 };
 
 var FLATNORMS = false;

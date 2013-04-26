@@ -62,6 +62,21 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 
 Cylinder.prototype.invertNorms = _oInvertNorms;
 
+Cylinder.prototype.wrapText = function() {
+    return;
+    this.o.setTexture(TEXT_TEXTURE);
+
+    var xPos, yPos;
+    for (var latitude = 0; i <= this.stacks; i++) {
+	yPos = i / (this.stacks - 1);
+	
+	for (var j = 0; j <= this.slices; j++) {
+	xPos = 10 * (j / (this.slices)) % 1;
+	    this.o.addTexture(xPos, yPos);
+	}
+    }
+};
+
 Cylinder.prototype.drawScrew = function() {
 
     var radius_change = this.top_radius - this.base_radius;

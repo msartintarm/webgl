@@ -15,6 +15,7 @@ function ThickCyl(inner_radius, width, height, slices, stacks) {
 	.invertNorms();
     this.outerCyl = this.Cyl(
 	inner_radius + width, inner_radius + width, height, slices, stacks);
+    this.outerCyl.wrapText();
 
     return this;
 }

@@ -243,16 +243,19 @@ GLcanvas.prototype.drawScene = function() {
 GLcanvas.prototype.initText = function(){
 
     var the_canvas = document.getElementById('textureCanvas');
+    the_canvas.width = 128;//getPowerOfTwo(ctx.measureText(text_to_write).width);
+    the_canvas.height = 32;//getPowerOfTwo(2*textSize);
+
     var ctx = the_canvas.getContext("2d");
+    if(!ctx) { alert("Error initializing text."); }
     var text_to_write = "butthole";
-    var textSize = 84;
-    ctx.font = "84px Arial";
+    var textSize = 24;
     ctx.fillStyle = "#999999";
+//    ctx.fillRect(0, 0, the_canvas.width/2, the_canvas.height/2);
+    ctx.font = "28px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    the_canvas.width = 256;//getPowerOfTwo(ctx.measureText(text_to_write).width);
-    the_canvas.height = 128;//getPowerOfTwo(2*textSize);
 //    textTexture.style.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
 //    textTexture.style.height = getPowerOfTwo(2*textSize);
 

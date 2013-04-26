@@ -90,6 +90,10 @@ function _oDraw(gl_) {
     this.o.draw(gl_);
 }
 
+function _oDrawAgain(gl_) {
+    this.o.drawAgain(gl_);
+}
+
 function _oTranslate(vec_) {
     this.o.translate(vec_);
     return this;

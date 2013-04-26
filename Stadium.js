@@ -120,7 +120,11 @@ Stadium.prototype.draw = function(gl_) {
 	    if(this.pieces[newPiece])
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
-	this.balls[i].draw(gl_);
+	if(i === 0) {
+	    this.balls[i].draw(gl_);
+	} else {
+	    this.balls[i].drawAgain(gl_);
+	}
     }
     if(ballInitOver) stadiumInit = 1;
 

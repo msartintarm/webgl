@@ -34,7 +34,7 @@ Quad.prototype.invertNorms = _oInvertNorms;
 
 Quad.prototype.setTexture = function(texture) { 
     this.o.setTexture(texture);
-    this.o.initTextures([0,0], [0,1], [1,0], [1,1]);
+    this.o.initTextures([1,0], [1,1], [0,0], [0,1]);
     return this;
 }
 

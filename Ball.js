@@ -47,6 +47,15 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.pop();
 }
 
+Ball.prototype.drawAgain = function(gl_) {
+    if(this.init) this.initBalls();
+
+    theMatrix.push();
+    theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
+    this.sphere.drawAgain(gl_);
+    theMatrix.pop();
+}
+
 Ball.prototype.reflect = function(flip_x){
     //handles reflections when we hitting a wall flipping the velocity
     if(flip_x){
