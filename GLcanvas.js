@@ -1,3 +1,4 @@
+
 /**
  * Object holding modelview and perspective matrices.
  */
@@ -137,7 +138,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.bufferModels();
 
 	this.initTextures();
-	//this.initText();
+	this.initText();
 
 	// Set background color, clear everything, and
 	//  enable depth testing
@@ -241,34 +242,47 @@ GLcanvas.prototype.drawScene = function() {
 
 GLcanvas.prototype.initText = function(){
 
-    var canvasTexture = this.gl.createTexture();
-    var textTexture = document.getElementById('textureCanvas');
-    var ctx = textTexture.getContext('2d');
-    var textToWrite = "HTML5 Rocks!";
-    var textSize = 12;
-    ctx.font = textSize+"px monospace"; // Set the font of the text before measuring the width!
-    textTexture.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
-    textTexture.height = getPowerOfTwo(2*textSize);
+    var the_canvas = document.getElementById('textureCanvas');
+    var ctx = the_canvas.getContext("2d");
+    var text_to_write = "butthole";
+    var textSize = 84;
+    ctx.font = "84px Arial";
+    ctx.fillStyle = "#999999";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    the_canvas.width = 256;//getPowerOfTwo(ctx.measureText(text_to_write).width);
+    the_canvas.height = 128;//getPowerOfTwo(2*textSize);
 //    textTexture.style.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
 //    textTexture.style.height = getPowerOfTwo(2*textSize);
 
-    ctx.fillStyle = "#333333"; // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
-    ctx.textAlign = "center";// This determines the alignment of text, e.g. left, center, right
-    ctx.textBaseline = "middle";// This determines the baseline of the text, e.g. top, middle, bottom
-    ctx.font = "12px monospace";// This determines the size of the text and the font family used
-    ctx.fillText("HTML5 Rockss!", textTexture.width/2, textTexture.height/2);
+//    ctx.strokeText(text_to_write, the_canvas.width/2, the_canvas.height/2);
+    ctx.fillText(text_to_write, the_canvas.width/2, the_canvas.height/2);
 
-    this.gl.activeTexture(this.gl.TEXTURE0 + GLactiveTexture());
+    var the_active = GLactiveTexture();
+    var sampler =
+    this.gl.getUniformLocation(this.shader, "sampler" + TEXT_TEXTURE);
+    this.gl.uniform1i(sampler, the_active);
 
-    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+//    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
 
-    this.gl.bindTexture(this.gl.TEXTURE_2D, canvasTexture);
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, textTexture); // This is the important line!
+    this.gl.activeTexture(this.gl.TEXTURE0 + the_active);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.gl.createTexture());
+
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+			  this.gl.TEXTURE_WRAP_S, 
+			  this.gl.CLAMP_TO_EDGE);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, 
+			  this.gl.TEXTURE_WRAP_T, 
+			  this.gl.CLAMP_TO_EDGE);
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, 
+		       this.gl.UNSIGNED_BYTE, the_canvas);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
-    this.gl.generateMipmap(this.gl.TEXTURE_2D);
 
-    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
+//    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
+    this.gl.generateMipmap(this.gl.TEXTURE_2D);
 };
 
 GLcanvas.prototype.initTextures = function() {

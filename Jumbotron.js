@@ -63,8 +63,8 @@ function Jumbotron() {
     this.frame = new GLframe(FRAME_BUFF);
 
     this.jumboScreen = SixSidedPrism.rectangle(a, b, c, d, widthScreen)
-	.setSixTextures(NO_TEXTURE, FRAME_BUFF, NO_TEXTURE,
-			NO_TEXTURE, NO_TEXTURE, NO_TEXTURE) ;
+	.setSixTextures(TEXT_TEXTURE, FRAME_BUFF, TEXT_TEXTURE,
+			TEXT_TEXTURE, TEXT_TEXTURE, TEXT_TEXTURE) ;
     return this;
 }
 
