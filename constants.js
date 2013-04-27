@@ -36,6 +36,12 @@ const BACK_RIGHT = RIGHT | BACK;
 const LEFT_RIGHT = RIGHT | LEFT;
 const FRONT_LEFT = FRONT | LEFT;
 
+zz = 0;
+// -- Movement modes -- //
+const MAZE_MODE = zz++;
+const STADIUM_MODE = zz++;
+const MAZE_MODE = 0x10;
+
 
 // -- Environment Variables -- //
 const envDEBUG = true;

@@ -42,9 +42,9 @@ div#banner{
     text-align:center;
     color: #FF0000;
     line-height:200%;
-    -moz-user-select: none;
+/*    -moz-user-select: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
+    -khtml-user-select: none;*/
 	background-size: 100% 200px;
 
 }

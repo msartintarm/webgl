@@ -270,8 +270,17 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
         <div class='one_third'>Demo</div>
       </div>
 
-      <div class='padDiv'> 
-	<div id = "banner">       
+      <div class="padDiv"> 
+	<div id="banner">       
+	  <div style="height:50px;">
+	    <input id="inputz" type="text"
+		   onclick="theCanvas.initText(document.getElementById('inputz').value);" 
+		   value="Cylinder"/>
+	    <input type="submit" 
+		   onclick="theCanvas.initText(document.getElementById('inputz').value);" 
+		   value="Submit"/>
+
+</div>
 	  <div class="lowAcross" ></div>
           <div class="topAcross" ></div>
           <div class="leftSide" ></div>
@@ -280,6 +289,8 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
           <div class="topRight" ></div>
 	  <div class="lowLeft" ></div>
           <div class="lowRight" ></div>
+
+
 	  <div id="dashboard" style="padding: 20px; background-color: #000000;">
 	    <div id="positionXStats" style="display:none;"></div>
 	    <div id="positionYStats" style="display:none;"></div>
@@ -325,24 +336,28 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
 			 value="Cylinder" 
 			 class="button_add"/>
 		  <input type="button" 
-			 onclick="theCanvas.start('sphere');" 
-			 value="Sphere" 
+			 onclick="theCanvas.start('framebuffer');" 
+			 value="Framebuffer" 
 			 class="button_add"/>
 		  <input type="button" 
 			 onclick="theCanvas.start('skybox');" 
 			 value="Skybox" 
 			 class="button_add"/>
 		  <input type="button" 
-			 onclick="theCanvas.start('torus');" 
-			 value="Torus" 
+			 onclick="theCanvas.start('sphere');" 
+			 value="Sphere" 
 			 class="button_add"/>
 		  <input type="button" 
 			 onclick="theCanvas.start('stool');" 
 			 value="Stool" 
 			 class="button_add"/>
 		  <input type="button" 
-			 onclick="theCanvas.start('jumbotron');" 
-			 value="Jumbotron" 
+			 onclick="theCanvas.start('text');" 
+			 value="Text" 
+			 class="button_add"/>
+		  <input type="button" 
+			 onclick="theCanvas.start('torus');" 
+			 value="Torus" 
 			 class="button_add"/>
 		</td>
 		<td>
@@ -356,8 +371,8 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
 			 value="Shadows" 
 			 class="button_add"/>
 		  <input type="button" 
-			 onclick="theCanvas.start('framebuffer');" 
-			 value="Framebuffer" 
+			 onclick="theCanvas.start('jumbotron');" 
+			 value="Jumbotron" 
 			 class="button_add"/>
 		  <input type="button" 
 			 onclick="theCanvas.start('stadium');" 

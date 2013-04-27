@@ -47,6 +47,9 @@ GLcanvas.prototype.debug = function() {
 GLcanvas.prototype.createScene = function(objToDraw) {
     mazeMode = 0;
     stadiumMode = 0;
+
+    
+
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
     } else if(objToDraw == "sphere") {
@@ -84,6 +87,13 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [-1,-1,-4],
 	    [ 1, 1,-4],
 	    [ 1,-1,-4]).setTexture(FRAME_BUFF));
+
+    } else if(objToDraw == "text") {
+	this.objects.push(new Quad(
+	    [ 1.5, 0.8,-4.0],
+	    [ 1.5,-0.8,-4.0],
+	    [-1.5, 0.8,-4.0],
+	    [-1.5,-0.8,-4.0]).setTexture(TEXT_TEXTURE));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -138,7 +148,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.bufferModels();
 
 	this.initTextures();
-	this.initText();
+	this.initText("initial!");
 
 	// Set background color, clear everything, and
 	//  enable depth testing
@@ -240,26 +250,28 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.initText = function(){
+GLcanvas.prototype.initText = function(text_to_write) {
+
+    if(!this.textTexture) this.textTexture = this.gl.createTexture();
 
     var the_canvas = document.getElementById('textureCanvas');
-    the_canvas.width = 128;//getPowerOfTwo(ctx.measureText(text_to_write).width);
-    the_canvas.height = 32;//getPowerOfTwo(2*textSize);
+    var textSize = 112;
 
     var ctx = the_canvas.getContext("2d");
     if(!ctx) { alert("Error initializing text."); }
-    var text_to_write = "butthole";
-    var textSize = 24;
-    ctx.fillStyle = "#999999";
-//    ctx.fillRect(0, 0, the_canvas.width/2, the_canvas.height/2);
-    ctx.font = "28px Arial";
+
+    ctx.font = textSize + "px Arial";
+    the_canvas.width = Math.pow(2,
+	Math.ceil(Math.log(ctx.measureText(text_to_write).width) / Math.LN2));
+    the_canvas.height = Math.pow(2,
+	Math.ceil(Math.log(textSize) / Math.LN2));
+
+    ctx.font = textSize + "px Arial";
+    ctx.fillStyle = "#654321";
+    ctx.fillRect(0,0, the_canvas.width, the_canvas.height);
+    ctx.fillStyle = "#123456";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-
-//    textTexture.style.width = getPowerOfTwo(ctx.measureText(textToWrite).width);
-//    textTexture.style.height = getPowerOfTwo(2*textSize);
-
-//    ctx.strokeText(text_to_write, the_canvas.width/2, the_canvas.height/2);
     ctx.fillText(text_to_write, the_canvas.width/2, the_canvas.height/2);
 
     var the_active = GLactiveTexture();
@@ -267,10 +279,8 @@ GLcanvas.prototype.initText = function(){
     this.gl.getUniformLocation(this.shader, "sampler" + TEXT_TEXTURE);
     this.gl.uniform1i(sampler, the_active);
 
-//    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
-
     this.gl.activeTexture(this.gl.TEXTURE0 + the_active);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.gl.createTexture());
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.textTexture);
 
     this.gl.texParameteri(this.gl.TEXTURE_2D, 
 			  this.gl.TEXTURE_WRAP_S, 
@@ -284,7 +294,6 @@ GLcanvas.prototype.initText = function(){
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
 
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-//    this.gl.bindTexture(this.gl.TEXTURE_2D, null);
     this.gl.generateMipmap(this.gl.TEXTURE_2D);
 };
 

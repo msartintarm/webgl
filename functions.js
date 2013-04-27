@@ -186,11 +186,13 @@ function resetModel() {
 }
 
 function drawDashboard() {
-    if(rotateCam.html.style.display == "inline-block") {
+
+
+    if(rotateCam.html.style.display === "inline-block") {
 	rotateCam.html.innerHTML = "Rotation - Cam: " + rotateCam.val + "&deg;";
 	rotateCam.inc();
     }
-    if(rotateY.html.style.display == "inline-block") {
+    if(rotateY.html.style.display === "inline-block") {
 	rotateY.inc();
     }
     if(!positionX.isZero()) {
