@@ -21,12 +21,22 @@ function Stadium() {
     if(5280%piecesPerSide != 0)
 	alert("Not a proper selection of pieces per side");
 
+    this.intro = new Quad(
+	[-1200 - 40,  800 + 20, 1200 + 40],
+	[-1200 - 40,  800 - 20, 1200 + 40],
+	[-1200 + 40,  800 + 20, 1200 - 40],
+	[-1200 + 40,  800 - 20, 1200 - 40]).setTexture(TEXT_TEXTURE);
+    
+
     //initializes the field...floor and walls
     this.Field();
     this.InitBalls();
 }
 
 Stadium.prototype.initBuffers = function(gl_) {
+
+    theCanvas.initText("Welcome to our game. --CRA --MST");
+    this.intro.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
@@ -50,6 +60,7 @@ var sbZ_;
 var sbW_;
 
 Stadium.prototype.Field = function(){
+
     sbX_ = this.size/2 + 14.9; // back X coordinates
     sh_ = this.size/2;    // height of wall                                      
     sbZ_ = this.size/2 -15.1;  // back Z coordinate                                   
@@ -94,6 +105,8 @@ Stadium.prototype.Piece = function(a,b,c) {
 
 Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
+    this.intro.draw(gl_);
+
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	

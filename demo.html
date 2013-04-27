@@ -90,13 +90,28 @@ uniform sampler2D sampler15;
 uniform sampler2D sampler16;
 uniform sampler2D sampler17;
 
-void colorize(vec4 textureColor, 
-              float diffConst,
-              float ambConst,
-              vec3 specColor) {
-  vec3 ambColor = textureColor.rgb / 3.0 * ambConst;
-  vec3 diffColor = textureColor.rgb / 3.0 * diffuseV * diffConst;
+  // Specular
 
+float specular() {
+    vec3 reflectionV2 = (normalize(vertNorm) * diffuseV *
+		 2.0) - lightNorm;
+    vec3 viewer = vec3(0.,0.,0.);
+float specularV2 = dot(normalize(reflectionV2), 
+                    normalize(viewer - vModel.xyz));
+    if (specularV2 <= 0. || diffuseV <= 0.) { specularV2 = 0.0; }
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    return specularV2;
+}
+
+void colorize() {
+  float ambConst = 0.1;
+  float diffConst = 0.7;
+  vec3 ambColor = colorV / 3.0 * ambConst;
+  vec3 diffColor = colorV / 3.0 * diffuseV * diffConst;
+  vec3 specColor = vec3(.8, .8, .8) * specular();
   gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
 }
 
@@ -114,13 +129,11 @@ void texturize(sampler2D theSampler,
 
 void colorTexture(sampler2D theSampler,
                   float ambConst,
-                  float diffConst,
-                  float specConst) {
-  vec3 textureColor = texture2D(theSampler, 
-    vec2(textureV.s, textureV.t)).xyz;
+                  float diffConst) {
+  vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;
   vec3 ambColor = textureColor / 3.0 * ambConst;
   vec3 diffColor = textureColor * diffuseV * diffConst;
-  vec3 specColor = textureColor * specConst;
+  vec3 specColor = textureColor * specular();
 
   gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
 }
@@ -138,18 +151,7 @@ void colorSpecular(sampler2D theSampler,
   gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
 }
 
-void colorNoSpec(sampler2D theSampler, 
-                  float ambConst,
-                  float diffConst) {
-  vec3 textureColor = texture2D(theSampler, 
-    vec2(textureV.s, textureV.t)).xyz;
-  vec3 ambColor = textureColor / 3.0 * ambConst;
-  vec3 diffColor = textureColor * diffuseV * diffConst;
-
-  gl_FragColor = vec4(ambColor + diffColor, 1.0);
-}
-
-void colorJumbotron(sampler2D theSampler) {
+void colorNoLighting(sampler2D theSampler) {
   vec3 textureColor = texture2D(theSampler, 
     vec2(textureV.s, textureV.t)).xyz;
 
@@ -158,46 +160,27 @@ void colorJumbotron(sampler2D theSampler) {
 
 void main(void) {
 
-  // Specular
+if (textureNumV < 0.1) {colorTexture(sampler0, 0.1, 0.7);
+} else if (textureNumV < 1.1) { colorTexture(sampler1, 0.1, 0.7);
+} else if (textureNumV < 2.1) { colorSpecular(sampler2, 0.25, 0.7, vec3(.7,.2,.2) * specular());
+} else if (textureNumV < 3.1) { colorTexture(sampler3, 0.2, 0.4);
+} else if (textureNumV < 5.1) { colorTexture(sampler5, 0.1, 0.4);
+} else if (textureNumV < 6.1) { colorTexture(sampler6, 0.25, 0.4);
+} else if (textureNumV < 7.1) { colorize();
 
-vec3 reflectionV2 = (normalize(vertNorm) * diffuseV *
-		 2.0) - lightNorm;
-    vec3 viewer = vec3(0.,0.,0.);
-float specularV2 = dot(normalize(reflectionV2), 
-                    normalize(viewer - vModel.xyz));
-    if (specularV2 <= 0. || diffuseV <= 0.) { specularV2 = 0.0; }
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
-    specularV2 = specularV2 * specularV2;
+} else if (textureNumV < 13.1) { // skybox
 
-  vec3 specColor = vec3(.8,.8,.8) * specularV2;
-
-  vec4 textureColor;
-  float ambConst = 0.1;
-  float diffConst = 0.7;
-
-if (textureNumV < 0.1) {colorTexture(sampler0, ambConst, diffConst, specularV2);
-} else if (textureNumV < 1.1) { colorTexture(sampler1, ambConst, diffConst, specularV2);
-} else if (textureNumV < 2.1) { colorSpecular(sampler2, ambConst * 2.5, diffConst, vec3(.7,.2,.2) * specularV2);
-} else if (textureNumV < 3.1) { colorTexture(sampler3, 0.2, diffConst * 0.6, specularV2);
-} else if (textureNumV < 5.1) { colorTexture(sampler5, ambConst, diffConst * 0.6, specularV2);
-} else if (textureNumV < 6.1) { colorTexture(sampler6, ambConst * 2.5, diffConst, specularV2);
-} else if (textureNumV < 7.1) { colorize(vec4(colorV, 1.0), ambConst, diffConst, specColor);
-} else if (textureNumV < 8.1) { colorNoSpec(sampler8, ambConst, diffConst);
-} else if (textureNumV < 9.1) { colorNoSpec(sampler9, ambConst, diffConst);
-} else if (textureNumV < 10.1) { colorNoSpec(sampler10, ambConst, diffConst);
-} else if (textureNumV < 11.1) { colorNoSpec(sampler11, ambConst, diffConst);
-} else if (textureNumV < 12.1) { colorNoSpec(sampler12, ambConst, diffConst);
-} else if (textureNumV < 13.1) { colorNoSpec(sampler13, ambConst, diffConst);
-} else if (textureNumV < 14.1) { colorSpecular(sampler14, 0.9, diffConst, specColor);
-} else if (textureNumV < 15.1) { colorTexture(sampler15, ambConst, diffConst, specularV2);
-} else if (textureNumV < 16.1) { colorTexture(sampler16, ambConst * 3.0, diffConst, specularV2);
-} else if (textureNumV < 17.1) { // jumbotron
-  colorJumbotron(sampler17);
-} else { colorize(vec4(colorV * 2.0, 1.0), ambConst, diffConst, specColor);
+   if (textureNumV < 8.1) { colorNoLighting(sampler8);
+  } else if (textureNumV < 9.1) { colorNoLighting(sampler9);
+  } else if (textureNumV < 10.1) { colorNoLighting(sampler10);
+  } else if (textureNumV < 11.1) { colorNoLighting(sampler11);
+  } else if (textureNumV < 12.1) { colorNoLighting(sampler12);
+  } else { colorNoLighting(sampler13); }
+} else if (textureNumV < 14.1) { colorSpecular(sampler14, 0.9, 0.7, vec3(.8,.8,.8) * specular());
+} else if (textureNumV < 15.1) { colorNoLighting(sampler15);
+} else if (textureNumV < 16.1) { colorTexture(sampler16, 0.3, 0.7);
+} else { colorNoLighting(sampler17);
 }
-
 }
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
