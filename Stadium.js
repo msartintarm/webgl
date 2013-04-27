@@ -22,10 +22,10 @@ function Stadium() {
 	alert("Not a proper selection of pieces per side");
 
     this.intro = new Quad(
-	[-1200 - 40,  800 + 20, 1200 + 40],
-	[-1200 - 40,  800 - 20, 1200 + 40],
-	[-1200 + 40,  800 + 20, 1200 - 40],
-	[-1200 + 40,  800 - 20, 1200 - 40]).setTexture(TEXT_TEXTURE);
+	[-1200 + 70, 760 + 175, 1200 + 70],
+	[-1200 + 70, 760 + 125, 1200 + 70],
+	[-1200 - 70, 760 + 175, 1200 - 70],
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
     
 
     //initializes the field...floor and walls

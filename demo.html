@@ -158,6 +158,13 @@ void colorNoLighting(sampler2D theSampler) {
   gl_FragColor = vec4(textureColor, 1.0);
 }
 
+void colorText(sampler2D theSampler) {
+  vec3 textureColor = texture2D(theSampler, 
+    vec2(textureV.s, textureV.t)).xyz;
+
+  gl_FragColor = vec4(textureColor, 1.0);
+}
+
 void main(void) {
 
 if (textureNumV < 0.1) {colorTexture(sampler0, 0.1, 0.7);
@@ -179,7 +186,7 @@ if (textureNumV < 0.1) {colorTexture(sampler0, 0.1, 0.7);
 } else if (textureNumV < 14.1) { colorSpecular(sampler14, 0.9, 0.7, vec3(.8,.8,.8) * specular());
 } else if (textureNumV < 15.1) { colorNoLighting(sampler15);
 } else if (textureNumV < 16.1) { colorTexture(sampler16, 0.3, 0.7);
-} else { colorNoLighting(sampler17);
+} else { colorText(sampler17);
 }
 }
     </script>

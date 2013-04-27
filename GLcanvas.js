@@ -148,8 +148,6 @@ GLcanvas.prototype.start = function(theScene) {
 	this.bufferModels();
 
 	this.initTextures();
-	this.initText("initial!");
-
 	// Set background color, clear everything, and
 	//  enable depth testing
 	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
@@ -267,12 +265,18 @@ GLcanvas.prototype.initText = function(text_to_write) {
 	Math.ceil(Math.log(textSize) / Math.LN2));
 
     ctx.font = textSize + "px Arial";
-    ctx.fillStyle = "#654321";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0,0, the_canvas.width, the_canvas.height);
     ctx.fillStyle = "#123456";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(text_to_write, the_canvas.width/2, the_canvas.height/2);
+    ctx.fillStyle = "#423518";
+    ctx.fillText(text_to_write, the_canvas.width/2 + 1, the_canvas.height/2 + 1);
+    ctx.fillStyle = "#127596";
+    ctx.fillText(text_to_write, the_canvas.width/2 + 2, the_canvas.height/2 + 2);
+    ctx.fillStyle = "#112233";
+    ctx.fillText(text_to_write, the_canvas.width/2 + 3, the_canvas.height/2 + 3);
 
     var the_active = GLactiveTexture();
     var sampler =
