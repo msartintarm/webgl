@@ -6,6 +6,7 @@ function Ball(position) {
     this.timeLeft = 100;
     this.hit = false;
     this.sphere = new Sphere(this.radius);
+    this.textQuad = new Quad([0,10,0],[0,0,0],[0,10,-10],[0,0,-10]).setTexture(TEXT_TEXTURE);
     this.position = [50,this.radius,-50];
     this.init = true;
     this.velocityVec = vec3.create();
@@ -37,6 +38,7 @@ Ball.prototype.initBalls = function(){
 }
 Ball.prototype.initBuffers = function (gl_){
     this.sphere.initBuffers(gl_);
+    this.textQuad.initBuffers(gl_);
 }
 
 Ball.prototype.draw = function(gl_) {
@@ -45,6 +47,7 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     this.sphere.draw(gl_);
+    //this.textQuad.draw(gl_);
     theMatrix.pop();
 }
 
@@ -69,7 +72,7 @@ Ball.prototype.reflect = function(flip_x){
     this.updatePosition(true);
 }
 
-Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
+Ball.prototype.detectViewerCollision = function(oldPosition, newPosition, viewerMove){
     //sign of *_dir will tell you if you are heading in - or + resp direction
     // *_dir will also give you the vector of movement
     // vector will be necessary for bouncing
@@ -87,7 +90,8 @@ Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     if(distance < 2*this.radius){
 	//alert("HIT");
 	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
-	this.velocity = 100;
+	if(viewerMove)
+	    this.velocity = 100;
 	return false;
     }
 
