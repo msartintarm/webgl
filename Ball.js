@@ -13,6 +13,7 @@ function Ball(position) {
     vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
     this.startPosition = position;
     this.oldPosition = position;
+    this.ballCollide = false;
 }
 
 var timeStep = 0;
@@ -86,11 +87,38 @@ Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     if(distance < 2*this.radius){
 	//alert("HIT");
 	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
-	this.velocity = 500;
+	this.velocity = 100;
 	return false;
     }
 
     return true;
+}
+
+Ball.prototype.checkBallCollision = function(ball){
+    //sign of *_dir will tell you if you are heading in - or + resp direction
+    // *_dir will also give you the vector of movement
+    // vector will be necessary for bouncing
+    var x_dir = ball.position[0] - this.position[0];
+    var z_dir = ball.position[2] - this.position[2];
+
+    //check to see if we cross sphere on z axis
+    var newPos = vec2.fromValues(this.position[0],this.position[2]);
+    var ballPos = vec2.fromValues(ball.position[0], ball.position[2]);
+
+    //calculate distance
+    var distance = vec2.distance(newPos, ballPos);
+    //if we are within two radius' of ball we have a collision
+    if(distance < 2*this.radius){
+	//alert("HIT");
+	vec3.normalize(ball.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
+	this.velocityVec[0] = -1*ball.velocityVec[0];
+	this.velocityVec[2] = -1*ball.velocityVec[2];
+	ball.updatePosition(false);
+	this.updatePosition(true);
+	ball.velocity = this.velocity;
+	ball.ballCollide = true;
+    }
+
 }
 
 Ball.prototype.updatePosition = function(revert){
@@ -104,8 +132,8 @@ Ball.prototype.updatePosition = function(revert){
 	this.oldPosition[0] = this.position[0];
 	this.oldPosition[2] = this.position[2];
     }
-    this.position[0] += this.velocityVec[0] * this.velocity/10;
-    this.position[2] += this.velocityVec[2] * this.velocity/10;
+    this.position[0] += this.velocityVec[0] * this.velocity/5;
+    this.position[2] += this.velocityVec[2] * this.velocity/5;
 
     this.velocity--;
 }

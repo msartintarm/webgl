@@ -107,11 +107,19 @@ Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
     this.intro.draw(gl_);
 
+    //we haven't looked at any balls yet so lets reset the collisions
+    //this flag will tell us when we have a collision so that we 
+    //do not encounter a deadlock type situation where both balls
+    //are setting reflections on each other
+    for(var i = 0; i<this.balls.length; i++){
+	this.balls[i].ballCollide = false;
+    }
+
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	
 	//check to see if balls hit something
-	if(this.balls[i].velocity != 0){
+	if(this.balls[i].velocity != 0 && !this.balls[i].ballCollide){
 	    //update the ball position
 	    this.balls[i].updatePosition(false);
 	    var curPos = this.balls[i].oldPosition;
@@ -127,7 +135,13 @@ Stadium.prototype.draw = function(gl_) {
 	    pieceZ = Math.round(newPos[2] /-this.size);
 	    newPiece = (this.width * pieceZ) + pieceX;
 	    
+	    for(var j=0; j<this.balls.length; j++){
+		//don't check detection with itself
+		if(j!=i)
+		    this.balls[i].checkBallCollision(this.balls[j]);
+	    }
 	    //check both current and new piece
+	    this.balls[i].detectViewerCollision(curPos, newPos);
 	    if(this.pieces[curPiece])
 		this.pieces[curPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	    if(this.pieces[newPiece])
