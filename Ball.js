@@ -6,7 +6,17 @@ function Ball(position) {
     this.timeLeft = 100;
     this.hit = false;
     this.sphere = new Sphere(this.radius);
-    this.textQuad = new Quad([0,60,0],[0,50,0],[0,60,-10],[0,50,-10]).setTexture(TEXT_TEXTURE);
+
+    //array of quads, then change to coordinates of the texture
+    //all set the same texture but the coorinates being picked off in the texture
+    //will change.
+    
+    this.textQuad = [];
+    
+    for(var i=0; i<10; i++){
+	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(TEXT_TEXTURE,i);
+    }
+	  
     this.position = [50,this.radius,-50];
     this.init = true;
     this.velocityVec = vec3.create();
@@ -38,7 +48,11 @@ Ball.prototype.initBalls = function(){
 }
 Ball.prototype.initBuffers = function (gl_){
     this.sphere.initBuffers(gl_);
-    this.textQuad.initBuffers(gl_);
+    theCanvas.initText("0 1 2 3 4 5 6 7 8 9");
+    
+    for(var i=0; i<10; i++){
+	this.textQuad[i].initBuffers(gl_);
+    }
 }
 
 Ball.prototype.draw = function(gl_) {
@@ -47,7 +61,9 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     this.sphere.draw(gl_);
-    this.textQuad.draw(gl_);
+    for(var i=0; i<10; i++){
+	this.textQuad[i].draw(gl_);
+    }
     theMatrix.pop();
 }
 

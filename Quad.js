@@ -72,6 +72,15 @@ Quad.prototype.setSkyTexture = function(texture, val) {
     return this;
 }
 
+Quad.prototype.setStringTexture = function(texture, val) { 
+    this.o.setTexture(texture);
+    var x_dist = 0.125;
+    var offset = 0.06;
+    if(val==0)
+	this.o.initTextures([x_dist,0.0],[x_dist,1.0],[offset,0.0],[offset,1.0]);
+    return this;
+}
+
 
 Quad.prototype.initBuffers = _oInitBuffers;
 Quad.prototype.translate = _oTranslate;
