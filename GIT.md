@@ -1,3 +1,5 @@
+###[Back to README](README.md)
+
 ##How to Use Git
 This isn't directly related to the project, but it's pretty important for the (two) 
   contributors to know how to properly configure and use Git.
