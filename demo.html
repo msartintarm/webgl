@@ -22,6 +22,7 @@
     <script src="GLtexture.js" type="text/javascript"></script>
     <script src="GLframe.js" type="text/javascript"></script>
     <script src="GLcanvas.js" type="text/javascript"></script>
+    <script src="GLstring.js" type="text/javascript"></script>
 
     <!-- Simple objects -->
     <script src="Cylinder.js" type="text/javascript"></script>
@@ -89,6 +90,16 @@ uniform sampler2D sampler14;
 uniform sampler2D sampler15;
 uniform sampler2D sampler16;
 uniform sampler2D sampler17;
+
+// These are to be used by text only
+uniform sampler2D sampler18;
+uniform sampler2D sampler19;
+uniform sampler2D sampler20;
+uniform sampler2D sampler21;
+uniform sampler2D sampler22;
+uniform sampler2D sampler23;
+uniform sampler2D sampler24;
+uniform sampler2D sampler25;
 
   // Specular
 
@@ -186,7 +197,16 @@ if (textureNumV < 0.1) {colorTexture(sampler0, 0.1, 0.7);
 } else if (textureNumV < 14.1) { colorSpecular(sampler14, 0.9, 0.7, vec3(.8,.8,.8) * specular());
 } else if (textureNumV < 15.1) { colorNoLighting(sampler15);
 } else if (textureNumV < 16.1) { colorTexture(sampler16, 0.3, 0.7);
-} else { colorText(sampler17);
+} else if (textureNumV < 17.1) { colorText(sampler17);
+} else if (textureNumV < 18.1) { colorText(sampler18);
+} else if (textureNumV < 19.1) { colorText(sampler19);
+} else if (textureNumV < 20.1) { colorText(sampler20);
+} else if (textureNumV < 21.1) { colorText(sampler21);
+} else if (textureNumV < 22.1) { colorText(sampler22);
+} else if (textureNumV < 23.1) { colorText(sampler23);
+} else if (textureNumV < 24.1) { colorText(sampler24);
+} else if (textureNumV < 25.1) { colorText(sampler25);
+} else { colorize();
 }
 }
     </script>

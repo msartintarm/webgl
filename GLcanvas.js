@@ -89,11 +89,20 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [ 1,-1,-4]).setTexture(FRAME_BUFF));
 
     } else if(objToDraw == "text") {
+	this.string1 = new GLstring("testing 1.");
+	this.string2 = new GLstring("testing 2.");
+	this.objects.push(this.string1);
+	this.objects.push(this.string2);
 	this.objects.push(new Quad(
 	    [ 1.5, 0.8,-4.0],
 	    [ 1.5,-0.8,-4.0],
 	    [-1.5, 0.8,-4.0],
-	    [-1.5,-0.8,-4.0]).setTexture(TEXT_TEXTURE));
+	    [-1.5,-0.8,-4.0]).setTexture(this.string1.texture_num));
+	this.objects.push(new Quad(
+	    [ 1.5, 2.4,-4.0],
+	    [ 1.5, 0.8,-4.0],
+	    [-1.5, 2.4,-4.0],
+	    [-1.5, 0.8,-4.0]).setTexture(this.string2.texture_num));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -304,9 +313,8 @@ GLcanvas.prototype.initText = function(text_to_write) {
 GLcanvas.prototype.initTextures = function() {
     var i = 0;
     this.gl.textures.forEach(function(val, index) {
-	if(index != FRAME_BUFF &&
-	   index != NO_TEXTURE &&
-	   index != TEXT_TEXTURE) {
+	if(index < FRAME_BUFF &&
+	   index != NO_TEXTURE) {
 	    var theTexture = new GLtexture(val, index);
 	}
     });
