@@ -1,3 +1,5 @@
+###[Back to README](README.md)
+
 ##How to load a texture into WebGL
 TODO instead, just link to a commit
 
