@@ -10,7 +10,7 @@ function GLstringSampler() {
  */
 function GLstring(text_to_write) {
     this.active = GLactiveTexture();
-    this.texture_num = GLstringSampler();
+    this.texture_num = this.active;
     this.text = text_to_write;
     this.canvas = document.getElementById('textureCanvas');
     this.text_size = 112;

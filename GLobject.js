@@ -140,6 +140,56 @@ GLobject.prototype.setTexture = function(theTexture) {
     for(var i = 0; i < this.normData.length / 3; ++i) {
 	this.textureNum[i] = theTexture;
     }
+
+    this.ambient_coeff = 0.1;
+    this.diffuse_coeff = 0.7;
+    this.specular_coeff = 0.0;
+    this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
+
+    switch(theTexture) {
+	case 0: case 1: break;
+    case 2:
+	vec3.set(this.specular_color, 0.7, 0.2, 0.2);
+	this.specular_coeff = 1.0;
+	break;
+    case 3:
+	this.ambient_coeff = 0.2;
+	this.diffuse_coeff = 0.4;
+	break;
+    case 5:
+	this.ambient_coeff = 0.1;
+	this.diffuse_coeff = 0.4;
+	break; 
+    case 6:
+	this.ambient_coeff = 0.25;
+	this.diffuse_coeff = 0.4;
+	break;
+    case 7:
+	this.ambient_coeff = 0.0;
+	this.diffuse_coeff = 0.0;
+	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
+	this.specular_coeff = 1.0;
+	break;
+    case 8: case 9: case 10: case 11: 
+    case 12: case 13: case 15: case 17: 
+    case 18: case 19: case 20: case 21: 
+    case 22: case 23: case 24: case 25:
+	this.ambient_coeff = 0.0;
+	this.diffuse_coeff = 0.0;
+	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
+	this.specular_coeff = 1.0;
+	break;
+    case 14:
+	this.ambient_coeff = 0.9;
+	this.specular_coeff = 1.0;
+	break;
+    case 16:
+	this.ambient_coeff = 0.3;
+	break;
+    default:
+	alert("Unsupported texture number in GLobject.js");
+	break;
+    }
     return this;
 };
 
@@ -241,9 +291,15 @@ GLobject.prototype.translate = function(vec) {
 
 /**
    Link GL's pre-loaded attributes to the shader program
+   Then send the divide-and-conquer 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
     
+    gl_.uniform1f(shader_.ambient_coeff, this.ambient_coeff);
+    gl_.uniform1f(shader_.diffuse_coeff, this.diffuse_coeff);
+//    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
+    gl_.uniform3fv(shader_.specular_color, this.specular_color);
+
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.vNormA, this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
@@ -273,7 +329,7 @@ GLobject.prototype.draw = function(gl_) {
 
     var shader_;
     if(this.textureNum[0] === NO_TEXTURE) {
-	shader_ = gl_.shader;
+	shader_ = gl_.shader_color;
     } else {
 	shader_ = gl_.shader;
     }
