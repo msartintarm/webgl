@@ -53,7 +53,7 @@ Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
 	var x_dist = Math.round(Math.random()*5000);
 	var z_dist = Math.round(Math.random()*-5000);
-	this.balls.push(new Ball([x_dist,0,z_dist], this.numbers.texture_num));
+	this.balls.push(new Ball([x_dist,0,z_dist], this.numbers.texture_num, this.numberBalls));
     }
 }
 
@@ -109,21 +109,25 @@ Stadium.prototype.draw = function(gl_) {
     //this flag will tell us when we have a collision so that we 
     //do not encounter a deadlock type situation where both balls
     //are setting reflections on each other
+    var numBallsHit = 0;
+    var gameOver = false;
     for(var i = 0; i<this.balls.length; i++){
 	this.balls[i].ballCollide = false;
+	if(this.balls[i].hit == true && !this.balls[i].gameOver)
+	    numBallsHit++;
+	if(this.balls[i].gameOver)
+	    gameOver = true;
     }
-
-    //we haven't looked at any balls yet so lets reset the collisions
-    //this flag will tell us when we have a collision so that we 
-    //do not encounter a deadlock type situation where both balls
-    //are setting reflections on each other
-    for(var i = 0; i<this.balls.length; i++){
-	this.balls[i].ballCollide = false;
-    }
+    if(numBallsHit == this.numberBalls)
+	alert("You win the game!");
 
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	
+	//the game has ended let every ball know
+	if(numBallsHit == this.numberBalls || gameOver)
+	    this.balls[i].gameOver = true;
+
 	//check to see if balls hit something
 	if(this.balls[i].velocity != 0 && !this.balls[i].ballCollide){
 	    //update the ball position
@@ -148,12 +152,15 @@ Stadium.prototype.draw = function(gl_) {
 	    }
 	    //check both current and new piece
 	    //checks viewer collision even if you aren't moving
+	    //need a new method here, for when the viewer is not moving
 	    this.balls[i].detectViewerCollision(curPos, newPos, false);
+
 	    if(this.pieces[curPiece])
 		this.pieces[curPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	    if(this.pieces[newPiece])
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
+
 	this.balls[i].draw(gl_);
     }
     if(ballInitOver) stadiumInit = 1;
@@ -216,16 +223,18 @@ Stadium.prototype.checkPosition = function() {
 	}
 
     if(newPiece < 0) { return false; }
-    
 
     //see if we collide with a ball
-    for(var i = 0; i<this.balls.length; i++){
-	this.balls[i].detectViewerCollision(curPos, newPos, true);
-    }
 
     if(!this.pieces[newPiece].positionLegal(curPos, newPos) ||
        !this.pieces[curPiece].positionLegal(curPos, newPos)){
 	mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
+	curPos[0] = newPos[0];
+	curPos[2] = newPos[2];
+    }
+    for(var i = 0; i<this.balls.length; i++){
+	this.balls[i].detectViewerCollision(curPos, newPos, true);
+	this.balls[i].getRotationAngle(curPos);
     }
     return true;
 }

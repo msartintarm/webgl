@@ -74,10 +74,39 @@ Quad.prototype.setSkyTexture = function(texture, val) {
 
 Quad.prototype.setStringTexture = function(texture, val) { 
     this.o.setTexture(texture);
-    var x_dist = 0.125;
+    var x_dist = 0.120;
+    var x_dist_1 = 0.115
+    var x_dist_2 = 0.110;
+    var x_dist_3 = 0.105;
+    var x_dist_4 = 0.100;
+    var x_dist_5 = 0.100;
+    var x_dist_6 = 0.098;
+    var x_dist_7 = 0.097;
+    var x_dist_8 = 0.096;
+    var x_dist_9 = 0.096;
     var offset = 0.06;
+
     if(val==0)
 	this.o.initTextures([x_dist,0.0],[x_dist,1.0],[offset,0.0],[offset,1.0]);
+    else if(val==1)
+	this.o.initTextures([2*x_dist,0.0],[2*x_dist,1.0],[x_dist,0.0],[x_dist,1.0]);
+    else if(val==2)
+	this.o.initTextures([3*x_dist_2,0.0],[3*x_dist_2,1.0],[2*x_dist_2,0.0],[2*x_dist_2,1.0]);
+    else if(val==3)
+	this.o.initTextures([4*x_dist_3,0.0],[4*x_dist_3,1.0],[3*x_dist_3,0.0],[3*x_dist_3,1.0]);
+    else if(val==4)
+	this.o.initTextures([5*x_dist_4,0.0],[5*x_dist_4,1.0],[4*x_dist_4,0.0],[4*x_dist_4,1.0]);
+    else if(val==5)
+	this.o.initTextures([6*x_dist_4,0.0],[6*x_dist_4,1.0],[5*x_dist_4,0.0],[5*x_dist_4,1.0]);
+    else if(val==6)
+	this.o.initTextures([7*x_dist_6,0.0],[7*x_dist_6,1.0],[6*x_dist_6,0.0],[6*x_dist_6,1.0]);
+    else if(val==7)
+	this.o.initTextures([8*x_dist_7,0.0],[8*x_dist_7,1.0],[7*x_dist_7,0.0],[7*x_dist_7,1.0]);
+    else if(val==8)
+	this.o.initTextures([9*x_dist_8,0.0],[9*x_dist_8,1.0],[8*x_dist_8,0.0],[8*x_dist_8,1.0]);
+    else if(val==9)
+	this.o.initTextures([10*x_dist_9,0.0],[10*x_dist_9,1.0],[9*x_dist_9,0.0],[9*x_dist_9,1.0]);
+    
     return this;
 }
 

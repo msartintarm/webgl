@@ -212,7 +212,7 @@ StadiumPiece.prototype.reflect = function(currentPosition, newPosition, index, f
 	vec3.fromValues(newPosition[0],newPosition[1],newPosition[2]));
     oppo = Math.abs(currentPosition[index]-newPosition[index]);
     
-    angle = 2*Math.sin(oppo/hypt);
+    angle = 2*Math.asin(oppo/hypt);
     
     //flip x or z for direction of angle
     if(index == 2) index = 0;
