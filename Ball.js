@@ -1,4 +1,4 @@
-function Ball(position) { 
+function Ball(position, texture_num) { 
 //    this.velocity;
 //    this.position;
 //    this.color;
@@ -14,7 +14,7 @@ function Ball(position) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(TEXT_TEXTURE,i);
+	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num,i);
     }
 	  
     this.position = [50,this.radius,-50];
@@ -48,8 +48,6 @@ Ball.prototype.initBalls = function(){
 }
 Ball.prototype.initBuffers = function (gl_){
     this.sphere.initBuffers(gl_);
-    theCanvas.initText("0 1 2 3 4 5 6 7 8 9");
-    
     for(var i=0; i<10; i++){
 	this.textQuad[i].initBuffers(gl_);
     }

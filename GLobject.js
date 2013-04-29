@@ -23,8 +23,6 @@ function GLobject() {
     this.rotation = [0,0,0];
     this.scale = 1;
 
-    this.texture = "favicon.ico";
-
     // Ensure any repeat initialization
     //  of this object's data will do it correctly
     this.normsInverted = false;
@@ -163,9 +161,7 @@ GLobject.prototype.initBuffers = function(gl_) {
     if(this.textureNum.length >= 1) {
 	gl_.textures[this.textureNum[0]] = gl_;
     } else {
-	for(i = 0, max = this.normData.length / 3; i < max; ++i) {
-	    this.textureNum.push(NO_TEXTURE);
-	}
+	this.setTexture(NO_TEXTURE);
     }
 
     this.initFlatNorms();
@@ -246,65 +242,18 @@ GLobject.prototype.translate = function(vec) {
 /**
    Link GL's pre-loaded attributes to the shader program
 */
-GLobject.prototype.linkSomeAttribs = function(gl_) {
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(gl_.shader.vPosA, 
-			    this.posBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
-/*    
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
-    gl_.vertexAttribPointer(gl_.shader.vNormA, 
-			    this.normBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
-    gl_.vertexAttribPointer(gl_.shader.vColA, 
-			    this.colBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(gl_.shader.textureA, 
-			    this.textureBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
-    gl_.vertexAttribPointer(gl_.shader.textureNumA, 
-			    this.textureNumBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
-*/
-};
-
-/**
-   Link GL's pre-loaded attributes to the shader program
-*/
-GLobject.prototype.linkAttribs = function(gl_) {
+GLobject.prototype.linkAttribs = function(gl_, shader_) {
     
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
-    gl_.vertexAttribPointer(gl_.shader.vNormA, 
-			    this.normBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.vNormA, this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(gl_.shader.vPosA, 
-			    this.posBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.vPosA, this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
-    gl_.vertexAttribPointer(gl_.shader.vColA, 
-			    this.colBuff.itemSize, 
-			    gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.vColA, this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(gl_.shader.textureA, 
-			    this.textureBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.textureA, this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
-    gl_.vertexAttribPointer(gl_.shader.textureNumA, 
-			    this.textureNumBuff.itemSize,
-			    gl_.FLOAT, false, 0, 0);
-};
-
-/**
-   Send the divide-and-conquer 'draw' signal to the GPU
-   Attributes must first be linked (as above).
-*/
-GLobject.prototype.drawSomeElements = function(gl_) {
-    gl_.drawElements(gl_.TRIANGLES, 
-        this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
+    gl_.vertexAttribPointer(shader_.textureNumA, this.textureNumBuff.itemSize, gl_.FLOAT, false, 0, 0);
 };
 
 /**
@@ -322,21 +271,17 @@ GLobject.prototype.drawElements = function(gl_) {
  */
 GLobject.prototype.draw = function(gl_) {
 
-    theMatrix.setViewUniforms(gl_);
-    theMatrix.setVertexUniforms(gl_);
-    this.linkAttribs(gl_);
+    var shader_;
+    if(this.textureNum[0] === NO_TEXTURE) {
+	shader_ = gl_.shader;
+    } else {
+	shader_ = gl_.shader;
+    }
+    gl_.useProgram(shader_);
+    theMatrix.setViewUniforms(gl_, shader_);
+    theMatrix.setVertexUniforms(gl_, shader_);
+    this.linkAttribs(gl_, shader_);
     this.drawElements(gl_);
-};
-
-/**
- * Some data we will not need this time.
- */
-GLobject.prototype.drawAgain = function(gl_) {
-
-    theMatrix.setViewUniforms(gl_);
-    theMatrix.setVertexUniforms(gl_);
-    this.linkSomeAttribs(gl_);
-    this.drawSomeElements(gl_);
 };
 
 var FLATNORMS = false;
@@ -435,14 +380,6 @@ GLobject.prototype.initFlatNorms = function() {
 	this.normData_.push(c[2]);
     }
 
-//    this.indexData = this.indexData_.slice(0);
-//    this.normData = this.normData_.slice(0);
- //   this.colData = this.colData_.slice(0);
- //   this.posData = this.posData_.slice(0);
- //   this.textureData = this.textureData_.slice(0);
- //   this.textureNum = this.textureNum_.slice(0);
-
     if(this.normsInverted) { this.invertFlatNorms(); }
-
 
 };

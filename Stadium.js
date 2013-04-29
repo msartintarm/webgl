@@ -18,6 +18,9 @@ function Stadium() {
     this.size = pieceLength;
     this.width = piecesPerSide;
 
+    this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9");
+    this.introScreen = new GLstring("Welcome to our game. --CRA --MST");
+
     if(5280%piecesPerSide != 0)
 	alert("Not a proper selection of pieces per side");
 
@@ -25,7 +28,7 @@ function Stadium() {
 	[-1200 + 70, 760 + 175, 1200 + 70],
 	[-1200 + 70, 760 + 125, 1200 + 70],
 	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num);
     
 
     //initializes the field...floor and walls
@@ -35,8 +38,8 @@ function Stadium() {
 
 Stadium.prototype.initBuffers = function(gl_) {
 
-    theCanvas.initText("Welcome to our game. --CRA --MST");
     this.intro.initBuffers(gl_);
+    this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
@@ -50,7 +53,7 @@ Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
 	var x_dist = Math.round(Math.random()*5000);
 	var z_dist = Math.round(Math.random()*-5000);
-	this.balls.push(new Ball([x_dist,0,z_dist]));
+	this.balls.push(new Ball([x_dist,0,z_dist], this.numbers.texture_num));
     }
 }
 

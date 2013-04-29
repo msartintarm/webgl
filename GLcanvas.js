@@ -15,6 +15,9 @@ function GLcanvas() {
     this.frames = [];
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
+
+    // if we have errors, don't keep trying to draw the scene
+    this.has_errors = false;
     theMatrix = new GLmatrix();
 
     colorVec = vec3.fromValues(1,1,0);
@@ -45,10 +48,9 @@ GLcanvas.prototype.debug = function() {
 };
 
 GLcanvas.prototype.createScene = function(objToDraw) {
+
     mazeMode = 0;
     stadiumMode = 0;
-
-    
 
     if(objToDraw == "cylinder") {
 	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
@@ -120,7 +122,7 @@ GLcanvas.prototype.bufferModels = function() {
 GLcanvas.prototype.drawModels = function() {
     for(var i = 0, max = this.objects.length;
 	i < max; ++i) {
-	this.objects[i].draw(this.gl, this.shader); 
+	this.objects[i].draw(this.gl); 
     } 
 };
 
@@ -140,7 +142,9 @@ GLcanvas.prototype.start = function(theScene) {
 	this.canvas.height = window.innerHeight - 150;
 
 	this.initGL();
-	this.initShaders("shader-fs", "shader-vs");
+	this.gl.shader = this.gl.createProgram();
+	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
+	this.gl.useProgram(this.gl.shader);
 
 	theMatrix.viewInit();
 	this.objects = [];
@@ -213,17 +217,20 @@ GLcanvas.prototype.drawScene = function() {
     
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
-    while (error != this.gl.NO_ERROR) {
-	alert("error: " + error);
-	error = this.gl.getError();
-
+    if (error != this.gl.NO_ERROR) {
+	this.has_errors = true;
+	while (error != this.gl.NO_ERROR) {
+	    alert("error: " + error);
+	    error = this.gl.getError();
+	}
     }
+
+    if(envDEBUG === true && this.has_errors === true) { return; }
 
     for(var i = 0; i < this.frames.length; ++i) {
 	this.frames[i].drawScene(this.gl);
     }
 
-//    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
 
@@ -231,11 +238,6 @@ GLcanvas.prototype.drawScene = function() {
 			  this.gl.viewportWidth / 
 			  this.gl.viewportHeight,
 			  0.1, 30000.0);
-
-
-//    theMatrix.modelInit();
-//    if(!mazeMode)
-//	theMatrix.modelUpdate();
 
     // Draw all our objects
     theMatrix.push();
@@ -257,59 +259,6 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.initText = function(text_to_write) {
-
-    if(!this.textTexture) this.textTexture = this.gl.createTexture();
-
-    var the_canvas = document.getElementById('textureCanvas');
-    var textSize = 112;
-
-    var ctx = the_canvas.getContext("2d");
-    if(!ctx) { alert("Error initializing text."); }
-
-    ctx.font = textSize + "px Arial";
-    the_canvas.width = Math.pow(2,
-	Math.ceil(Math.log(ctx.measureText(text_to_write).width) / Math.LN2));
-    the_canvas.height = Math.pow(2,
-	Math.ceil(Math.log(textSize) / Math.LN2));
-
-    ctx.font = textSize + "px Arial";
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0,0, the_canvas.width, the_canvas.height);
-    ctx.fillStyle = "#123456";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text_to_write, the_canvas.width/2, the_canvas.height/2);
-    ctx.fillStyle = "#423518";
-    ctx.fillText(text_to_write, the_canvas.width/2 + 1, the_canvas.height/2 + 1);
-    ctx.fillStyle = "#127596";
-    ctx.fillText(text_to_write, the_canvas.width/2 + 2, the_canvas.height/2 + 2);
-    ctx.fillStyle = "#112233";
-    ctx.fillText(text_to_write, the_canvas.width/2 + 3, the_canvas.height/2 + 3);
-
-    var the_active = GLactiveTexture();
-    var sampler =
-    this.gl.getUniformLocation(this.shader, "sampler" + TEXT_TEXTURE);
-    this.gl.uniform1i(sampler, the_active);
-
-    this.gl.activeTexture(this.gl.TEXTURE0 + the_active);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.textTexture);
-
-    this.gl.texParameteri(this.gl.TEXTURE_2D, 
-			  this.gl.TEXTURE_WRAP_S, 
-			  this.gl.CLAMP_TO_EDGE);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, 
-			  this.gl.TEXTURE_WRAP_T, 
-			  this.gl.CLAMP_TO_EDGE);
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, 
-		       this.gl.UNSIGNED_BYTE, the_canvas);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
-
-    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-    this.gl.generateMipmap(this.gl.TEXTURE_2D);
-};
-
 GLcanvas.prototype.initTextures = function() {
     var i = 0;
     this.gl.textures.forEach(function(val, index) {
@@ -326,71 +275,51 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.bufferModels();
     this.initTextures();
 };
-		     
-GLcanvas.prototype.initShaders = function(frag, vert) {
+
+GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     
-    this.shader = this.gl.createProgram();
-    this.gl.attachShader(this.shader, getShader(this.gl, frag));
-    this.gl.attachShader(this.shader, getShader(this.gl, vert));
-    this.gl.linkProgram(this.shader);
+    this.gl.attachShader(gl_shader, getShader(this.gl, frag));
+    this.gl.attachShader(gl_shader, getShader(this.gl, vert));
+    this.gl.linkProgram(gl_shader);
 
     if (!this.gl.getProgramParameter(
-	this.shader, this.gl.LINK_STATUS)) {
+	gl_shader, this.gl.LINK_STATUS)) {
         alert("Could not initialise shaders");
     }
 
-    this.gl.useProgram(this.shader);
-    this.gl.shader = this.shader;
+    gl_shader.vPosA = 
+	this.gl.getAttribLocation(gl_shader, "vPosA");
+    this.gl.enableVertexAttribArray(gl_shader.vPosA);
 
-    this.shader.vPosA = 
-	this.gl.getAttribLocation(
-	    this.shader, "vPosA");
-    this.gl.enableVertexAttribArray(
-	this.shader.vPosA);
+    gl_shader.vNormA = 
+	this.gl.getAttribLocation(gl_shader, "vNormA");
+    this.gl.enableVertexAttribArray(gl_shader.vNormA);
 
-    this.shader.vNormA = 
-	this.gl.getAttribLocation(
-	    this.shader, "vNormA");
-    this.gl.enableVertexAttribArray(
-	this.shader.vNormA);
+    gl_shader.vColA = 
+	this.gl.getAttribLocation(gl_shader, "vColA");
+    this.gl.enableVertexAttribArray(gl_shader.vColA);
 
-    this.shader.vColA = 
-	this.gl.getAttribLocation(this.shader, "vColA");
-    this.gl.enableVertexAttribArray(this.shader.vColA);
+    gl_shader.textureA = 
+	this.gl.getAttribLocation(gl_shader, "textureA");
+    this.gl.enableVertexAttribArray(gl_shader.textureA);
 
-    this.shader.textureA = 
-	this.gl.getAttribLocation(this.shader, "textureA");
-    this.gl.enableVertexAttribArray(this.shader.textureA);
-
-    this.shader.textureNumA = 
-	this.gl.getAttribLocation(this.shader, "textureNumA");
-    this.gl.enableVertexAttribArray(this.shader.textureNumA);
+    gl_shader.textureNumA = 
+	this.gl.getAttribLocation(gl_shader, "textureNumA");
+    this.gl.enableVertexAttribArray(gl_shader.textureNumA);
 
     this.gl.textures = [];
 
     // Perspecctive matrix
-    this.shader.pMatU = 
-	this.gl.getUniformLocation(
-	    this.shader, "pMatU");
+    gl_shader.pMatU = this.gl.getUniformLocation(gl_shader, "pMatU");
     // Model matrix
-    this.shader.mMatU = 
-	this.gl.getUniformLocation(
-	    this.shader, "mMatU");
+    gl_shader.mMatU = this.gl.getUniformLocation(gl_shader, "mMatU");
     // Viewing matrix
-    this.shader.vMatU = 
-	this.gl.getUniformLocation(
-	    this.shader, "vMatU");
+    gl_shader.vMatU = this.gl.getUniformLocation(gl_shader, "vMatU");
     // Model's normal matrix
-    this.shader.nMatU = 
-	this.gl.getUniformLocation(
-	    this.shader, "nMatU");
+    gl_shader.nMatU = this.gl.getUniformLocation(gl_shader, "nMatU");
     // Lighting matrix
-    this.shader.lMatU = 
-	this.gl.getUniformLocation(
-	    this.shader, "lMatU");
+    gl_shader.lMatU = this.gl.getUniformLocation(gl_shader, "lMatU");
     // Initial light's position
-    this.shader.lightPosU = 
-	this.gl.getUniformLocation(
-	    this.shader, "lightPosU");
+    gl_shader.lightPosU = this.gl.getUniformLocation(gl_shader, "lightPosU");
 };
 var theCanvas;

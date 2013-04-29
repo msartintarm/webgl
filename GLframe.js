@@ -36,7 +36,7 @@ GLframe.prototype.drawScene = function(gl_) {
     mat4.identity(theMatrix.vMatrix);
     theMatrix.vMatrixChanged = true;
 
-    theMatrix.setViewUniforms(gl_);
+    theMatrix.setViewUniforms(gl_, gl_.shader);
 
     theMatrix.push();
     theMatrix.modelInit();
