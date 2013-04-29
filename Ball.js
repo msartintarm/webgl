@@ -6,7 +6,7 @@ function Ball(position) {
     this.timeLeft = 100;
     this.hit = false;
     this.sphere = new Sphere(this.radius);
-    this.textQuad = new Quad([0,10,0],[0,0,0],[0,10,-10],[0,0,-10]).setTexture(TEXT_TEXTURE);
+    this.textQuad = new Quad([0,60,0],[0,50,0],[0,60,-10],[0,50,-10]).setTexture(TEXT_TEXTURE);
     this.position = [50,this.radius,-50];
     this.init = true;
     this.velocityVec = vec3.create();
@@ -47,7 +47,7 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     this.sphere.draw(gl_);
-    //this.textQuad.draw(gl_);
+    this.textQuad.draw(gl_);
     theMatrix.pop();
 }
 
@@ -139,6 +139,6 @@ Ball.prototype.updatePosition = function(revert){
     this.position[0] += this.velocityVec[0] * this.velocity/5;
     this.position[2] += this.velocityVec[2] * this.velocity/5;
 
-    this.velocity--;
+    this.velocity-= 0.5;
 }
 

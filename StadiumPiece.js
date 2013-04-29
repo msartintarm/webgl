@@ -6,8 +6,8 @@ the number of walls to build and texture for each wall is an input variable
 each wall consists of 4 quads (right now at least)
 probably can make this a variable parameter
 */
-//function StadiumPiece(walls, ft, bt, rt, lt) { 
-function StadiumPiece(room_size, walls, movingWalls, textures) { 
+function StadiumPiece(room_size, walls, movingWalls, textures,
+		     sbX_, sh_, sbZ_, sbW_) { 
     this.y_positionF = -200;
     this.y_positionR = -200;
 
@@ -61,22 +61,41 @@ function StadiumPiece(room_size, walls, movingWalls, textures) {
    you see lengths of 11.4 that is to give the long wall texture preference
    over the short edge(looks crappy) when those conflicts do occur.
 */
-    if(this.f || this.fM){ this.qFront = this.FrontWall(this.ft, this.fM); }
-    if(this.l || this.lM){ this.qLeft = this.LeftWall(this.lt, this.lM); }
-    if(this.r || this.rM){ this.qRight = this.RightWall(this.rt, this.rM); }
-    if(this.b || this.bM){ this.qBack = this.BackWall(this.bt, this.bM); }
+    if(this.f || this.fM){ 
+	this.qFront = this.FrontWall(this.ft, this.fM,
+		     sbX_, sh_, sbZ_, sbW_); }
+    if(this.l || this.lM){ 
+	this.qLeft = this.LeftWall(this.lt, this.lM,
+		     sbX_, sh_, sbZ_, sbW_); }
+    if(this.r || this.rM){ 
+	this.qRight = this.RightWall(this.rt, this.rM,
+		     sbX_, sh_, sbZ_, sbW_); }
+    if(this.b || this.bM){ 
+	this.qBack = this.BackWall(this.bt, this.bM,
+		     sbX_, sh_, sbZ_, sbW_); }
     // Bounds - N, S, W, and E - are created within as well.
 };
 
-StadiumPiece.prototype.FrontWall = function(texture, move) {
+/**
+   The stadium parameters are named with repsect to the front wall.
+   (It is across the negative Z-plane facing the viewer.
+   Calculated in Stadium.js
+   sbX_: length across positive and negative X-axis
+   sh_: height in Y direction starting at 0
+   sbZ_: Offset from the viewer in (negative) Z-direction
+   sbW_: Width of wall, from base Z offset towards the viewer
+
+*/
+StadiumPiece.prototype.FrontWall = function(texture, move,
+		     sbX_, sh_, sbZ_, sbW_) {
     var front = new SixSidedPrism(
 	[ sbX_, sh_, -(sbZ_ + sbW_)],
-	[ sbX_,  0, -(sbZ_ + sbW_)],
-	[ sbX_,  0, -(sbZ_      )],
+	[ sbX_,  0,  -(sbZ_ + sbW_)],
+	[ sbX_,  0,  -(sbZ_      )],
 	[ sbX_, sh_, -(sbZ_      )],
 	[-sbX_, sh_, -(sbZ_ + sbW_)],
-	[-sbX_,  0, -(sbZ_ + sbW_)],
-	[-sbX_,  0, -(sbZ_      )],
+	[-sbX_,  0,  -(sbZ_ + sbW_)],
+	[-sbX_,  0,  -(sbZ_      )],
 	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
     if(move) this.objsMoveFront.push(front);
     else this.objs.push(front);
@@ -84,22 +103,24 @@ StadiumPiece.prototype.FrontWall = function(texture, move) {
     return front;
 }
 
-StadiumPiece.prototype.LeftWall = function(texture, move) {
+StadiumPiece.prototype.LeftWall = function(texture, move,
+		     sbX_, sh_, sbZ_, sbW_) {
     var left = new SixSidedPrism(
 	[-(sbZ_ + sbW_), sh_,-sbX_],
-	[-(sbZ_ + sbW_),  0,-sbX_],
-	[-(sbZ_      ),  0,-sbX_],
-	[-(sbZ_      ), sh_,-sbX_],
+	[-(sbZ_ + sbW_),   0,-sbX_],
+	[-(sbZ_      ),    0,-sbX_],
+	[-(sbZ_      ),  sh_,-sbX_],
 	[-(sbZ_ + sbW_), sh_, sbX_],
-	[-(sbZ_ + sbW_),  0, sbX_],
-	[-(sbZ_      ),  0, sbX_],
-	[-(sbZ_      ), sh_, sbX_]).setTexture(texture);
+	[-(sbZ_ + sbW_),   0, sbX_],
+	[-(sbZ_      ),    0, sbX_],
+	[-(sbZ_      ),  sh_, sbX_]).setTexture(texture);
     this.objs.push(left);
     this.west = -(sbZ_ - 1);
     return left;
 }
 
-StadiumPiece.prototype.RightWall = function(texture, move) {
+StadiumPiece.prototype.RightWall = function(texture, move,
+		     sbX_, sh_, sbZ_, sbW_) {
     var right = new SixSidedPrism(
 	[sbZ_ + sbW_, sh_, -sbX_],
 	[sbZ_ + sbW_,  0, -sbX_],
@@ -115,7 +136,8 @@ StadiumPiece.prototype.RightWall = function(texture, move) {
     return right;
 }
 
-StadiumPiece.prototype.BackWall = function(texture, move) {
+StadiumPiece.prototype.BackWall = function(texture, move,
+		     sbX_, sh_, sbZ_, sbW_) {
     var back = new SixSidedPrism(
 	[ sbX_, sh_, sbZ_      ],
 	[ sbX_,  0, sbZ_      ],
@@ -170,7 +192,8 @@ StadiumPiece.prototype.translate = function(vec_) {
 
 // Based upon the piece number, translate it by its coords
 StadiumPiece.prototype.atCoord = function(x, y) {
-	this.translate([x * this.size, 0, -y * this.size]);
+    this.translate([x * this.size, 0, -y * this.size]);
+    return this;
 }
 
 StadiumPiece.prototype.Quad = _Quad;
@@ -265,7 +288,6 @@ StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition
     return true;
 }
 
-
 var timeStep = 0;
 StadiumPiece.prototype.draw = function(gl_) {
 
@@ -279,7 +301,7 @@ StadiumPiece.prototype.draw = function(gl_) {
 	this.y_positionR = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
 	if(timeStep == 540) timeStep = 0;
 	else timeStep++;
-
+	
 	if(this.y_positionF >= -125){
 	    for(var i = 0; i < this.objsMoveFront.length; ++i) {
 		theMatrix.push();

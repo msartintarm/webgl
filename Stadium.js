@@ -54,17 +54,12 @@ Stadium.prototype.InitBalls = function(){
     }
 }
 
-var sbX_;
-var sh_;
-var sbZ_;
-var sbW_;
-
 Stadium.prototype.Field = function(){
 
-    sbX_ = this.size/2 + 14.9; // back X coordinates
-    sh_ = this.size/2;    // height of wall                                      
-    sbZ_ = this.size/2 -15.1;  // back Z coordinate                                   
-    sbW_ = 30.0;  // width of back wall
+    var sbX_ = this.size/2;
+    var sh_ = this.size/2;
+    var sbZ_ = this.size/2;
+    var sbW_ = 30.0; 
 
     //stamp out square floor with proper variables
     for(var i=0;i<this.width; i++){
@@ -91,16 +86,15 @@ Stadium.prototype.Field = function(){
 		   i != (this.width*3/4) )		
 		movingWall |= RIGHT;
 	    }
-
-	    this.Piece(wall, movingWall, BRICK_TEXTURE).atCoord(j,i);	    
+	    
+	    this.pieces.push(
+		new StadiumPiece(
+		    this.size, wall, movingWall, BRICK_TEXTURE,
+		    sbX_, sh_, sbZ_, sbW_
+		).atCoord(j,i)
+	    );	    
 	}
     }
-}
-
-Stadium.prototype.Piece = function(a,b,c) {
-    var newPiece = new StadiumPiece(this.size, a,b,c);
-    this.pieces.push(newPiece);
-    return newPiece;
 }
 
 Stadium.prototype.draw = function(gl_) {
@@ -157,11 +151,7 @@ Stadium.prototype.draw = function(gl_) {
 	    if(this.pieces[newPiece])
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
-	if(i === 0) {
-	    this.balls[i].draw(gl_);
-	} else {
-	    this.balls[i].drawAgain(gl_);
-	}
+	this.balls[i].draw(gl_);
     }
     if(ballInitOver) stadiumInit = 1;
 
