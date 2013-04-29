@@ -2,7 +2,7 @@
 - http://notepag.es is a useful browser-based Markdown editor.
 - https://www.khronos.org/registry/webgl/specs/1.0/#2.1: Excellent WebGL specifications reference
 
-#  CS 559 Spring 2013: Project #2
+##  CS 559 Spring 2013: Project #2
 
 **Title:** Caged
 
@@ -33,7 +33,7 @@
 	         allow the user to look 'up' and 'down' respectively.  The keys
 		               'w' and 's' will allow the user to move up and down.
 
-##[A detailed description of each file in the project](DESCRIPTION.md).
-##[How to load a texture into WebGL](TEXTURE.md)
-##[How to Use Git](GIT.md)
-##[List of remaining TODO items](TODO.md)
+###[A detailed description of each file in the project](DESCRIPTION.md).
+###[How to load a texture into WebGL](TEXTURE.md)
+###[How to Use Git](GIT.md)
+###[List of remaining TODO items](TODO.md)
