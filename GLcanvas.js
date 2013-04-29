@@ -143,7 +143,9 @@ GLcanvas.prototype.start = function(theScene) {
 
 	this.initGL();
 	this.gl.shader = this.gl.createProgram();
+	this.gl.shader_color = this.gl.createProgram();
 	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
+	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
 	this.gl.useProgram(this.gl.shader);
 
 	theMatrix.viewInit();
@@ -308,6 +310,15 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.gl.enableVertexAttribArray(gl_shader.textureNumA);
 
     this.gl.textures = [];
+
+    gl_shader.ambient_coeff = this.gl.getUniformLocation(
+	gl_shader, "ambient_coeff_u");
+    gl_shader.diffuse_coeff = this.gl.getUniformLocation(
+	gl_shader, "diffuse_coeff_u");
+    gl_shader.specular_coeff = this.gl.getUniformLocation(
+	gl_shader, "specular_coeff_u");
+    gl_shader.specular_color = this.gl.getUniformLocation(
+	gl_shader, "specular_color_u");
 
     // Perspecctive matrix
     gl_shader.pMatU = this.gl.getUniformLocation(gl_shader, "pMatU");
