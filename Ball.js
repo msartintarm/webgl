@@ -139,13 +139,13 @@ Ball.prototype.reflect = function(flip_x){
     this.updatePosition(true);
 }
 
-Ball.prototype.detectViewerCollision = function(oldPosition, newPosition, viewerMove){
+Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
     //sign of *_dir will tell you if you are heading in - or + resp direction
     // *_dir will also give you the vector of movement
     // vector will be necessary for bouncing
     var x_dir = newPosition[0] - oldPosition[0];
     var z_dir = newPosition[2] - oldPosition[2];
-
+    
     //check to see if we cross sphere on z axis
     var newPos = vec2.fromValues(newPosition[0],newPosition[2]);
     var ballPos = vec2.fromValues(this.position[0], this.position[2]);
@@ -162,8 +162,27 @@ Ball.prototype.detectViewerCollision = function(oldPosition, newPosition, viewer
 	}
 	this.hit = true;
 	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
-	if(viewerMove)
-	    this.velocity = 100;
+	this.velocity = 100;
+	return false;
+    }
+
+    return true;
+}
+
+Ball.prototype.detectBallViewerCollision = function(viewerPosIn){
+    //check to see if we cross sphere on z axis
+    var viewerPos = vec2.fromValues(viewerPosIn[0],viewerPosIn[2]);
+    var ballPos = vec2.fromValues(this.position[0], this.position[2]);
+
+    //calculate distance
+    var distance = vec2.distance(viewerPos, ballPos);
+
+    //if we are within two radius' of ball we have a collision
+    if(distance < 2*this.radius){
+	//alert("HIT");
+	console.log("bouncing");
+	this.velocityVec[0] = this.velocityVec[0] * -1;
+	this.velocityVec[2] = this.velocityVec[2] * -1;
 	return false;
     }
 
@@ -194,9 +213,9 @@ Ball.prototype.checkBallCollision = function(ball){
 	vec3.normalize(ball.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
 	this.velocityVec[0] = -1*ball.velocityVec[0];
 	this.velocityVec[2] = -1*ball.velocityVec[2];
-	ball.updatePosition(false);
 	this.updatePosition(true);
 	ball.velocity = this.velocity;
+	ball.updatePosition(false);
 	ball.ballCollide = true;
     }
 

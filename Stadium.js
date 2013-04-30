@@ -77,17 +77,28 @@ Stadium.prototype.Field = function(){
 		wall |= FRONT;
 	    if(j==(this.width-1))
 		wall |= RIGHT;
-
+	    //sets the actual wall down
 	    if(i==((this.width/2)-1) ){
 		if(j != (this.width/4) &&
 		   j != (this.width*3/4) )
 		    movingWall |= FRONT;
 	    }
+	    //for collision on the other side
+	    if(i==(this.width/2) ){
+		if(j != (this.width/4) &&
+		   j != (this.width*3/4) )
+		    movingWall |= BACK;
+	    }
 	    
 	    if(j==((this.width/2)-1) ){
 		if(i != (this.width/4) &&
 		   i != (this.width*3/4) )		
-		movingWall |= RIGHT;
+		    movingWall |= RIGHT;
+	    }
+	    if(j==((this.width/2)) ){
+		if(i != (this.width/4) &&
+		   i != (this.width*3/4) )		
+		movingWall |= LEFT;
 	    }
 	    
 	    this.pieces.push(
@@ -112,26 +123,40 @@ Stadium.prototype.draw = function(gl_) {
     var numBallsHit = 0;
     var gameOver = false;
     for(var i = 0; i<this.balls.length; i++){
+	//clear collision value
 	this.balls[i].ballCollide = false;
+	//check number of balls that are hit to see if game has been won
 	if(this.balls[i].hit == true && !this.balls[i].gameOver)
 	    numBallsHit++;
+	//if one ball has finished all of them have
 	if(this.balls[i].gameOver)
 	    gameOver = true;
     }
-    if(numBallsHit == this.numberBalls)
+    //this is how you win the game
+    if(numBallsHit == this.numberBalls){
 	alert("You win the game!");
+	gameOver = true;
+    }
 
     for(var i = 0; i<this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	
 	//the game has ended let every ball know
-	if(numBallsHit == this.numberBalls || gameOver)
+	if(gameOver)
 	    this.balls[i].gameOver = true;
 
-	//check to see if balls hit something
+	//check to see if balls hit something, ball collide 
 	if(this.balls[i].velocity != 0 && !this.balls[i].ballCollide){
 	    //update the ball position
 	    this.balls[i].updatePosition(false);
+
+	    //check both current and new piece
+	    //checks viewer collision even if you aren't moving
+	    //need a new method here, for when the viewer is not moving
+	    var viewerPos = vec4.fromValues(0,0,0,1);
+	    vec4.transformMat4(viewerPos, viewerPos, theMatrix.vMatrix);
+	    this.balls[i].detectBallViewerCollision(viewerPos);
+
 	    var curPos = this.balls[i].oldPosition;
 	    var newPos = this.balls[i].position;
 	    
@@ -150,14 +175,10 @@ Stadium.prototype.draw = function(gl_) {
 		if(j!=i)
 		    this.balls[i].checkBallCollision(this.balls[j]);
 	    }
-	    //check both current and new piece
-	    //checks viewer collision even if you aren't moving
-	    //need a new method here, for when the viewer is not moving
-	    this.balls[i].detectViewerCollision(curPos, newPos, false);
-
+	
 	    if(this.pieces[curPiece])
 		this.pieces[curPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
-	    if(this.pieces[newPiece])
+	    if(this.pieces[newPiece] && !this.pieces[curPiece].ballReflected)
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
 
@@ -225,13 +246,24 @@ Stadium.prototype.checkPosition = function() {
     if(newPiece < 0) { return false; }
 
     //see if we collide with a ball
-
-    if(!this.pieces[newPiece].positionLegal(curPos, newPos) ||
-       !this.pieces[curPiece].positionLegal(curPos, newPos)){
-	mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
-	curPos[0] = newPos[0];
-	curPos[2] = newPos[2];
+    if(this.pieces[curPiece]){
+	if(!this.pieces[curPiece].positionLegal(curPos, newPos)){
+	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
+	    curPos[0] = newPos[0];
+	    curPos[2] = newPos[2];
+	}
+    }    
+    if(this.pieces[newPiece] && !this.pieces[curPiece].viewerReflected){
+	if(!this.pieces[newPiece].positionLegal(curPos, newPos)){
+	    mat4.identity(theMatrix.vMatrixNew, theMatrix.vMatrixNew);
+	    curPos[0] = newPos[0];
+	    curPos[2] = newPos[2];
+	}
     }
+    if(!this.pieces[newPiece] && !this.pieces[curPiece]){
+	alert("You got eaten by the wall.  You lose and die");
+    }
+
     for(var i = 0; i<this.balls.length; i++){
 	this.balls[i].detectViewerCollision(curPos, newPos, true);
 	this.balls[i].getRotationAngle(curPos);

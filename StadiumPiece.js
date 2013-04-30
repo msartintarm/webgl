@@ -8,8 +8,8 @@ probably can make this a variable parameter
 */
 function StadiumPiece(room_size, walls, movingWalls, textures,
 		     sbX_, sh_, sbZ_, sbW_) { 
-    this.y_positionF = -200;
-    this.y_positionR = -200;
+    this.y_positionEWMoving = -200;
+    this.y_positionNSMoving = -200;
 
     //f,b,r,l boolean variables draw or not
     this.f = walls & FRONT;
@@ -20,7 +20,11 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
 
     this.fM = movingWalls & FRONT;
     this.rM = movingWalls & RIGHT;
-   
+    this.bM = movingWalls & BACK;
+    this.lM = movingWalls & LEFT;
+
+    this.ballReflected = false;
+    this.viewerReflected = false;
 
     // only affects translate at the moment: TODO (mst)
     this.size = room_size;
@@ -64,15 +68,21 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
     if(this.f || this.fM){ 
 	this.qFront = this.FrontWall(this.ft, this.fM,
 		     sbX_, sh_, sbZ_, sbW_); }
-    if(this.l || this.lM){ 
+    if(this.l){ 
 	this.qLeft = this.LeftWall(this.lt, this.lM,
 		     sbX_, sh_, sbZ_, sbW_); }
     if(this.r || this.rM){ 
 	this.qRight = this.RightWall(this.rt, this.rM,
 		     sbX_, sh_, sbZ_, sbW_); }
-    if(this.b || this.bM){ 
+    if(this.b){ 
 	this.qBack = this.BackWall(this.bt, this.bM,
 		     sbX_, sh_, sbZ_, sbW_); }
+    //don't draw wall, but need collision checks
+    if(this.bM)
+	this.south = sbZ_ - 31;	
+    if(this.lM)
+	this.west = -(sbZ_ - 31);
+
     // Bounds - N, S, W, and E - are created within as well.
 };
 
@@ -99,7 +109,7 @@ StadiumPiece.prototype.FrontWall = function(texture, move,
 	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
     if(move) this.objsMoveFront.push(front);
     else this.objs.push(front);
-    this.north = -(sbZ_ - 1);
+    this.north = -(sbZ_ - 15);
     return front;
 }
 
@@ -115,7 +125,7 @@ StadiumPiece.prototype.LeftWall = function(texture, move,
 	[-(sbZ_      ),    0, sbX_],
 	[-(sbZ_      ),  sh_, sbX_]).setTexture(texture);
     this.objs.push(left);
-    this.west = -(sbZ_ - 1);
+    this.west = -(sbZ_ - 15);
     return left;
 }
 
@@ -132,7 +142,7 @@ StadiumPiece.prototype.RightWall = function(texture, move,
 	[sbZ_      , sh_,  sbX_]).setTexture(texture);
     if(move) this.objsMoveRight.push(right);
     else this.objs.push(right);
-    this.east = sbZ_ - 1;
+    this.east = sbZ_ - 15;
     return right;
 }
 
@@ -148,7 +158,7 @@ StadiumPiece.prototype.BackWall = function(texture, move,
 	[-sbX_,  0, sbZ_ + sbW_],
 	[-sbX_, sh_, sbZ_ + sbW_]).setTexture(texture);
     this.objs.push(back);
-    this.south = sbZ_ - 1;
+    this.south = sbZ_ - 15;
     return back;
 }
 
@@ -184,9 +194,9 @@ StadiumPiece.prototype.translate = function(vec_) {
     }
 
     if(this.f || this.fM){ this.north += vec_[2]; }
-    if(this.l){ this.west += vec_[0]; }
+    if(this.l || this.lM){ this.west += vec_[0]; }
     if(this.r || this.rM){ this.east += vec_[0]; }
-    if(this.b){ this.south += vec_[2]; }
+    if(this.b || this.bM){ this.south += vec_[2]; }
     return this;
 }
 
@@ -228,33 +238,57 @@ StadiumPiece.prototype.reflect = function(currentPosition, newPosition, index, f
     theMatrix.turnAround(angle);
 }
 StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
+    this.viewerReflected = false;
+
     if(this.f && newPosition[2] < this.north) { 
+	//alert("reflecting front");
+	this.viewerReflected = true;
 	this.reflect(currentPosition, newPosition, 2, true);
 	return false; 
     }
     if(this.b && newPosition[2] > this.south) { 
+	//console.log("reflectingBack");
+	this.viewerReflected = true;
 	this.reflect(currentPosition, newPosition, 2, false);
 	return false; 
     }
     if(this.l && newPosition[0] < this.west) { 
+	this.viewerReflected = true;
 	this.reflect(currentPosition, newPosition, 0, false);
 	return false; 
     }
     if(this.r && newPosition[0] > this.east) { 
+	this.viewerReflected = true;
 	this.reflect(currentPosition, newPosition, 0, true);
 	return false; 
     }
 
+    //moving north?
+    var northBound = false;
+    if(newPosition[2]-currentPosition[2] < 0) northBound = true;
 
-    if(this.fM && newPosition[2] < this.north &&
-      this.y_positionF >= -125) { 
+    if((this.fM && northBound) && newPosition[2] < this.north &&
+      this.y_positionEWMoving >= -125) { 
 	this.reflect(currentPosition, newPosition, 2, true);
+	this.viewerReflected = true;
 	return false; 
     }
-
-    if(this.rM && newPosition[0] < this.east &&
-       this.y_positionR >= -125){
+    if((this.bM && !northBound) && newPosition[2] > this.south &&
+      this.y_positionEWMoving >= -125) { 
+	this.reflect(currentPosition, newPosition, 2, false);
+	this.viewerReflected = true;
+	return false; 
+    }
+    if(this.rM && newPosition[0] > this.east &&
+       this.y_positionNSMoving >= -125){
 	this.reflect(currentPosition, newPosition, 0, true);
+	this.viewerReflected = true;
+	return false; 
+      }
+    if(this.lM && newPosition[0] < this.west &&
+       this.y_positionNSMoving >= -125){
+	this.reflect(currentPosition, newPosition, 0, false)
+	this.viewerReflected = true;
 	return false; 
       }
 
@@ -264,6 +298,7 @@ StadiumPiece.prototype.positionLegal = function(currentPosition, newPosition) {
 StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition, ball) {
     //check to see if we are hitting a wall 
     //if we are reflect the balls velocity vector accordingly
+    this.ballReflected = false;
     if(this.f && newPosition[2] < this.north) { 
 	ball.reflect(false);
     }
@@ -276,12 +311,36 @@ StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition
     if(this.r && newPosition[0] > this.east) { 
 	ball.reflect(true);
     }
-    if(this.fM && newPosition[2] < this.north &&
-      this.y_positionF >= -125) { 
+
+    //moving north?
+    var northBound = false;
+    if(newPosition[2]-currentPosition[2] < 0) northBound = true;
+
+    //moving north?
+    var eastBound = false;
+    if(newPosition[0]-currentPosition[0] > 0) 
+	eastBound = true;
+
+    if((this.fM && northBound) && newPosition[2] < this.north &&
+      this.y_positionEWMoving >= -125) { 
+	this.ballReflected = true;
 	ball.reflect(false);
     }
-    if(this.rM && newPosition[0] < this.east &&
-       this.y_positionR >= -125){
+    if((this.bM && !northBound) && newPosition[2] > this.south &&
+      this.y_positionEWMoving >= -125) { 
+	this.ballReflected = true;
+	ball.reflect(false);
+    }
+    if((this.rM && eastBound) && newPosition[0] > this.east &&
+       this.y_positionNSMoving >= -125){
+	console.log("eastbound wall");
+	this.ballReflected = true;
+	ball.reflect(true);
+      }
+    if((this.lM && !eastBound) && newPosition[0] < this.west &&
+       this.y_positionNSMoving >= -125){
+	console.log("westbound wall");
+	this.ballReflected = true;
 	ball.reflect(true);
       }
 
@@ -297,24 +356,24 @@ StadiumPiece.prototype.draw = function(gl_) {
 
     
     if(stadiumInit == 1){
-	this.y_positionF = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
-	this.y_positionR = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
+	this.y_positionEWMoving = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
+	this.y_positionNSMoving = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
 	if(timeStep == 540) timeStep = 0;
 	else timeStep++;
 	
-	if(this.y_positionF >= -125){
+	if(this.y_positionEWMoving >= -125){
 	    for(var i = 0; i < this.objsMoveFront.length; ++i) {
 		theMatrix.push();
-		theMatrix.translate([0,this.y_positionF,0]);
+		theMatrix.translate([0,this.y_positionEWMoving,0]);
 		this.objsMoveFront[i].draw(gl_);
 		theMatrix.pop();
 	    }
 	}
 	
-	if(this.y_positionR >= -125){
+	if(this.y_positionNSMoving >= -125){
 	    for(var i = 0; i < this.objsMoveRight.length; ++i) {
 		theMatrix.push();
-		theMatrix.translate([0,this.y_positionR,0]);
+		theMatrix.translate([0,this.y_positionNSMoving,0]);
 		this.objsMoveRight[i].draw(gl_);
 		theMatrix.pop();
 	    }
