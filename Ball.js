@@ -180,7 +180,6 @@ Ball.prototype.detectBallViewerCollision = function(viewerPosIn){
     //if we are within two radius' of ball we have a collision
     if(distance < 2*this.radius){
 	//alert("HIT");
-	console.log("bouncing");
 	this.velocityVec[0] = this.velocityVec[0] * -1;
 	this.velocityVec[2] = this.velocityVec[2] * -1;
 	return false;
@@ -205,11 +204,11 @@ Ball.prototype.checkBallCollision = function(ball){
     //if we are within two radius' of ball we have a collision
     if(distance < 2*this.radius){
 	//alert("HIT");
-	if(!this.hit){
-	    this.timer = this.numberBalls*2 +30;
-	    this.birthTime = Math.round(new Date().getTime()/1000);
+	if(!ball.hit){
+	    ball.timer = ball.numberBalls*2 +30;
+	    ball.birthTime = Math.round(new Date().getTime()/1000);
 	}
-	this.hit = true;
+	ball.hit = true;
 	vec3.normalize(ball.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
 	this.velocityVec[0] = -1*ball.velocityVec[0];
 	this.velocityVec[2] = -1*ball.velocityVec[2];
