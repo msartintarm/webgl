@@ -19,6 +19,7 @@ function GLobject() {
     // Position / scale / rotation data for this object
     // X-Y-Z position to translate
     this.position = [0,0,0];
+    this.position = [0,0,0];
     // X-Y-Z coords to rotate
     this.rotation = [0,0,0];
     this.scale = 1;
@@ -165,10 +166,6 @@ GLobject.prototype.setTexture = function(theTexture) {
 	this.diffuse_coeff = 0.4;
 	break;
     case 7:
-	this.ambient_coeff = 0.0;
-	this.diffuse_coeff = 0.0;
-	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
-	this.specular_coeff = 1.0;
 	break;
     case 8: case 9: case 10: case 11: 
     case 12: case 13: case 15: case 17: 
@@ -327,13 +324,10 @@ GLobject.prototype.drawElements = function(gl_) {
  */
 GLobject.prototype.draw = function(gl_) {
 
-    var shader_;
-    if(this.textureNum[0] === NO_TEXTURE) {
-	shader_ = gl_.shader_color;
-    } else {
-	shader_ = gl_.shader;
+    var shader_ = (this.textureNum[0] === NO_TEXTURE) ? gl_.shader: gl_.shader;
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
     }
-    gl_.useProgram(shader_);
     theMatrix.setViewUniforms(gl_, shader_);
     theMatrix.setVertexUniforms(gl_, shader_);
     this.linkAttribs(gl_, shader_);
