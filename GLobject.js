@@ -137,54 +137,67 @@ GLobject.prototype.initTextures = function(at, bt, ct, dt) {
     this.addTexture(dt[0], dt[1]);
 };
 
+/**
+ *   Based upon the enumerated texture chosen,
+ *   selects which lighting attributes this object
+ *   will receive. 
+ *
+ *   These values are uniforms - the same for each vertice
+*/
 GLobject.prototype.setTexture = function(theTexture) { 
     for(var i = 0; i < this.normData.length / 3; ++i) {
 	this.textureNum[i] = theTexture;
     }
 
+    // default values
     this.ambient_coeff = 0.1;
     this.diffuse_coeff = 0.7;
     this.specular_coeff = 0.0;
     this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
 
     switch(theTexture) {
-	case 0: case 1: break;
-    case 2:
+    case HELL_TEXTURE:
 	vec3.set(this.specular_color, 0.7, 0.2, 0.2);
 	this.specular_coeff = 1.0;
 	break;
-    case 3:
+    case FLOOR_TEXTURE:
 	this.ambient_coeff = 0.2;
 	this.diffuse_coeff = 0.4;
 	break;
-    case 5:
+    case BRICK_TEXTURE:
 	this.ambient_coeff = 0.1;
 	this.diffuse_coeff = 0.4;
 	break; 
-    case 6:
+    case TILE_TEXTURE:
 	this.ambient_coeff = 0.25;
 	this.diffuse_coeff = 0.4;
 	break;
-    case 7:
-	break;
-    case 8: case 9: case 10: case 11: 
-    case 12: case 13: case 15: case 17: 
-    case 18: case 19: case 20: case 21: 
-    case 22: case 23: case 24: case 25:
+    case SKYBOX_TEXTURE_0:
+    case SKYBOX_TEXTURE_1:
+    case SKYBOX_TEXTURE_2:
+    case SKYBOX_TEXTURE_3:
+    case SKYBOX_TEXTURE_4:
+    case SKYBOX_TEXTURE_5:
+    case SKYBOX_TEXTURE_REAL:
+    case TEXT_TEXTURE:
+	// For certain textures, we want _no_ position-dependent lighting.
 	this.ambient_coeff = 0.0;
 	this.diffuse_coeff = 0.0;
 	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
 	this.specular_coeff = 1.0;
 	break;
-    case 14:
+    case RUG_TEXTURE:
 	this.ambient_coeff = 0.9;
 	this.specular_coeff = 1.0;
 	break;
-    case 16:
+    case FRAME_BUFF:
 	this.ambient_coeff = 0.3;
 	break;
     default:
-	alert("Unsupported texture number in GLobject.js");
+	alert("Unsupported texture number %d in GLobject.js", theTexture);
+    case WOOD_TEXTURE:
+    case HEAVEN_TEXTURE: 
+    case NO_TEXTURE:
 	break;
     }
     return this;
