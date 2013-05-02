@@ -401,12 +401,6 @@ GLmatrix.prototype.update = function() {
 };
 
 /**
- * Uniforms that are const over the lifetime
- *  of a shader only need to be set once.
-*/
-GLmatrix.prototype.setConstUniforms = function(gl_) {}
-
-/**
  * View / model / normal ops I got from:
  http://www.songho.ca/opengl/gl_transform.html
 */
@@ -423,10 +417,10 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
 	this.vMatrixChanged = false;
     }
 
-    gl_.uniformMatrix4fv(shader_.pMatU, false, this.pMatrix);
-    gl_.uniformMatrix4fv(shader_.vMatU, false, this.ivMatrix);
-    gl_.uniformMatrix4fv(shader_.lMatU, false, this.ilMatrix);
-    gl_.uniform3fv(shader_.lightPosU, lightPos);
+    gl_.uniformMatrix4fv(shader_.unis["pMatU"], false, this.pMatrix);
+    gl_.uniformMatrix4fv(shader_.unis["vMatU"], false, this.ivMatrix);
+    gl_.uniformMatrix4fv(shader_.unis["lMatU"], false, this.ilMatrix);
+    gl_.uniform3fv(shader_.unis["lightPosU"], lightPos);
 };
 
 /**
@@ -442,8 +436,8 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 	mat4.transpose(this.nMatrix, this.nMatrix);
 	this.mMatrixChanged = false;
     }
-    gl_.uniformMatrix4fv(shader_.mMatU, false, this.mMatrix);
-    gl_.uniformMatrix4fv(shader_.nMatU, false, this.nMatrix);
+    gl_.uniformMatrix4fv(shader_.unis["mMatU"], false, this.mMatrix);
+    gl_.uniformMatrix4fv(shader_.unis["nMatU"], false, this.nMatrix);
 };
 
 GLmatrix.prototype.push = function() {

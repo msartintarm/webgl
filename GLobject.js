@@ -11,7 +11,6 @@ function GLobject() {
     this.colData = [];
     this.indexData = [];
     this.textureData =  [];
-    this.textureNum = [];
 
     // Quads use an index position counter
     this.indexPos = 0;
@@ -137,54 +136,66 @@ GLobject.prototype.initTextures = function(at, bt, ct, dt) {
     this.addTexture(dt[0], dt[1]);
 };
 
+/**
+ *   Based upon the enumerated texture chosen,
+ *   selects which lighting attributes this object
+ *   will receive. 
+ *
+ *   These values are uniforms - the same for each vertice
+*/
 GLobject.prototype.setTexture = function(theTexture) { 
-    for(var i = 0; i < this.normData.length / 3; ++i) {
-	this.textureNum[i] = theTexture;
-    }
 
+    this.textureNum = theTexture;
+    
+    // default values
     this.ambient_coeff = 0.1;
     this.diffuse_coeff = 0.7;
     this.specular_coeff = 0.0;
     this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
 
     switch(theTexture) {
-	case 0: case 1: break;
-    case 2:
+    case HELL_TEXTURE:
 	vec3.set(this.specular_color, 0.7, 0.2, 0.2);
 	this.specular_coeff = 1.0;
 	break;
-    case 3:
+    case FLOOR_TEXTURE:
 	this.ambient_coeff = 0.2;
 	this.diffuse_coeff = 0.4;
 	break;
-    case 5:
+    case BRICK_TEXTURE:
 	this.ambient_coeff = 0.1;
 	this.diffuse_coeff = 0.4;
 	break; 
-    case 6:
+    case TILE_TEXTURE:
 	this.ambient_coeff = 0.25;
 	this.diffuse_coeff = 0.4;
 	break;
-    case 7:
-	break;
-    case 8: case 9: case 10: case 11: 
-    case 12: case 13: case 15: case 17: 
-    case 18: case 19: case 20: case 21: 
-    case 22: case 23: case 24: case 25:
+    case SKYBOX_TEXTURE_0:
+    case SKYBOX_TEXTURE_1:
+    case SKYBOX_TEXTURE_2:
+    case SKYBOX_TEXTURE_3:
+    case SKYBOX_TEXTURE_4:
+    case SKYBOX_TEXTURE_5:
+    case SKYBOX_TEXTURE_REAL:
+    case TEXT_TEXTURE:
+	// For certain textures, we want _no_ position-dependent lighting.
 	this.ambient_coeff = 0.0;
 	this.diffuse_coeff = 0.0;
 	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
 	this.specular_coeff = 1.0;
 	break;
-    case 14:
+    case RUG_TEXTURE:
 	this.ambient_coeff = 0.9;
 	this.specular_coeff = 1.0;
 	break;
-    case 16:
+    case FRAME_BUFF:
 	this.ambient_coeff = 0.3;
 	break;
     default:
-	alert("Unsupported texture number in GLobject.js");
+	alert("Unsupported texture number %d in GLobject.js", theTexture);
+    case WOOD_TEXTURE:
+    case HEAVEN_TEXTURE: 
+    case NO_TEXTURE:
 	break;
     }
     return this;
@@ -205,8 +216,8 @@ GLobject.prototype.initBuffers = function(gl_) {
 	}
     }
 
-    if(this.textureNum.length >= 1) {
-	gl_.textures[this.textureNum[0]] = gl_;
+    if(this.textureNum && this.textureNum !== NO_TEXTURE) {
+	gl_.textures[this.textureNum] = gl_;
     } else {
 	this.setTexture(NO_TEXTURE);
     }
@@ -218,7 +229,6 @@ GLobject.prototype.initBuffers = function(gl_) {
     this.colBuff = gl_.createBuffer();
     this.indexBuff = gl_.createBuffer();
     this.textureBuff = gl_.createBuffer();
-    this.textureNumBuff = gl_.createBuffer();
 
     // If we have flat norms, use them
     if(FLATNORMS === true) {
@@ -226,14 +236,12 @@ GLobject.prototype.initBuffers = function(gl_) {
 	this.bufferData(gl_, this.posBuff, this.posData_, 3);
 	this.bufferData(gl_, this.colBuff, this.colData_, 3);
 	this.bufferData(gl_, this.textureBuff, this.textureData_, 2);
-	this.bufferData(gl_, this.textureNumBuff, this.textureNum_, 1);
 	this.bufferElements(gl_, this.indexBuff, this.indexData_);
     } else {
 	this.bufferData(gl_, this.normBuff, this.normData, 3);
 	this.bufferData(gl_, this.posBuff, this.posData, 3);
 	this.bufferData(gl_, this.colBuff, this.colData, 3);
 	this.bufferData(gl_, this.textureBuff, this.textureData, 2);
-	this.bufferData(gl_, this.textureNumBuff, this.textureNum, 1);
 	this.bufferElements(gl_, this.indexBuff, this.indexData);
     }
 };
@@ -287,26 +295,25 @@ GLobject.prototype.translate = function(vec) {
 };
 
 /**
-   Link GL's pre-loaded attributes to the shader program
+   Link GL's pre-loaded attributes to the  program
    Then send the divide-and-conquer 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
     
-    gl_.uniform1f(shader_.ambient_coeff, this.ambient_coeff);
-    gl_.uniform1f(shader_.diffuse_coeff, this.diffuse_coeff);
+    gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
+    gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
+    gl_.uniform1f(shader_.unis["textureNumU"], gl_.textureNums[this.textureNum]);
 //    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
-    gl_.uniform3fv(shader_.specular_color, this.specular_color);
+    gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color);
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
-    gl_.vertexAttribPointer(shader_.vNormA, this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.attribs["vNormA"], this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(shader_.vPosA, this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.attribs["vPosA"], this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
-    gl_.vertexAttribPointer(shader_.vColA, this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.attribs["vColA"], this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(shader_.textureA, this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureNumBuff);
-    gl_.vertexAttribPointer(shader_.textureNumA, this.textureNumBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    gl_.vertexAttribPointer(shader_.attribs["textureA"], this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
 };
 
 /**
@@ -324,7 +331,8 @@ GLobject.prototype.drawElements = function(gl_) {
  */
 GLobject.prototype.draw = function(gl_) {
 
-    var shader_ = (this.textureNum[0] === NO_TEXTURE) ? gl_.shader: gl_.shader;
+    var shader_ = (this.textureNum !== NO_TEXTURE) ? 
+	gl_.shader: gl_.shader_color;
     if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
 	gl_.useProgram(shader_);
     }
@@ -359,7 +367,6 @@ GLobject.prototype.initFlatNorms = function() {
     this.colData_ = [];
     this.posData_ = []; 
     this.textureData_ = [];
-    this.textureNum_ = [];
     // We'll go over one triangle (3 indexes, 3 * data_size elements for each new buffer)
     // This will mean the new buffers will have 3/2 as many elements
     var i = 0;
@@ -376,7 +383,6 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3 + 2] );
 	this.textureData_.push( this.textureData[ind * 2] );
 	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(a, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 
@@ -392,7 +398,6 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3 + 2] );
 	this.textureData_.push( this.textureData[ind * 2] );
 	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(b, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 
@@ -408,7 +413,6 @@ GLobject.prototype.initFlatNorms = function() {
 	this.posData_.push( this.posData[ind * 3 + 2] );
 	this.textureData_.push( this.textureData[ind * 2] );
 	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	this.textureNum_.push( this.textureNum[ind] );
 	vec3.set(c, this.posData[ind * 3], 
 		    this.posData[ind * 3 + 1], 
 		    this.posData[ind * 3 + 2]); 

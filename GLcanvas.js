@@ -12,6 +12,7 @@ var stadiumMode;
 function GLcanvas() {
     this.objects = [];
     this.textures = [];
+    this.textureNums = [];
     this.frames = [];
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
@@ -145,7 +146,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
 	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
-//	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
+	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
 	this.gl.useProgram(this.gl.shader);
 
 	theMatrix.viewInit();
@@ -264,9 +265,8 @@ GLcanvas.prototype.drawScene = function() {
 GLcanvas.prototype.initTextures = function() {
     var i = 0;
     this.gl.textures.forEach(function(val, index) {
-	if(index < FRAME_BUFF &&
-	   index != NO_TEXTURE) {
-	    var theTexture = new GLtexture(val, index);
+	if(index < FRAME_BUFF && index !== NO_TEXTURE) {
+	    val.textureNums[index] = (new GLtexture(val, index)).active;
 	}
     });
     this.gl.textures = null;
@@ -278,55 +278,49 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initTextures();
 };
 
+/**
+ * Some shaders won't have these attributes. This funct should still work.
+ */
+GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
+    gl_shader.attribs[attr] = this.gl.getAttribLocation(gl_shader, attr);
+    if(gl_shader.attribs[attr] !== -1) {
+	this.gl.enableVertexAttribArray(gl_shader.attribs[attr]);
+    }
+};
+
+GLcanvas.prototype.initUniform = function(gl_shader, uni) {
+    gl_shader.unis[uni] = this.gl.getUniformLocation(gl_shader, uni);
+};
+
 GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     
     this.gl.attachShader(gl_shader, getShader(this.gl, frag));
     this.gl.attachShader(gl_shader, getShader(this.gl, vert));
     this.gl.linkProgram(gl_shader);
 
-    if (!this.gl.getProgramParameter(
-	gl_shader, this.gl.LINK_STATUS)) {
-        alert("Could not initialise shaders");
-    }
+    if (!this.gl.getProgramParameter(gl_shader, this.gl.LINK_STATUS)) {
+        alert("Could not initialise shaders"); }
+    gl_shader.attribs = [];
+    gl_shader.unis = [];
 
-    gl_shader.vPosA = this.gl.getAttribLocation(gl_shader, "vPosA");
-    this.gl.enableVertexAttribArray(gl_shader.vPosA);
-
-    gl_shader.vNormA = this.gl.getAttribLocation(gl_shader, "vNormA");
-    this.gl.enableVertexAttribArray(gl_shader.vNormA);
-
-    gl_shader.vColA = this.gl.getAttribLocation(gl_shader, "vColA");
-    this.gl.enableVertexAttribArray(gl_shader.vColA);
-
-    gl_shader.textureA = this.gl.getAttribLocation(gl_shader, "textureA");
-    console.log(gl_shader.textureA);
-    this.gl.enableVertexAttribArray(gl_shader.textureA);
-
-    gl_shader.textureNumA = this.gl.getAttribLocation(gl_shader, "textureNumA");
-    this.gl.enableVertexAttribArray(gl_shader.textureNumA);
+    this.initAttribute(gl_shader, "vPosA");
+    this.initAttribute(gl_shader, "vNormA");
+    this.initAttribute(gl_shader, "vColA");
+    this.initAttribute(gl_shader, "textureA");
 
     this.gl.textures = [];
+    this.gl.textureNums = [];
 
-    gl_shader.ambient_coeff = this.gl.getUniformLocation(
-	gl_shader, "ambient_coeff_u");
-    gl_shader.diffuse_coeff = this.gl.getUniformLocation(
-	gl_shader, "diffuse_coeff_u");
-    gl_shader.specular_coeff = this.gl.getUniformLocation(
-	gl_shader, "specular_coeff_u");
-    gl_shader.specular_color = this.gl.getUniformLocation(
-	gl_shader, "specular_color_u");
-
-    // Perspecctive matrix
-    gl_shader.pMatU = this.gl.getUniformLocation(gl_shader, "pMatU");
-    // Model matrix
-    gl_shader.mMatU = this.gl.getUniformLocation(gl_shader, "mMatU");
-    // Viewing matrix
-    gl_shader.vMatU = this.gl.getUniformLocation(gl_shader, "vMatU");
-    // Model's normal matrix
-    gl_shader.nMatU = this.gl.getUniformLocation(gl_shader, "nMatU");
-    // Lighting matrix
-    gl_shader.lMatU = this.gl.getUniformLocation(gl_shader, "lMatU");
-    // Initial light's position
-    gl_shader.lightPosU = this.gl.getUniformLocation(gl_shader, "lightPosU");
+    this.initUniform(gl_shader, "ambient_coeff_u");
+    this.initUniform(gl_shader, "diffuse_coeff_u");
+    this.initUniform(gl_shader, "specular_coeff_u");
+    this.initUniform(gl_shader, "specular_color_u");
+    this.initUniform(gl_shader, "pMatU"); // Perspecctive matrix
+    this.initUniform(gl_shader, "mMatU"); // Model matrix
+    this.initUniform(gl_shader, "vMatU"); // Viewing matrix
+    this.initUniform(gl_shader, "nMatU"); // Model's normal matrix
+    this.initUniform(gl_shader, "lMatU"); // Lighting matrix
+    this.initUniform(gl_shader, "lightPosU"); // Initial light's position
+    this.initUniform(gl_shader, "textureNumU");
 };
 var theCanvas;

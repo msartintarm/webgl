@@ -47,7 +47,7 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.fillText(this.text, this.canvas.width/2 + 3, this.canvas.height/2 + 3);
 
     var sampler =
-    gl_.getUniformLocation(gl_.shader, "sampler" + this.texture_num);
+    gl_.getUniformLocation(gl_.shader, "sampler" + this.active);
     gl_.uniform1i(sampler, this.active);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);

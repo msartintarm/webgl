@@ -64,7 +64,6 @@ uniform vec3 specular_color_u;
 
 varying float diffuseV;
 varying float specularV;
-varying float textureNumV;
 varying vec3 colorV;
 
 varying vec3 reflectionV;
@@ -114,7 +113,6 @@ uniform vec3 specular_color_u;
 
 varying float diffuseV;
 varying float specularV;
-varying float textureNumV;
 varying vec3 colorV;
 
 varying vec3 reflectionV;
@@ -126,6 +124,9 @@ varying vec3 vertNorm;
 
 varying vec2 textureV;
 varying vec2 shadowV;
+
+uniform float textureNumU;
+
 
 uniform sampler2D sampler0;
 uniform sampler2D sampler1;
@@ -173,17 +174,17 @@ void colorTexture(sampler2D theSampler) {
 
 void main(void) {
 
-  if (textureNumV < 0.1) { colorTexture(sampler0);
-  } else if (textureNumV < 1.1) { colorTexture(sampler1);
-  } else if (textureNumV < 2.1) { colorTexture(sampler2);
-  } else if (textureNumV < 3.1) { colorTexture(sampler3);
-  } else if (textureNumV < 4.1) { colorTexture(sampler4);
-  } else if (textureNumV < 5.1) { colorTexture(sampler5);
-  } else if (textureNumV < 6.1) { colorTexture(sampler6);
-  } else if (textureNumV < 7.1) { colorTexture(sampler7);
-  } else if (textureNumV < 8.1) { colorTexture(sampler8);
-  } else if (textureNumV < 9.1) { colorTexture(sampler9);
-  } else if (textureNumV < 10.1) { colorTexture(sampler10);
+  if (textureNumU < 0.1) { colorTexture(sampler0);
+  } else if (textureNumU < 1.1) { colorTexture(sampler1);
+  } else if (textureNumU < 2.1) { colorTexture(sampler2);
+  } else if (textureNumU < 3.1) { colorTexture(sampler3);
+  } else if (textureNumU < 4.1) { colorTexture(sampler4);
+  } else if (textureNumU < 5.1) { colorTexture(sampler5);
+  } else if (textureNumU < 6.1) { colorTexture(sampler6);
+  } else if (textureNumU < 7.1) { colorTexture(sampler7);
+  } else if (textureNumU < 8.1) { colorTexture(sampler8);
+  } else if (textureNumU < 9.1) { colorTexture(sampler9);
+  } else if (textureNumU < 10.1) { colorTexture(sampler10);
   } else { colorize();
   }
 }
@@ -196,7 +197,6 @@ attribute vec3 vPosA;
 attribute vec3 vNormA;
 attribute vec3 vColA;
 attribute vec2 textureA;
-attribute float textureNumA;
 
 // Matrixes
 uniform mat4 pMatU; // Position
@@ -211,7 +211,6 @@ uniform vec3 viewPosU;
 
 // Passed to the fragment shader
 varying float diffuseV;
-varying float textureNumV;
 varying vec3 colorV;
 varying vec2 textureV;
 varying vec2 shadowV;
@@ -223,8 +222,6 @@ varying vec3 lightNorm;
 varying vec3 vertNorm;
 
 void main(void) {
-
-textureNumV = textureNumA;
 
 // Viewing space coordinates of light / vertex
 vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;
