@@ -145,7 +145,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
 	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
-	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
+//	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
 	this.gl.useProgram(this.gl.shader);
 
 	theMatrix.viewInit();
@@ -289,24 +289,20 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
         alert("Could not initialise shaders");
     }
 
-    gl_shader.vPosA = 
-	this.gl.getAttribLocation(gl_shader, "vPosA");
+    gl_shader.vPosA = this.gl.getAttribLocation(gl_shader, "vPosA");
     this.gl.enableVertexAttribArray(gl_shader.vPosA);
 
-    gl_shader.vNormA = 
-	this.gl.getAttribLocation(gl_shader, "vNormA");
+    gl_shader.vNormA = this.gl.getAttribLocation(gl_shader, "vNormA");
     this.gl.enableVertexAttribArray(gl_shader.vNormA);
 
-    gl_shader.vColA = 
-	this.gl.getAttribLocation(gl_shader, "vColA");
+    gl_shader.vColA = this.gl.getAttribLocation(gl_shader, "vColA");
     this.gl.enableVertexAttribArray(gl_shader.vColA);
 
-    gl_shader.textureA = 
-	this.gl.getAttribLocation(gl_shader, "textureA");
+    gl_shader.textureA = this.gl.getAttribLocation(gl_shader, "textureA");
+    console.log(gl_shader.textureA);
     this.gl.enableVertexAttribArray(gl_shader.textureA);
 
-    gl_shader.textureNumA = 
-	this.gl.getAttribLocation(gl_shader, "textureNumA");
+    gl_shader.textureNumA = this.gl.getAttribLocation(gl_shader, "textureNumA");
     this.gl.enableVertexAttribArray(gl_shader.textureNumA);
 
     this.gl.textures = [];
