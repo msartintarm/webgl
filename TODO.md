@@ -50,9 +50,32 @@
 | Skybox has visible seams | o |
 | GL viewport retains dimensions of GLframe (512 x 512) when GLframe is used | x |
 
-####Unclaimed (bonus features)
+####Presentation / cleanup
+|Class         |Task         |Status      |Estimated time to completion     |
+|-------------|:----------|:----------:|----------:|
+| Overall | Get stadium looking good with new shaders | o | 2 hours |
+| | Fix window resizing function | MST | 30 mins |
+| Intro | texture loading | o | 1 hour |
+|  | Pass in number of balls (HTML interface) | MST | 10 mins |
+| Movement | accelerate over time | CRA |
+|  | get rid of stutter-step when key is held down | CRA |
+| Lighting | make specular highlight on floor behave correctly | MST | 30 mins |
+|  | place light | o |
+| Objects | Integrate Jumbotron into stadium | o |
+|  | Set up displays on Jumbotron screen | MST | 2 hours |
+|  | Add effect to balls with extra shader | MST | 20 mins |
+|  | Add effect to floor with extra shader | MST | 20 mins |
+| Modes | God mode | o |
+|  | Wireframe mode | o |
+|  | Shader toggling | MST | 20 mins |
+| Outro | Exit game mode | o |
+|  | Output final time / whether you have won | CRA |
+
 |Task         |Status      |
 |-------------|:----------:|
 | Background music | o |
 | Sound effects | o |
 | Text wrapping to Jumbotron cylinders (see pic) | o |
+| Debug mode toggling | o |
+| introduction screen | o |
+| Live editing | o |
