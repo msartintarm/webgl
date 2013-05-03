@@ -40,6 +40,7 @@ function Stadium() {
 Stadium.prototype.initBuffers = function(gl_) {
 
     this.intro.initBuffers(gl_);
+    this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
