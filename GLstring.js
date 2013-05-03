@@ -1,7 +1,5 @@
-var nextSamplerString = 18;
-function GLstringSampler() {
-    return nextSamplerString++;
-}
+var theTextNum = TEXT_TEXTURE;
+function GLstringTexture () { return theTextNum++; }
 
 /**
    Creates a texture and fills it with the contents of a string.
@@ -10,7 +8,7 @@ function GLstringSampler() {
  */
 function GLstring(text_to_write) {
     this.active = GLactiveTexture();
-    this.texture_num = this.active;
+    this.texture_num = GLstringTexture();
     this.text = text_to_write;
     this.canvas = document.getElementById('textureCanvas');
     this.text_size = 112;
@@ -18,6 +16,9 @@ function GLstring(text_to_write) {
 }
 
 GLstring.prototype.initBuffers = function(gl_) {
+
+
+//    gl_.textureNums[this.texture_num] = this.active;
 
     if(!this.texture) this.texture = gl_.createTexture();
 

@@ -19,6 +19,9 @@ const SKYBOX_TEXTURE_REAL = zz++;
 // -- Framebuffer -- // 
 const FRAME_BUFF = zz++;
 const TEXT_TEXTURE = zz++;
+const TEXT_TEXTURE2 = zz++;
+const TEXT_TEXTURE3 = zz++;
+const TEXT_TEXTURE4 = zz++;
 
 // -- Maze Piece wall locations -- //
 const FRONT = 0x1; // 0001

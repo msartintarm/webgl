@@ -38,6 +38,11 @@ Quad.prototype.setTexture = function(texture) {
     return this;
 }
 
+Quad.prototype.setActive = function(active) { 
+    this.o.setActive(active);
+    return this;
+}
+
 Quad.prototype.setSkyTexture = function(texture, val) { 
     this.o.setTexture(texture);
    

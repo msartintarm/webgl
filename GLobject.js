@@ -12,6 +12,8 @@ function GLobject() {
     this.indexData = [];
     this.textureData =  [];
 
+    this.textureNum = null;
+
     // Quads use an index position counter
     this.indexPos = 0;
 
@@ -178,11 +180,14 @@ GLobject.prototype.setTexture = function(theTexture) {
     case SKYBOX_TEXTURE_5:
     case SKYBOX_TEXTURE_REAL:
     case TEXT_TEXTURE:
+    case TEXT_TEXTURE2:
+    case TEXT_TEXTURE3:
+    case TEXT_TEXTURE4:
 	// For certain textures, we want _no_ position-dependent lighting.
-	this.ambient_coeff = 0.0;
+	this.ambient_coeff = 0.8;
 	this.diffuse_coeff = 0.0;
 	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
-	this.specular_coeff = 1.0;
+//	this.specular_coeff = 1.0;
 	break;
     case RUG_TEXTURE:
 	this.ambient_coeff = 0.9;
@@ -202,26 +207,39 @@ GLobject.prototype.setTexture = function(theTexture) {
 };
 
 /**
+ *   Based upon the enumerated texture chosen,
+ *   selects which lighting attributes this object
+ *   will receive. 
+ *
+ *   These values are uniforms - the same for each vertice
+*/
+GLobject.prototype.setActive = function(theActive) { 
+    this.active = theActive;
+};
+
+/**
  * Once the arrays are full, call to 
  *  buffer WebGL with their data
  */
 GLobject.prototype.initBuffers = function(gl_) {
 
-    var i, max;
-    if(this.textureData.length < 1) {
-	
-	for(i = 0, max = this.normData.length / 3; i < max; ++i) {
-	    this.textureData.push(0);
-	    this.textureData.push(0);
+
+    if(!this.textureNum) { 
+	this.setTexture(NO_TEXTURE);
+	// See if we need to create 'dummy' data
+	if(this.textureData.length < 1) {
+	    var i, max;
+	    for(i = 0, max = this.normData.length / 3; i < max; ++i) {
+		this.textureData.push(0);
+		this.textureData.push(0);
+	    }
+	}
+    } else {
+	// See if the texture has been created or not
+	if(this.textureNum < TEXT_TEXTURE && !gl_.textureNums[this.textureNum]) {
+	    gl_.textureNums[this.textureNum] = (new GLtexture(gl_, this.textureNum)).active;
 	}
     }
-
-    if(this.textureNum && this.textureNum !== NO_TEXTURE) {
-	gl_.textures[this.textureNum] = gl_;
-    } else {
-	this.setTexture(NO_TEXTURE);
-    }
-
     this.initFlatNorms();
 
     this.normBuff = gl_.createBuffer();
@@ -302,9 +320,24 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
-    gl_.uniform1f(shader_.unis["textureNumU"], gl_.textureNums[this.textureNum]);
+
+    // check to see if texture is used in shader
+    if(shader_.unis["textureNumU"] && (this.textureNum !== NO_TEXTURE)) {
+
+	// check to see if texture is a text texture
+	if(this.textureNum >= TEXT_TEXTURE) {
+	    gl_.uniform1f(shader_.unis["textureNumU"], this.active);
+	} else if (gl_.textureNums[this.textureNum]) {
+	    gl_.uniform1f(shader_.unis["textureNumU"], gl_.textureNums[this.textureNum]);
+	} else { 
+	    if(envDEBUG) { alert("error: texture not loaded."); }
+	}
+    }
+//    if(shader_.unis["textureNumU"] !== null && (gl_.textureNums[this.textureNum])) {
+//	gl_.uniform1f(shader_.unis["textureNumU"], NO_TEXTURE);
+  //  }
 //    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
-    gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color);
+if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
     gl_.vertexAttribPointer(shader_.attribs["vNormA"], this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);

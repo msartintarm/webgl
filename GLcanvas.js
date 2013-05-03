@@ -100,12 +100,14 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [ 1.5, 0.8,-4.0],
 	    [ 1.5,-0.8,-4.0],
 	    [-1.5, 0.8,-4.0],
-	    [-1.5,-0.8,-4.0]).setTexture(this.string1.texture_num));
+	    [-1.5,-0.8,-4.0]).setTexture(this.string1.texture_num)
+			 .setActive(this.string1.active));
 	this.objects.push(new Quad(
 	    [ 1.5, 2.4,-4.0],
 	    [ 1.5, 0.8,-4.0],
 	    [-1.5, 2.4,-4.0],
-	    [-1.5, 0.8,-4.0]).setTexture(this.string2.texture_num));
+	    [-1.5, 0.8,-4.0]).setTexture(this.string2.texture_num)
+			 .setActive(this.string2.active));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -163,7 +165,6 @@ GLcanvas.prototype.start = function(theScene) {
 	}
 	this.bufferModels();
 
-	this.initTextures();
 	// Set background color, clear everything, and
 	//  enable depth testing
 	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
@@ -199,6 +200,8 @@ GLcanvas.prototype.initGL = function() {
     if (!this.gl) {
 	alert("Unable to initialize WebGL. Your browser may not support it.");
     }
+
+    this.gl.textureNums = [];
 
     window.onresize = function() {
 	theCanvas.resizeCounter = 30;
@@ -262,20 +265,9 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.initTextures = function() {
-    var i = 0;
-    this.gl.textures.forEach(function(val, index) {
-	if(index < FRAME_BUFF && index !== NO_TEXTURE) {
-	    val.textureNums[index] = (new GLtexture(val, index)).active;
-	}
-    });
-    this.gl.textures = null;
-};
-
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.bufferModels();
-    this.initTextures();
 };
 
 /**
@@ -307,9 +299,6 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initAttribute(gl_shader, "vNormA");
     this.initAttribute(gl_shader, "vColA");
     this.initAttribute(gl_shader, "textureA");
-
-    this.gl.textures = [];
-    this.gl.textureNums = [];
 
     this.initUniform(gl_shader, "ambient_coeff_u");
     this.initUniform(gl_shader, "diffuse_coeff_u");

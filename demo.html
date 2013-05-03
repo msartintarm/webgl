@@ -257,15 +257,7 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
 
       <div class="padDiv"> 
 	<div id="banner">       
-	  <div style="height:50px;">
-	    <input id="inputz" type="text"
-		   onclick="theCanvas.initText(document.getElementById('inputz').value);" 
-		   value="Cylinder"/>
-	    <input type="submit" 
-		   onclick="theCanvas.initText(document.getElementById('inputz').value);" 
-		   value="Submit"/>
-
-</div>
+<!--
 	  <div class="lowAcross" ></div>
           <div class="topAcross" ></div>
           <div class="leftSide" ></div>
@@ -274,6 +266,17 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
           <div class="topRight" ></div>
 	  <div class="lowLeft" ></div>
           <div class="lowRight" ></div>
+-->
+	  <div style="padding-top:30%; width:90%;">
+	    <input id="inputz" type="text" style="padding-left:24px;width:80%;"
+		   value="Cylinder"/>
+	    <input type="button" class="button_add"
+onclick="theCanvas.initText(document.getElementById('inputz').value);" 
+		   value="Submit"/>
+	    <input type="button" class="button_add"
+			 onclick="theCanvas.start('stadium');" 
+		   value="Submit"/>
+	  </div>
 
 
 	  <div id="dashboard" style="padding: 20px; background-color: #000000;">
