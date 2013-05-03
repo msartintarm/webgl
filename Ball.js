@@ -1,4 +1,4 @@
-function Ball(position, texture_num, numBalls) { 
+function Ball(position, numBalls, texture_num, active) { 
 //    this.velocity;
 //    this.position;
 //    this.color;
@@ -18,7 +18,7 @@ function Ball(position, texture_num, numBalls) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num,i);
+	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num,i).setActive(active);
     }
 	  
     this.position = [50,this.radius,-50];

@@ -28,7 +28,8 @@ function Stadium() {
 	[-1200 + 70, 760 + 175, 1200 + 70],
 	[-1200 + 70, 760 + 125, 1200 + 70],
 	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num);
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num)
+	.setActive(this.introScreen.active);
     
 
     //initializes the field...floor and walls
@@ -53,7 +54,10 @@ Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
 	var x_dist = Math.round(Math.random()*5000);
 	var z_dist = Math.round(Math.random()*-5000);
-	this.balls.push(new Ball([x_dist,0,z_dist], this.numbers.texture_num, this.numberBalls));
+	this.balls.push(new Ball([x_dist,0,z_dist], 
+				 this.numberBalls,
+				 this.numbers.texture_num, 
+				 this.numbers.active));
     }
 }
 
