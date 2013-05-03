@@ -18,8 +18,9 @@ GLframe.prototype.debug = function() {
 
 GLframe.prototype.drawScene = function(gl_) {
 
-    gl_.uniform1i(gl_.getUniformLocation(
-	gl_.shader, "sampler" + this.num), this.active);
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
+	gl_.useProgram(gl_.shader);
+    }
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
 			this.frameBuff);
@@ -112,5 +113,8 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindRenderbuffer(gl_.RENDERBUFFER, null);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
+
+    gl_.uniform1i(gl_.getUniformLocation(
+	gl_.shader, "sampler" + this.active), this.active);
 
 };

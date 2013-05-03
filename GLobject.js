@@ -326,7 +326,7 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     if(shader_.unis["textureNumU"] && (this.textureNum !== NO_TEXTURE)) {
 
 	// check to see if texture is a text texture
-	if(this.textureNum >= TEXT_TEXTURE) {
+	if(this.textureNum >= FRAME_BUFF) {
 	    gl_.uniform1f(shader_.unis["textureNumU"], this.active);
 	} else if (gl_.textureNums[this.textureNum]) {
 	    gl_.uniform1f(shader_.unis["textureNumU"], gl_.textureNums[this.textureNum]);
