@@ -15,9 +15,7 @@ function Skybox() {
 	[-size, size,-size],
 	[-size,-size,-size],
 	[ size,-size,-size],
-	[ size, size,-size])
-    // Next, set it to the sky
-	.setSkyBoxTexture(SKYBOX_TEXTURE_REAL);
+	[ size, size,-size]).setSkyBoxTexture(SKYBOX_TEXTURE_REAL);
 }
 
 Skybox.prototype.initBuffers = _oInitBuffers;

@@ -82,8 +82,7 @@ StoolPyramid.prototype.draw = function(gl_) {
 	theMatrix.translate([0, seat_location, -d_]);
     }
     theMatrix.pop();
-}
-
+};
 
 StoolPyramid.prototype.drawBase = function(gl_, size) {
 
@@ -96,4 +95,4 @@ StoolPyramid.prototype.drawBase = function(gl_, size) {
 	theMatrix.translate([(size) * d_, 0,
 			     (size - 2) * d_]);
     }
-}
+};

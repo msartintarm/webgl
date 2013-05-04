@@ -197,11 +197,12 @@ GLobject.prototype.setTexture = function(theTexture) {
     case FRAME_BUFF:
 	this.ambient_coeff = 0.3;
 	break;
-    default:
-	alert("Unsupported texture number %d in GLobject.js", theTexture);
     case WOOD_TEXTURE:
     case HEAVEN_TEXTURE: 
     case NO_TEXTURE:
+	break;
+    default:
+	alert("Unsupported texture number %d in GLobject.js", theTexture);
 	break;
     }
     return this;

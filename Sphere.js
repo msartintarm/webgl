@@ -36,11 +36,12 @@ function Sphere(radius) {
     //        Two triangles: ABC and BDC
     // B  D   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
-    for (var i = 0; i < kLat; i++) {
+    for (i = 0; i < kLat; i++) {
 	var A = (i * (kLong + 1));
 	var C = A + kLong + 1;
-	for (var j = 0; j < kLong; j++) {
-	    this.o.addQuadIndexes(C++,A++);
+	for (j = 0; j < kLong; j++) {
+	    this.o.addQuadIndexes(C, A);
+	    C++; A++;
 	}
     }
 }

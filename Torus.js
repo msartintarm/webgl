@@ -42,8 +42,8 @@ function Torus(innerRadius, outerRadius) {
     //        Array indices of C and D are A / B + 1
 
     var indexData = [];
-    for (var i = 0; i < slices; i++) {
-	for (var j = 0; j < stacks; j++) {
+    for (i = 0; i < slices; i++) {
+	for (j = 0; j < stacks; j++) {
 	    var A = (i * (stacks + 1)) + j;
 	    var C = A + stacks + 1;
 	    this.o.addQuadIndexes(C, A);

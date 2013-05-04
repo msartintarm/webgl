@@ -1,5 +1,9 @@
 var theTextNum = TEXT_TEXTURE;
-function GLstringTexture () { return theTextNum++; }
+function GLstringTexture () { 
+    var to_return = theTextNum;
+    theTextNum++;
+    return to_return; 
+}
 
 /**
    Creates a texture and fills it with the contents of a string.
@@ -69,4 +73,4 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.generateMipmap(gl_.TEXTURE_2D);
 };
 
-GLstring.prototype.draw = function(gl_) { return; }
+GLstring.prototype.draw = function(gl_) { return; };

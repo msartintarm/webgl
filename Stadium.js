@@ -21,15 +21,14 @@ function Stadium() {
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9");
     this.introScreen = new GLstring("Welcome to our game. --CRA --MST");
 
-    if(5280%piecesPerSide != 0)
+    if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
 
     this.intro = new Quad(
 	[-1200 + 70, 760 + 175, 1200 + 70],
 	[-1200 + 70, 760 + 125, 1200 + 70],
 	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num)
-	.setActive(this.introScreen.active);
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num).setActive(this.introScreen.active);
     
 
     //initializes the field...floor and walls
@@ -42,14 +41,14 @@ Stadium.prototype.initBuffers = function(gl_) {
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
-    for(var i=0; i < this.pieces.length; ++i){
+    for(i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
 
     for(var i=0; i < this.balls.length; ++i){
 	this.balls[i].initBuffers(gl_);
     }
-}
+};
 
 Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
@@ -60,7 +59,7 @@ Stadium.prototype.InitBalls = function(){
 				 this.numbers.texture_num, 
 				 this.numbers.active));
     }
-}
+};
 
 Stadium.prototype.Field = function(){
 
@@ -74,47 +73,45 @@ Stadium.prototype.Field = function(){
 	for(var j=0;j<this.width; j++){
 	    var wall = 0;
 	    var movingWall = 0;
-	    if(i==0)
+	    if(i===0)
 		wall |= BACK;
-	    if(j==0)
+	    if(j===0)
 		wall |= LEFT;
-	    if(i==(this.width-1))
+	    if(i===(this.width-1))
 		wall |= FRONT;
-	    if(j==(this.width-1))
+	    if(j===(this.width-1))
 		wall |= RIGHT;
 	    //sets the actual wall down
-	    if(i==((this.width/2)-1) ){
-		if(j != (this.width/4) &&
-		   j != (this.width*3/4) )
+	    if(i===((this.width/2)-1) ){
+		if(j !== (this.width/4) &&
+		   j !== (this.width*3/4) )
 		    movingWall |= FRONT;
 	    }
 	    //for collision on the other side
-	    if(i==(this.width/2) ){
-		if(j != (this.width/4) &&
-		   j != (this.width*3/4) )
+	    if(i===(this.width/2) ){
+		if(j !== (this.width/4) &&
+		   j !== (this.width*3/4) )
 		    movingWall |= BACK;
 	    }
 	    
-	    if(j==((this.width/2)-1) ){
-		if(i != (this.width/4) &&
-		   i != (this.width*3/4) )		
+	    if(j===((this.width/2)-1) ){
+		if(i !== (this.width/4) &&
+		   i !== (this.width*3/4) )		
 		    movingWall |= RIGHT;
 	    }
 	    if(j==((this.width/2)) ){
-		if(i != (this.width/4) &&
-		   i != (this.width*3/4) )		
+		if(i !== (this.width/4) &&
+		   i !== (this.width*3/4) )		
 		movingWall |= LEFT;
 	    }
 	    
 	    this.pieces.push(
 		new StadiumPiece(
 		    this.size, wall, movingWall, BRICK_TEXTURE,
-		    sbX_, sh_, sbZ_, sbW_
-		).atCoord(j,i)
-	    );	    
+		    sbX_, sh_, sbZ_, sbW_).atCoord(j,i));	    
 	}
     }
-}
+};
 
 Stadium.prototype.draw = function(gl_) {
     var ballInitOver = true;
@@ -131,7 +128,7 @@ Stadium.prototype.draw = function(gl_) {
 	//clear collision value
 	this.balls[i].ballCollide = false;
 	//check number of balls that are hit to see if game has been won
-	if(this.balls[i].hit == true && !this.balls[i].gameOver)
+	if(this.balls[i].hit === true && !this.balls[i].gameOver)
 	    numBallsHit++;
 	//if one ball has finished all of them have
 	if(this.balls[i].gameOver)
@@ -143,7 +140,7 @@ Stadium.prototype.draw = function(gl_) {
 	gameOver = true;
     }
 
-    for(var i = 0; i<this.balls.length; i++){
+    for(i = 0; i < this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	
 	//the game has ended let every ball know
@@ -151,7 +148,7 @@ Stadium.prototype.draw = function(gl_) {
 	    this.balls[i].gameOver = true;
 
 	//check to see if balls hit something, ball collide 
-	if(this.balls[i].velocity != 0 && !this.balls[i].ballCollide){
+	if(this.balls[i].velocity !== 0 && !this.balls[i].ballCollide){
 	    //update the ball position
 	    this.balls[i].updatePosition(false);
 
@@ -191,10 +188,10 @@ Stadium.prototype.draw = function(gl_) {
     }
     if(ballInitOver) stadiumInit = 1;
 
-    for(var i = 0; i<this.pieces.length; i++){
+    for(i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_);
     }
-}
+};
 
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
@@ -223,7 +220,7 @@ Stadium.prototype.checkPosition = function() {
     var piecePosX = newPos[0] % this.size;
     var piecePosZ = newPos[2] % this.size;
 
-    if(1==1) {
+    if(envDEBUG === true) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 
@@ -274,4 +271,4 @@ Stadium.prototype.checkPosition = function() {
 	this.balls[i].getRotationAngle(curPos);
     }
     return true;
-}
+};

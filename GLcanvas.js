@@ -100,14 +100,16 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [ 1.5, 0.8,-4.0],
 	    [ 1.5,-0.8,-4.0],
 	    [-1.5, 0.8,-4.0],
-	    [-1.5,-0.8,-4.0]).setTexture(this.string1.texture_num)
-			 .setActive(this.string1.active));
+	    [-1.5,-0.8,-4.0]).setTexture(
+		this.string1.texture_num).setActive(
+		    this.string1.active));
 	this.objects.push(new Quad(
 	    [ 1.5, 2.4,-4.0],
 	    [ 1.5, 0.8,-4.0],
 	    [-1.5, 2.4,-4.0],
-	    [-1.5, 0.8,-4.0]).setTexture(this.string2.texture_num)
-			 .setActive(this.string2.active));
+	    [-1.5, 0.8,-4.0]).setTexture(
+		this.string2.texture_num).setActive(
+		    this.string2.active));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));

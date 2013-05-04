@@ -111,43 +111,43 @@ function _oInvertNorms() {
     return this;
 }
 
-MatrixData.prototype.pause = function() { this.inc_ = 0; }
-MatrixData.prototype.set = function(num) { this.val = num; }
+MatrixData.prototype.pause = function() { this.inc_ = 0; };
+MatrixData.prototype.set = function(num) { this.val = num; };
 MatrixData.prototype.setInc = function(num) {     
     this.inc_ = num; 
     this.inc();
     this.html.style.display = "inline-block"; 
-}
+};
 MatrixData.prototype.inc = function() {
     this.val = (this.val + this.inc_) % 360; 
-}
+};
 
 MatrixData.prototype.incBy = function(val) {
     this.val = (this.val + val) % 360; 
-}
+};
 
 MatrixData.prototype.setIncZoom = function(num) { 
     this.val = this.val + num; 
     if(this.val > 180) this.val = 180;
     if(this.val < 0) this.val = 0;
-}
+};
 
 MatrixData.prototype.setStoolHeight = function(num) { 
     this.val = this.val + num; 
     if(this.val > 4.375) this.val = 4.375;
     if(this.val < 0) this.val = 0;
-}
+};
 
 MatrixData.prototype.dec = function() { 
-    this.val = (this.val - this.inc_) % 360; }
+    this.val = (this.val - this.inc_) % 360; };
 
 MatrixData.prototype.reset = function() {
     this.val = 0;
     this.inc_ = 0; 
-    this.html.style.display = "none"; }
+    this.html.style.display = "none"; };
 
 MatrixData.prototype.isZero = function() {
-    return(this.val == 0); }
+    return(this.val === 0); };
 
 function booleanData(htmlID){
     this.val = 1;
@@ -156,13 +156,13 @@ function booleanData(htmlID){
 
 booleanData.prototype.reset = function(){
     this.val = 1;
-}
+};
 
 booleanData.prototype.toggle = function(){
-    if(this.val == 0) this.val = 1;
+    if(this.val === 0) this.val = 1;
     else this.val = 0;
     this.html.style.display = "inline-block";
-}
+};
 
 var stoolHeight;
 var rotateY;
@@ -393,31 +393,6 @@ function tick() {
 function tick2() {
     requestAnimFrame(tick);
     theCanvas.drawScene();
-}
-
-
-var count = 0;
-function handleTextureLoaded(gl_, image, texture) {
-    gl_.activeTexture(gl_.TEXTURE0 + count++);
-    gl_.bindTexture(gl_.TEXTURE_2D, texture);
-    gl_.texImage2D(gl_.TEXTURE_2D, 0, 
-		   gl_.RGBA, gl_.RGBA, 
-		   gl_.UNSIGNED_BYTE, image);
-    gl_.texParameteri(gl_.TEXTURE_2D, 
-		      gl_.TEXTURE_MAG_FILTER, 
-		      gl_.LINEAR);
-    gl_.texParameteri(gl_.TEXTURE_2D, 
-		      gl_.TEXTURE_MIN_FILTER, 
-		      gl_.LINEAR_MIPMAP_NEAREST);
-    gl_.generateMipmap(gl_.TEXTURE_2D);
-}
-
-function getPowerOfTwo(value, pow) {
-    var pow = pow || 1;
-    while(pow<value) {
-	pow *= 2;
-    }
-    return pow;
 }
 
 function expand(contentID, titleID) {

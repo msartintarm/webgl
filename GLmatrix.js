@@ -348,19 +348,19 @@ GLmatrix.prototype.newViewAllowed = function() {
  * Input: amount of time to go up for x squares.
  */
 GLmatrix.prototype.update = function() {
-    if(stadiumMode && StadiumInitSeqNum == 0){
+    if(stadiumMode && StadiumInitSeqNum === 0){
 	this.moveInToPlay();
-	if(stadiumInit == 1)
+	if(stadiumInit === 1)
 	    StadiumInitSeqNum = 1;
     }
-    else if(stadiumMode && StadiumInitSeqNum == 1){
+    else if(stadiumMode && StadiumInitSeqNum === 1){
 	this.dropIn(); 
     }
-    else if(stadiumMode && StadiumInitSeqNum == 2){
-	if(moveCount == 0)
+    else if(stadiumMode && StadiumInitSeqNum === 2){
+	if(moveCount === 0)
 	    StadiumInitSeqNum = 3;
     }
-    else if(stadiumMode && StadiumInitSeqNum == 3){
+    else if(stadiumMode && StadiumInitSeqNum === 3){
 	priveledgedMode.toggle();
 	StadiumInitSeqNum = 4;
     }
@@ -368,8 +368,8 @@ GLmatrix.prototype.update = function() {
     this.gradualMove();
     this.gradualRotate();
     const x = 0.1;
-    if(this.inJump == false) {
-	if(this.vMatrixNewChanged == false) { return; }
+    if(this.inJump === false) {
+	if(this.vMatrixNewChanged === false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
 	    // We only check the view if we are
 	    //  not in 'god mode'
@@ -382,19 +382,28 @@ GLmatrix.prototype.update = function() {
 	mat4.identity(this.vMatrixNew);
 	return; 
     }
-    if(this.up3-- >= 0) { this.vTranslate([0, 3*x, 0]); } 
-    else {
-    if(this.up2-- >= 0) { this.vTranslate([0, 2*x, 0]); }
-    else {
-      if(this.up1-- >= 0) { this.vTranslate([0, 1*x, 0]); }
-	    else {
-		if(this.dn1-- >= 0) { this.vTranslate([0,-1*x, 0]); }
-		else {
-		    if(this.dn2-- >= 0) { this.vTranslate([0,-2*x, 0]); }
-		    else {
-			if(this.dn3-- >= 0) { this.vTranslate([0,-3*x, 0]); }
-			else { this.inJump = false; return; }
-		    }}}}}
+    if(this.up3 >= 0) { 
+	this.vTranslate([0, 3*x, 0]); 
+	this.up3--;
+    } else if(this.up2 >= 0) { 
+	this.vTranslate([0, 2*x, 0]); 
+	this.up2--;
+    } else if(this.up1 >= 0) {
+	this.vTranslate([0, 1*x, 0]); 
+	this.up1--; 
+    } else if(this.dn1 >= 0) { 
+	this.vTranslate([0,-1*x, 0]);
+	this.dn1--;
+    } else if(this.dn2 >= 0) {
+	this.vTranslate([0,-2*x, 0]);
+	this.dn2--;
+    } else if(this.dn3 >= 0) {
+	this.vTranslate([0,-3*x, 0]);
+	this.dn3--;
+    } else {
+	this.inJump = false; return; 
+    }
+
     this.vMul(this.vMatrixNew);
     mat4.identity(this.vMatrixNew);
     this.vMatrixChanged = true;
@@ -451,7 +460,7 @@ GLmatrix.prototype.push = function() {
 };
 
 GLmatrix.prototype.pop = function() {
-    if (this.mStack.length == 0) {
+    if (this.mStack.length === 0) {
         throw "Invalid pop"; }
     mat4.copy(this.mMatrix, this.mStack.pop());
     this.mMatrixChanged = true;
