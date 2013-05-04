@@ -241,8 +241,15 @@ GLmatrix.prototype.moveDown = function() {
 
 GLmatrix.prototype.moveForward = function() {
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
-	distToMove = [0,0,-moveDist/10];
-	moveCount = 10;
+        if(moveCount != 0  && moveAccel <= 5){
+            moveAccel +=0.1;
+        }
+        else if(moveCount == 0){
+            moveAccel = 1;
+        }
+        distToMove = [0,0,(-moveDist/10)*moveAccel];
+        console.log("Accelerating %d", moveAccel);
+        moveCount = 10;
     }
 };
 GLmatrix.prototype.moveBack = function() {
@@ -294,6 +301,7 @@ GLmatrix.prototype.toggleSpeed = function() {
 };
 
 var moveCount = 0;
+var moveAccel = 1;
 var distToMove = vec3.create();
 GLmatrix.prototype.gradualMove = function() {
 

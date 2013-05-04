@@ -162,7 +162,7 @@ Ball.prototype.detectViewerCollision = function(oldPosition, newPosition){
 	}
 	this.hit = true;
 	vec3.normalize(this.velocityVec, vec3.fromValues(x_dir,0,z_dir));	
-	this.velocity = 100;
+	this.velocity = 100 * moveAccel;
 	return false;
     }
 
@@ -213,7 +213,9 @@ Ball.prototype.checkBallCollision = function(ball){
 	this.velocityVec[0] = -1*ball.velocityVec[0];
 	this.velocityVec[2] = -1*ball.velocityVec[2];
 	this.updatePosition(true);
-	ball.velocity = this.velocity;
+	ball.updatePosition(false);
+	ball.velocity = this.velocity/2;
+	this.velocity = ball.velocity;
 	ball.updatePosition(false);
 	ball.ballCollide = true;
     }
@@ -233,6 +235,19 @@ Ball.prototype.updatePosition = function(revert){
     }
     this.position[0] += this.velocityVec[0] * this.velocity/5;
     this.position[2] += this.velocityVec[2] * this.velocity/5;
-    this.velocity-= 0.5;
+    if(this.velocity < 0)
+        this.velocity = 0;
+    else if(this.velocity < 100)
+        this.velocity -= 0.5;
+    else if(this.velocity < 200)
+        this.velocity-= 2.5;
+    else if(this.velocity < 300)
+        this.velocity -= 5;
+    else if(this.velocity < 400)
+        this.velocity -= 25;
+    else if(this.velocity < 500)
+        this.velocity -=  50;
+    else if(this.velocity > 550)
+        alert("something is fucked");
 }
 
