@@ -423,6 +423,10 @@ GLmatrix.prototype.update = function() {
 */
 GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
 
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
+    }
+
     if (this.pMatrixChanged === true) {
 	this.pMatrixChanged = false;
     }
@@ -445,6 +449,10 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
  */
 GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
+    }
+
     if (this.mMatrixChanged === true) { 
 	// perceived normals: (inverse of modelview
 	//  transposed) * object normals
@@ -453,6 +461,7 @@ GLmatrix.prototype.setVertexUniforms = function(gl_, shader_) {
 	mat4.transpose(this.nMatrix, this.nMatrix);
 	this.mMatrixChanged = false;
     }
+
     gl_.uniformMatrix4fv(shader_.unis["mMatU"], false, this.mMatrix);
     gl_.uniformMatrix4fv(shader_.unis["nMatU"], false, this.nMatrix);
 };

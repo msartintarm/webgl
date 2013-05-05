@@ -1,7 +1,8 @@
-var slices = 50;
-var stacks = 50;
-
 function Torus(innerRadius, outerRadius) { 
+
+    var slices = 50;
+    var stacks = 50;
+
     this.o = new GLobject();
 
     for (var i = 0; i <= slices; i++) {
@@ -41,7 +42,6 @@ function Torus(innerRadius, outerRadius) {
     // A  B   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
-    var indexData = [];
     for (i = 0; i < slices; i++) {
 	for (j = 0; j < stacks; j++) {
 	    var A = (i * (stacks + 1)) + j;

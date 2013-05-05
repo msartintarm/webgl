@@ -51,6 +51,10 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.fillStyle = "#112233";
     ctx.fillText(this.text, this.canvas.width/2 + 3, this.canvas.height/2 + 3);
 
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
+	gl_.useProgram(gl_.shader);
+    }
+
     var sampler =
     gl_.getUniformLocation(gl_.shader, "sampler" + this.active);
     gl_.uniform1i(sampler, this.active);

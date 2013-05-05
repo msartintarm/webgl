@@ -150,8 +150,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
 	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
-	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
-	this.gl.useProgram(this.gl.shader);
+	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs-color");
 
 	theMatrix.viewInit();
 	this.objects = [];

@@ -1,7 +1,3 @@
-var diskPositionBuffer;
-var diskNormalBuffer;
-var diskColorBuffer;
-var diskIndexBuffer;
 var colorVec;
 
 function Disk(inner_radius, outer_radius, slices, loops) {
@@ -12,10 +8,6 @@ function Disk(inner_radius, outer_radius, slices, loops) {
     this.outer_radius = outer_radius;
     this.slices = slices;
     this.loops = loops;
-
-    var normalData = [];
-    var positionData = [];
-    var colorData = [];
 
     var radius_step_size = (outer_radius-inner_radius)/loops;
     var radius = inner_radius;
@@ -45,7 +37,6 @@ function Disk(inner_radius, outer_radius, slices, loops) {
     // B  D   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
-    var indexData = [];
     for (var latitude = 0; latitude < slices; latitude++) {
 	for (var longitude = 0; longitude < loops; longitude++) {
 	    var A = (latitude * (slices + 1)) + longitude;
@@ -57,15 +48,6 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 	}
     }
 }
-
-/**
- * Flip the z-coordinate of normals to -1
- */
-//Disk.prototype.invert = function() {
-//    for(var i = 2; i < this.o.normData.length; i += 3) {
-//	this.o.normData[i] = -1;
-//    }
-//}
 
 Disk.prototype.initBuffers = _oInitBuffers;
 Disk.prototype.invertNorms = _oInvertNorms;

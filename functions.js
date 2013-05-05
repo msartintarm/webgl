@@ -105,8 +105,9 @@ function _oScale(vec_) {
 }
 
 function _oInvertNorms() {
-    for(var i = 0; i < this.o.normData.length; ++i) {
-	this.o.normData[i] = -this.o.normData[i];
+    var theNormData = this.o.data["norm"];
+    for(var i = 0; i < theNormData.length; ++i) {
+	theNormData[i] = -theNormData[i];
     }
     return this;
 }

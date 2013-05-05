@@ -231,14 +231,6 @@ GLobject.prototype.initBuffers = function(gl_) {
 
     if(!this.textureNum) { 
 	this.setTexture(NO_TEXTURE);
-	// See if we need to create 'dummy' data
-	if(this.data["tex"].length < 1) {
-	    var i, max;
-	    for(i = 0, max = this.data["norm"].length / 3; i < max; ++i) {
-		this.data["tex"].push(0);
-		this.data["tex"].push(0);
-	    }
-	}
     } else {
 	// See if the texture has been created or not
 	if(this.textureNum < TEXT_TEXTURE && !gl_.textureNums[this.textureNum]) {
@@ -270,6 +262,7 @@ GLobject.prototype.initBuffers = function(gl_) {
 GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
 
     var theData = this.data[attribute];
+    if(!theData) return;
     var theBuff = gl_.createBuffer();
     gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
@@ -321,6 +314,10 @@ GLobject.prototype.translate = function(vec) {
    Then send the divide-and-conquer 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
+
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
+    }
     
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
@@ -341,7 +338,9 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 //	gl_.uniform1f(shader_.unis["textureNumU"], NO_TEXTURE);
   //  }
 //    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
-    if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
+    if(this.specular_color) {
+	gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color);
+    }
     
     GLobject_linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
     GLobject_linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
@@ -349,21 +348,15 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     GLobject_linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
 };
 
+/**
+ * This 'member function' also does type checking to 
+ * ensure they have been created in the shader
+ */
 GLobject_linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
-    if(gpu_attrib !== -1) {
+    if((gpu_attrib !== -1) && cpu_attrib) {
 	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
 	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
     }
-};
-
-/**
-   Send the divide-and-conquer 'draw' signal to the GPU
-   Attributes must first be linked (as above).
-*/
-GLobject.prototype.drawElements = function(gl_) {
-    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
-    gl_.drawElements(gl_.TRIANGLES, 
-        this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
 };
 
 /**
@@ -373,13 +366,12 @@ GLobject.prototype.draw = function(gl_) {
 
     var shader_ = (this.textureNum !== NO_TEXTURE) ? 
 	gl_.shader: gl_.shader_color;
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
-	gl_.useProgram(shader_);
-    }
+
     theMatrix.setViewUniforms(gl_, shader_);
     theMatrix.setVertexUniforms(gl_, shader_);
     this.linkAttribs(gl_, shader_);
-    this.drawElements(gl_);
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
+    gl_.drawElements(gl_.TRIANGLES, this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
 };
 
 var FLATNORMS = false;

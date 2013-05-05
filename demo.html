@@ -189,6 +189,59 @@ void main(void) {
   }
 }
     </script>
+    <script id="shader-vs-color" type="x-shader/x-vertex">
+precision mediump float;
+
+// Vector Attributes
+attribute vec3 vPosA;
+attribute vec3 vNormA;
+attribute vec3 vColA;
+
+// Matrixes
+uniform mat4 pMatU; // Position
+uniform mat4 mMatU; // Model
+uniform mat4 vMatU; // View
+uniform mat4 nMatU; // Normal
+uniform mat4 lMatU; // Lighting
+
+// Position attributes
+uniform vec3 lightPosU;
+uniform vec3 viewPosU;
+
+// Passed to the fragment shader
+varying float diffuseV;
+varying vec3 colorV;
+varying vec2 shadowV;
+
+varying vec3 viewPosV;
+varying vec3 vModel;
+varying vec4 lModel;
+varying vec3 lightNorm;
+varying vec3 vertNorm;
+
+void main(void) {
+
+// Viewing space coordinates of light / vertex
+vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;
+lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
+
+  // -- Position -- //
+
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
+
+  // -- Lighting -- //
+
+  // Ambient components we'll leave until frag shader
+  colorV = vColA;
+
+  // Diffuse component
+  lightNorm = normalize(lModel.xyz - vModel.xyz);
+
+  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);
+  diffuseV = dot(vertNorm, lightNorm);
+  if (diffuseV < 0.0) { diffuseV = 0.0; }
+}       
+    </script>
     <script id="shader-vs" type="x-shader/x-vertex">
 precision mediump float;
 
