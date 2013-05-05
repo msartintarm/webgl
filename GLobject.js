@@ -347,8 +347,11 @@ if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.
     gl_.vertexAttribPointer(shader_.attribs["vPosA"], this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
     gl_.vertexAttribPointer(shader_.attribs["vColA"], this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-    gl_.vertexAttribPointer(shader_.attribs["textureA"], this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
+
+    if(shader_.attribs["textureA"] !== -1) {
+	gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
+	gl_.vertexAttribPointer(shader_.attribs["textureA"], this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    }
 };
 
 /**
