@@ -341,16 +341,16 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 //    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
 if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.normBuff);
-    gl_.vertexAttribPointer(shader_.attribs["vNormA"], this.normBuff.itemSize, gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.posBuff);
-    gl_.vertexAttribPointer(shader_.attribs["vPosA"], this.posBuff.itemSize, gl_.FLOAT, false, 0, 0);
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.colBuff);
-    gl_.vertexAttribPointer(shader_.attribs["vColA"], this.colBuff.itemSize, gl_.FLOAT, false, 0, 0);
+    GLobject_linkAttrib(gl_, shader_.attribs["vNormA"], this.normBuff);
+    GLobject_linkAttrib(gl_, shader_.attribs["vPosA"], this.posBuff);
+    GLobject_linkAttrib(gl_, shader_.attribs["vColA"], this.colBuff);
+    GLobject_linkAttrib(gl_, shader_.attribs["textureA"], this.textureBuff);
+};
 
-    if(shader_.attribs["textureA"] !== -1) {
-	gl_.bindBuffer(gl_.ARRAY_BUFFER, this.textureBuff);
-	gl_.vertexAttribPointer(shader_.attribs["textureA"], this.textureBuff.itemSize, gl_.FLOAT, false, 0, 0);
+GLobject_linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
+    if(gpu_attrib !== -1) {
+	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
+	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
     }
 };
 
