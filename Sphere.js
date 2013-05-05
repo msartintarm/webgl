@@ -23,7 +23,10 @@ function Sphere(radius) {
 
 	    //not correct to add texture must set properly
 //	    this.o.addTexture(0.0, 0.0);  
-	    
+	    var u = 1 - (i/kLong);
+	    var v = 1 - (j/kLat);
+	    this.o.addTexture(u,v);
+
 	    colorVec = [x,y,z];
 	    this.o.addColors(x,y,z);
 	    //this.o.addColors(x/2, y/2, z/2);
@@ -45,6 +48,12 @@ function Sphere(radius) {
 	}
     }
 }
+
+Sphere.prototype.setTexture = function(texture) { 
+    this.o.setTexture(texture);
+    return this;
+}
+
 
 Sphere.prototype.initBuffers = _oInitBuffers;
 Sphere.prototype.draw = _oDraw;

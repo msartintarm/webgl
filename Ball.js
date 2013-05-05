@@ -5,7 +5,7 @@ function Ball(position, numBalls, texture_num, active) {
     this.radius = 25;
     this.timeLeft = 100;
     this.hit = false;
-    this.sphere = new Sphere(this.radius);
+    this.sphere = new Sphere(this.radius).setTexture(HELL_TEXTURE);
     this.timer = 0;
     this.birthTime = 0;
     this.numberBalls = numBalls;
