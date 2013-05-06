@@ -268,7 +268,11 @@ GLcanvas.prototype.drawScene = function() {
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
 };
-
+/*
+GLcanvas.prototype.updateShaders = function(){
+  
+}
+*/
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.bufferModels();
@@ -289,7 +293,6 @@ GLcanvas.prototype.initUniform = function(gl_shader, uni) {
 };
 
 GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
-    
     this.gl.attachShader(gl_shader, getShader(this.gl, frag));
     this.gl.attachShader(gl_shader, getShader(this.gl, vert));
     this.gl.linkProgram(gl_shader);
@@ -304,6 +307,8 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initAttribute(gl_shader, "vColA");
     this.initAttribute(gl_shader, "textureA");
 
+    this.initUniform(gl_shader, "ballHitu")
+    this.initUniform(gl_shader, "u_Scale")
     this.initUniform(gl_shader, "gaussFilter")
     this.initUniform(gl_shader, "ambient_coeff_u");
     this.initUniform(gl_shader, "diffuse_coeff_u");
@@ -316,5 +321,6 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lMatU"); // Lighting matrix
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
+
 };
 var theCanvas;

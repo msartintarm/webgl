@@ -330,6 +330,7 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     ];
     gl_.uniform2fv(shader_.unis["gaussFilter"], locations);
     gl_.uniform2fv(shader_.unis["u_Scale"], [1/512,1/512] );
+    //gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
 
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
