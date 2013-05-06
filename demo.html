@@ -189,6 +189,103 @@ void main(void) {
   }
 }
     </script>
+    <script id="shader-fs-ball" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform float ambient_coeff_u;
+uniform float diffuse_coeff_u;
+uniform float specular_coeff_u;
+uniform vec3 specular_color_u;
+
+varying float diffuseV;
+varying float specularV;
+varying vec3 colorV;
+
+varying vec3 reflectionV;
+varying vec3 viewPosV;
+varying vec3 vModel;
+varying vec4 lModel;
+varying vec3 lightNorm;
+varying vec3 vertNorm;
+
+varying vec2 textureV;
+varying vec2 shadowV;
+
+uniform float textureNumU;
+
+uniform vec2 gaussFilter[7];
+uniform vec2 u_Scale;
+
+uniform sampler2D sampler0;
+uniform sampler2D sampler1;
+uniform sampler2D sampler2;
+uniform sampler2D sampler3;
+uniform sampler2D sampler4;
+uniform sampler2D sampler5;
+uniform sampler2D sampler6;
+uniform sampler2D sampler7;
+uniform sampler2D sampler8;
+uniform sampler2D sampler9;
+uniform sampler2D sampler10;
+
+
+  // Specular
+vec3 getGaussianBlur(sampler2D theSampler) {
+   vec3 blurColor;
+   for( int i = 0; i < 7; i++ )
+   {
+       blurColor += texture2D(theSampler, vec2(textureV.s + gaussFilter[i].x * u_Scale.x, textureV.t + gaussFilter[i].x * u_Scale.y ) ).xyz * gaussFilter[i].y;
+   }
+   return blurColor;
+}
+
+float specular() {
+    vec3 reflectionV2 = (normalize(vertNorm) * diffuseV *
+		 2.0) - lightNorm;
+    vec3 viewer = vec3(0.,0.,0.);
+float specularV2 = dot(normalize(reflectionV2), 
+                    normalize(viewer - vModel.xyz));
+    if (specularV2 <= 0. || diffuseV <= 0.) { specularV2 = 0.0; }
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    specularV2 = specularV2 * specularV2;
+    return specularV2;
+}
+
+void colorize() {
+  vec3 ambColor = colorV / 3.0 * ambient_coeff_u;
+  vec3 diffColor = colorV / 3.0 * diffuseV * diffuse_coeff_u;
+  vec3 specColor = specular_color_u * specular();
+  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
+}
+
+void colorTexture(sampler2D theSampler) {
+  vec3 textureColor = getGaussianBlur(theSampler);
+  vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;
+  vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;
+  vec3 specColor = textureColor * specular();
+
+  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
+}
+
+void main(void) {
+
+  if (textureNumU < 0.1) { colorTexture(sampler0);
+  } else if (textureNumU < 1.1) { colorTexture(sampler1);
+  } else if (textureNumU < 2.1) { colorTexture(sampler2);
+  } else if (textureNumU < 3.1) { colorTexture(sampler3);
+  } else if (textureNumU < 4.1) { colorTexture(sampler4);
+  } else if (textureNumU < 5.1) { colorTexture(sampler5);
+  } else if (textureNumU < 6.1) { colorTexture(sampler6);
+  } else if (textureNumU < 7.1) { colorTexture(sampler7);
+  } else if (textureNumU < 8.1) { colorTexture(sampler8);
+  } else if (textureNumU < 9.1) { colorTexture(sampler9);
+  } else if (textureNumU < 10.1) { colorTexture(sampler10);
+  } else { colorize();
+  }
+}
+    </script>
     <script id="shader-vs-color" type="x-shader/x-vertex">
 precision mediump float;
 
@@ -212,12 +309,6 @@ uniform vec3 viewPosU;
 varying float diffuseV;
 varying vec3 colorV;
 varying vec2 shadowV;
-
-varying vec3 viewPosV;
-varying vec3 vModel;
-varying vec4 lModel;
-varying vec3 lightNorm;
-varying vec3 vertNorm;
 
 void main(void) {
 
@@ -243,6 +334,62 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
 }       
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
+precision mediump float;
+
+// Vector Attributes
+attribute vec3 vPosA;
+attribute vec3 vNormA;
+attribute vec3 vColA;
+attribute vec2 textureA;
+
+// Matrixes
+uniform mat4 pMatU; // Position
+uniform mat4 mMatU; // Model
+uniform mat4 vMatU; // View
+uniform mat4 nMatU; // Normal
+uniform mat4 lMatU; // Lighting
+
+// Position attributes
+uniform vec3 lightPosU;
+uniform vec3 viewPosU;
+
+// Passed to the fragment shader
+varying float diffuseV;
+varying vec3 colorV;
+varying vec2 textureV;
+varying vec2 shadowV;
+
+varying vec3 viewPosV;
+varying vec3 vModel;
+varying vec4 lModel;
+varying vec3 lightNorm;
+varying vec3 vertNorm;
+
+void main(void) {
+
+// Viewing space coordinates of light / vertex
+vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;
+lModel = vMatU * lMatU * vec4(lightPosU, 1.0);
+
+  // -- Position -- //
+
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);
+
+  // -- Lighting -- //
+
+  // Ambient components we'll leave until frag shader
+  colorV = vColA;
+  textureV = textureA;
+
+  // Diffuse component
+  lightNorm = normalize(lModel.xyz - vModel.xyz);
+
+  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);
+  diffuseV = dot(vertNorm, lightNorm);
+  if (diffuseV < 0.0) { diffuseV = 0.0; }
+}       
+    </script>
+    <script id="shader-vs-ball" type="x-shader/x-vertex">
 precision mediump float;
 
 // Vector Attributes
@@ -356,10 +503,7 @@ onclick="theCanvas.initText(document.getElementById('inputz').value);"
           <div class="border topRight" ></div>
 	  <div class="border lowLeft" ></div>
           <div class="border lowRight" ></div>
-            <canvas id="glcanvas" width="1100">
-			Your browser doesn't appear to support the HTML5 
-			<code>&lt;canvas&gt;</code> element.
-	    </canvas>
+            <canvas id="glcanvas" width="1100"></canvas>
           <div class="title" id="title2">            
 	    <!-- 
 		 We use a table with 2x2 cells, 

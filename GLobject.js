@@ -318,6 +318,17 @@ GLobject.prototype.translate = function(vec) {
    Then send the divide-and-conquer 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
+    var locations = [
+	    -3.0,0.015625,
+	    -2.0,0.09375,
+	    -1.0,0.234375,
+	0.0,0.3125,
+	1.0,0.234375,
+	2.0,0.09375,
+	3.0,0.015625
+    ];
+    gl_.uniform2fv(shader_.unis["gaussFilter"], locations);
+    gl_.uniform2fv(shader_.unis["u_Scale"], [1/512,1/512] );
 
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
@@ -375,8 +386,13 @@ GLobject.prototype.linkAttrib = function(gl_, shader_, glsl_attrib, js_buffer) {
  */
 GLobject.prototype.draw = function(gl_) {
 
-    var shader_ = (this.textureNum !== NO_TEXTURE) ? 
-	gl_.shader: gl_.shader_color;
+    var shader_;
+    if(this.textureNum === NO_TEXTURE)
+	shader_ = gl_.shader_color
+    else if(this.textureNum === HELL_TEXTURE)
+	shader_ = gl_.shader_ball;
+    else
+	shader_ = gl_.shader;
 
     if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
 	gl_.useProgram(shader_);
