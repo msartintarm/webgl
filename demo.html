@@ -66,6 +66,10 @@ varying float diffuseV;
 varying float specularV;
 varying vec3 colorV;
 
+uniform vec2 gaussFilter[7];
+uniform float ballHitu;
+uniform vec2 u_Scale;
+
 varying vec3 reflectionV;
 varying vec3 viewPosV;
 varying vec3 vModel;
@@ -127,6 +131,9 @@ varying vec2 shadowV;
 
 uniform float textureNumU;
 
+uniform vec2 gaussFilter[7];
+uniform float ballHitu;
+uniform vec2 u_Scale;
 
 uniform sampler2D sampler0;
 uniform sampler2D sampler1;

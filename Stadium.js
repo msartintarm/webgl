@@ -35,6 +35,7 @@ function Stadium() {
     //initializes the field...floor and walls
     this.Field();
     this.InitBalls();
+    return this;
 }
 
 Stadium.prototype.initBuffers = function(gl_) {
@@ -115,14 +116,24 @@ Stadium.prototype.Field = function(){
 };
 
 Stadium.prototype.draw = function(gl_) {
-    var ballInitOver = true;
     if(stadiumInit === 0)
 	this.intro.draw(gl_);
 
+    for(i = 0; i < this.balls.length; i++){
+	this.balls[i].draw(gl_, this.gameStart);
+    }
+
+    for(i = 0; i<this.pieces.length; i++){
+	this.pieces[i].draw(gl_);
+    }
+};
+
+Stadium.prototype.updateStadium = function(){
     //we haven't looked at any balls yet so lets reset the collisions
     //this flag will tell us when we have a collision so that we 
     //do not encounter a deadlock type situation where both balls
     //are setting reflections on each other
+    var ballInitOver = true;
     var numBallsHit = 0;
     var gameOver = false;
     for(var i = 0; i<this.balls.length; i++){
@@ -141,7 +152,7 @@ Stadium.prototype.draw = function(gl_) {
 	alert("You won the game in " + endTime + " seconds!");
 	gameOver = true;
     }
-
+    
     for(i = 0; i < this.balls.length; i++){
 	if(this.balls[i].init) ballInitOver = false;
 	
@@ -153,14 +164,14 @@ Stadium.prototype.draw = function(gl_) {
 	if(this.balls[i].velocity !== 0 && !this.balls[i].ballCollide){
 	    //update the ball position
 	    this.balls[i].updatePosition(false);
-
+	    
 	    //check both current and new piece
 	    //checks viewer collision even if you aren't moving
 	    //need a new method here, for when the viewer is not moving
 	    var viewerPos = vec4.fromValues(0,0,0,1);
 	    vec4.transformMat4(viewerPos, viewerPos, theMatrix.vMatrix);
 	    this.balls[i].detectBallViewerCollision(viewerPos);
-
+	    
 	    var curPos = this.balls[i].oldPosition;
 	    var newPos = this.balls[i].position;
 	    
@@ -179,25 +190,21 @@ Stadium.prototype.draw = function(gl_) {
 		if(j!=i)
 		    this.balls[i].checkBallCollision(this.balls[j]);
 	    }
-	
+	    
 	    if(this.pieces[curPiece])
 		this.pieces[curPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	    if(this.pieces[newPiece] && !this.pieces[curPiece].ballReflected)
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
-
-	this.balls[i].draw(gl_, this.gameStart);
+	
     }
     if(ballInitOver && stadiumInit == 0){
 	stadiumInit = 1;
 	this.gameStart = Math.round(new Date().getTime()/1000);
 	console.log("gameStart %f", this.gameStart);
     }
+}
 
-    for(i = 0; i<this.pieces.length; i++){
-	this.pieces[i].draw(gl_);
-    }
-};
 
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is

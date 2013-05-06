@@ -356,6 +356,9 @@ GLmatrix.prototype.newViewAllowed = function() {
  * Input: amount of time to go up for x squares.
  */
 GLmatrix.prototype.update = function() {
+    if(stadiumMode===1)
+	myStadium.updateStadium();
+
     if(stadiumMode && StadiumInitSeqNum === 0){
 	this.moveInToPlay();
 	if(stadiumInit === 1)
