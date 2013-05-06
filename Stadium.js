@@ -4,6 +4,7 @@ function Stadium() {
     lookDist = 1/15;
     stadiumInit = 0;
 
+    this.gameStart = 0.0;
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
@@ -136,7 +137,8 @@ Stadium.prototype.draw = function(gl_) {
     }
     //this is how you win the game
     if(numBallsHit == this.numberBalls){
-	alert("You win the game!");
+	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart; 
+	alert("You won the game in " + endTime + " seconds!");
 	gameOver = true;
     }
 
@@ -184,9 +186,13 @@ Stadium.prototype.draw = function(gl_) {
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
 
-	this.balls[i].draw(gl_);
+	this.balls[i].draw(gl_, this.gameStart);
     }
-    if(ballInitOver) stadiumInit = 1;
+    if(ballInitOver && stadiumInit == 0){
+	stadiumInit = 1;
+	this.gameStart = Math.round(new Date().getTime()/1000);
+	console.log("gameStart %f", this.gameStart);
+    }
 
     for(i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_);

@@ -76,7 +76,7 @@ Ball.prototype.getRotationAngle= function (viewerPos){
     this.ballRotationAngle = Math.asin(oppo/hypt)+ compAngle;
 }
 
-Ball.prototype.draw = function(gl_) {
+Ball.prototype.draw = function(gl_, gameStart) {
     if(this.init) this.initBalls();
 
     var shader_ = gl_.shader_ball
@@ -100,7 +100,8 @@ Ball.prototype.draw = function(gl_) {
 	this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-this.birthTime));
     }
     if(this.timer == 0 && this.hit && !this.gameOver){
-	alert("you lose");
+	var endTime = Math.round(new Date().getTime()/1000)-gameStart;
+	alert("You lost the game in " + endTime + " seconds");
 	this.gameOver = true;
     }
 
