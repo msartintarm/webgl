@@ -79,6 +79,17 @@ Ball.prototype.getRotationAngle= function (viewerPos){
 Ball.prototype.draw = function(gl_) {
     if(this.init) this.initBalls();
 
+    var shader_ = gl_.shader_ball
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
+    }
+
+    if(this.hit == true)
+	gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
+    else
+	gl_.uniform1f(shader_.unis["ballHitu"], 1.0);
+
+
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     theMatrix.rotate(this.ballRotationAngle, [0,1,0]);

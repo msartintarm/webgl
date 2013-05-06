@@ -214,6 +214,7 @@ varying vec2 shadowV;
 uniform float textureNumU;
 
 uniform vec2 gaussFilter[7];
+uniform float ballHitu;
 uniform vec2 u_Scale;
 
 uniform sampler2D sampler0;
@@ -261,7 +262,18 @@ void colorize() {
 }
 
 void colorTexture(sampler2D theSampler) {
-  vec3 textureColor = getGaussianBlur(theSampler);
+  vec3 textureColor;
+  if(ballHitu == 1.0){
+	//textureColor.x = 0.0;
+	//textureColor.y = 1.0;
+        //textureColor.z = 0.0;
+ 	textureColor = getGaussianBlur(theSampler); 
+ }
+  else{
+	textureColor.x = 0.0;
+	textureColor.y = 1.0;
+        textureColor.z = 1.0;
+  }
   vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;
   vec3 specColor = textureColor * specular();
