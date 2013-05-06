@@ -15,7 +15,7 @@ function GLobject() {
     this.data["tex"] =  [];
     this.indexData = [];
 
-    this.textureNum = null;
+    this.textureNum = NO_TEXTURE;
 
     // Quads use an index position counter
     this.indexPos = 0;
@@ -202,7 +202,6 @@ GLobject.prototype.setTexture = function(theTexture) {
 	break;
     case WOOD_TEXTURE:
     case HEAVEN_TEXTURE: 
-    case NO_TEXTURE:
 	break;
     default:
 	alert("Unsupported texture number %d in GLobject.js", theTexture);
@@ -229,8 +228,11 @@ GLobject.prototype.setActive = function(theActive) {
 GLobject.prototype.initBuffers = function(gl_) {
 
 
-    if(!this.textureNum) { 
-	this.setTexture(NO_TEXTURE);
+    if(this.textureNum === NO_TEXTURE) {
+	this.ambient_coeff = 0.1;
+	this.diffuse_coeff = 0.7;
+	this.specular_coeff = 0.0;
+	this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
     } else {
 	// See if the texture has been created or not
 	if(this.textureNum < TEXT_TEXTURE && !gl_.textureNums[this.textureNum]) {
@@ -258,20 +260,22 @@ GLobject.prototype.initBuffers = function(gl_) {
 
 /**
    Buffer data fpr a single vertex attribute array.
+   First, checks to ensure there is data to buffer.
 */
 GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
 
     var theData = this.data[attribute];
-    if(!theData) return;
-    var theBuff = gl_.createBuffer();
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
-    gl_.bufferData(gl_.ARRAY_BUFFER, 
-		   new Float32Array(theData),
-		   gl_.STATIC_DRAW);
-    theBuff.itemSize = theSize; 
-    theBuff.numItems = theData.length / theSize;
+    if(!theData || theData.length < 1) return;
+    this.buff[attribute] = gl_.createBuffer();
+    var theBuff = this.buff[attribute];
 
-    this.buff[attribute] = theBuff;
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
+    gl_.bufferData(gl_.ARRAY_BUFFER,
+		   new Float32Array(this.data[attribute]),
+		   gl_.STATIC_DRAW);
+    theBuff.itemSize = theSize;
+    theBuff.numItems = this.data[attribute].length / theSize;
+
 };
 
 /**
@@ -280,7 +284,7 @@ GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
 GLobject.prototype.bufferElements = function(gl_, theBuff, theData, theSize) {
 
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, theBuff);
-    gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
+    gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER,
 		   new Uint16Array(theData),
 		   gl_.STATIC_DRAW);
     theBuff.itemSize = 1;
@@ -315,10 +319,6 @@ GLobject.prototype.translate = function(vec) {
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
-	gl_.useProgram(shader_);
-    }
-    
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
 
@@ -342,20 +342,31 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 	gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color);
     }
     
-    GLobject_linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
-    GLobject_linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
-    GLobject_linkAttrib(gl_, shader_.attribs["vColA"], this.buff["col"]);
-    GLobject_linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
+    this.linkAttrib(gl_, shader_, "vNormA", "norm");
+    this.linkAttrib(gl_, shader_, "vPosA", "pos");
+    this.linkAttrib(gl_, shader_, "vColA", "col");
+    this.linkAttrib(gl_, shader_, "textureA", "tex");
 };
 
 /**
- * This 'member function' also does type checking to 
- * ensure they have been created in the shader
+ * This 'member function' does type checking to 
+ * ensure data has been created both in the shader and the object
+ *
+ * Standards obtained from KHRONOS specs
+http://www.khronos.org/registry/webgl/specs/latest/#ATTRIBS_AND_RANGE_CHECKING
  */
-GLobject_linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
-    if((gpu_attrib !== -1) && cpu_attrib) {
-	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
-	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
+GLobject.prototype.linkAttrib = function(gl_, shader_, glsl_attrib, js_buffer) {
+
+    var gpu_attrib = shader_.attribs[glsl_attrib];
+    var cpu_attrib = this.buff[js_buffer];
+
+    if(gpu_attrib !== -1) {
+	if(cpu_attrib && cpu_attrib.itemSize > 0) { // ensure CPU attribute exists
+	    gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
+	    gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
+	} else {         // if not, turn it off on the GPU side
+	    gl_.disableVertexAttribArray(gpu_attrib);
+	}
     }
 };
 
@@ -367,6 +378,10 @@ GLobject.prototype.draw = function(gl_) {
     var shader_ = (this.textureNum !== NO_TEXTURE) ? 
 	gl_.shader: gl_.shader_color;
 
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
+	gl_.useProgram(shader_);
+    }
+    
     theMatrix.setViewUniforms(gl_, shader_);
     theMatrix.setVertexUniforms(gl_, shader_);
     this.linkAttribs(gl_, shader_);

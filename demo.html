@@ -93,7 +93,7 @@ float specularV2 = dot(normalize(reflectionV2),
 }
 
 void colorize() {
-  vec3 ambColor = colorV / 3.0 * ambient_coeff_u;
+  vec3 ambColor = colorV * 5.0 * ambient_coeff_u;
   vec3 diffColor = colorV / 3.0 * diffuseV * diffuse_coeff_u;
   vec3 specColor = specular_color_u * specular();
   gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);

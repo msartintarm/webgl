@@ -275,10 +275,15 @@ GLcanvas.prototype.changeShaders = function(frag, vert) {
  * Some shaders won't have these attributes. This funct should still work.
  */
 GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
-    gl_shader.attribs[attr] = this.gl.getAttribLocation(gl_shader, attr);
-    if(gl_shader.attribs[attr] !== -1) {
-	this.gl.enableVertexAttribArray(gl_shader.attribs[attr]);
+
+    var theAttrib = this.gl.getAttribLocation(gl_shader, attr);
+
+    if(theAttrib === -1) return;
+    if(this.gl.getParameter(this.gl.CURRENT_PROGRAM) !== gl_shader) {
+	this.gl.useProgram(gl_shader);
     }
+    this.gl.enableVertexAttribArray(gl_shader.attribs[attr]);
+    gl_shader.attribs[attr] = theAttrib;
 };
 
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {
@@ -312,5 +317,7 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lMatU"); // Lighting matrix
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
+
+    this.gl.bindAttribLocation(gl_shader, 0, "vPosA");
 };
 var theCanvas;
