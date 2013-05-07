@@ -5,25 +5,20 @@
  */
 function GLobject() {
 
+    this.data = [];
+    this.buff = [];
+
     // Data to load into buffers
-    this.normData = [];
-    this.posData = [];
-    this.colData = [];
-    this.indexData = [];
-    this.textureData =  [];
+    this.data["norm"] = [];
+    this.data["pos"] = [];
+    this.data["col"] = [];
+    this.data["index"] = [];
+    this.data["tex"] =  [];
 
     this.textureNum = null;
 
     // Quads use an index position counter
     this.indexPos = 0;
-
-    // Position / scale / rotation data for this object
-    // X-Y-Z position to translate
-    this.position = [0,0,0];
-    this.position = [0,0,0];
-    // X-Y-Z coords to rotate
-    this.rotation = [0,0,0];
-    this.scale = 1;
 
     // Ensure any repeat initialization
     //  of this object's data will do it correctly
@@ -35,41 +30,41 @@ function GLobject() {
  * Pass 3 numbers into the object's internal arrays
  */
 GLobject.prototype.addNorms = function(x,y,z) {     
-    this.normData.push(x);
-    this.normData.push(y);
-    this.normData.push(z); };
+    this.data["norm"].push(x);
+    this.data["norm"].push(y);
+    this.data["norm"].push(z); };
 GLobject.prototype.addPos = function(x,y,z) {
-    this.posData.push(x);
-    this.posData.push(y);
-    this.posData.push(z); };
+    this.data["pos"].push(x);
+    this.data["pos"].push(y);
+    this.data["pos"].push(z); };
 GLobject.prototype.addColors = function(x,y,z) {
-    this.colData.push(x);
-    this.colData.push(y);
-    this.colData.push(z); };
+    this.data["col"].push(x);
+    this.data["col"].push(y);
+    this.data["col"].push(z); };
 GLobject.prototype.addTexture = function(x,y) {
-    this.textureData.push(x);
-    this.textureData.push(y); };
+    this.data["tex"].push(x);
+    this.data["tex"].push(y); };
 GLobject.prototype.addIndexes = function(x,y,z) {
-    this.indexData.push(x);
-    this.indexData.push(y);
-    this.indexData.push(z); };
+    this.data["index"].push(x);
+    this.data["index"].push(y);
+    this.data["index"].push(z); };
 
 /**
  * Or, pass a vec3 
  * (only with arrays that it makes sense for)
  */
 GLobject.prototype.addNormVec = 
-    function(vec) { this.normData.push(vec[0]);
-		    this.normData.push(vec[1]);
-		    this.normData.push(vec[2]); };
+    function(vec) { this.data["norm"].push(vec[0]);
+		    this.data["norm"].push(vec[1]);
+		    this.data["norm"].push(vec[2]); };
 GLobject.prototype.addPosVec = 
-    function(vec) { this.posData.push(vec[0]);
-		    this.posData.push(vec[1]);
-		    this.posData.push(vec[2]); };
+    function(vec) { this.data["pos"].push(vec[0]);
+		    this.data["pos"].push(vec[1]);
+		    this.data["pos"].push(vec[2]); };
 GLobject.prototype.addColorVec = 
-    function(vec) { this.colData.push(vec[0]);
-		    this.colData.push(vec[1]);
-		    this.colData.push(vec[2]); };
+    function(vec) { this.data["col"].push(vec[0]);
+		    this.data["col"].push(vec[1]);
+		    this.data["col"].push(vec[2]); };
 
 /**
  * Sometimes, we'll have to invert the norms 
@@ -77,8 +72,8 @@ GLobject.prototype.addColorVec =
  */
 GLobject.prototype.invertNorms = function() {
     this.normsInverted = true;
-    for (var i = 0; i < this.normData.length; ++i) {
-	this.normData[i] = -this.normData[i];
+    for (var i = 0; i < this.data["norm"].length; ++i) {
+	this.data["norm"][i] = -this.data["norm"][i];
     }
 };
 
@@ -87,8 +82,8 @@ GLobject.prototype.invertNorms = function() {
  *  of objects
  */
 GLobject.prototype.invertFlatNorms = function() {
-    for (var i = 0; i < this.normData_.length; ++i) {
-	this.normData_[i] = -this.normData_[i];
+    for (var i = 0; i < this.data["norm_"].length; ++i) {
+	this.data["norm_"][i] = -this.data["norm_"][i];
     }
 };
 
@@ -99,12 +94,12 @@ GLobject.prototype.invertFlatNorms = function() {
  *  B---D
  */
 GLobject.prototype.addQuadIndexes = function(a, c) {
-    this.indexData.push(a);
-    this.indexData.push(a+1);
-    this.indexData.push(c);
-    this.indexData.push(c+1);
-    this.indexData.push(c);
-    this.indexData.push(a+1);
+    this.data["index"].push(a);
+    this.data["index"].push(a+1);
+    this.data["index"].push(c);
+    this.data["index"].push(c+1);
+    this.data["index"].push(c);
+    this.data["index"].push(a+1);
 };
 
 /**
@@ -227,15 +222,14 @@ GLobject.prototype.setActive = function(theActive) {
  */
 GLobject.prototype.initBuffers = function(gl_) {
 
-
     if(!this.textureNum) { 
 	this.setTexture(NO_TEXTURE);
 	// See if we need to create 'dummy' data
-	if(this.textureData.length < 1) {
+	if(this.data["tex"].length < 1) {
 	    var i, max;
-	    for(i = 0, max = this.normData.length / 3; i < max; ++i) {
-		this.textureData.push(0);
-		this.textureData.push(0);
+	    for(i = 0, max = this.data["norm"].length / 3; i < max; ++i) {
+		this.data["tex"].push(0);
+		this.data["tex"].push(0);
 	    }
 	}
     } else {
@@ -246,25 +240,25 @@ GLobject.prototype.initBuffers = function(gl_) {
     }
     this.initFlatNorms();
 
-    this.normBuff = gl_.createBuffer();
-    this.posBuff = gl_.createBuffer();
-    this.colBuff = gl_.createBuffer();
-    this.indexBuff = gl_.createBuffer();
-    this.textureBuff = gl_.createBuffer();
+    this.buff["norm"] = gl_.createBuffer();
+    this.buff["pos"] = gl_.createBuffer();
+    this.buff["col"] = gl_.createBuffer();
+    this.buff["index"] = gl_.createBuffer();
+    this.buff["tex"] = gl_.createBuffer();
 
     // If we have flat norms, use them
     if(FLATNORMS === true) {
-	this.bufferData(gl_, this.normBuff, this.normData_, 3);
-	this.bufferData(gl_, this.posBuff, this.posData_, 3);
-	this.bufferData(gl_, this.colBuff, this.colData_, 3);
-	this.bufferData(gl_, this.textureBuff, this.textureData_, 2);
-	this.bufferElements(gl_, this.indexBuff, this.indexData_);
+	this.bufferData(gl_, this.buff["norm"], this.data["norm_"], 3);
+	this.bufferData(gl_, this.buff["pos"], this.data["pos_"], 3);
+	this.bufferData(gl_, this.buff["col"], this.data["col_"], 3);
+	this.bufferData(gl_, this.buff["tex"], this.data["tex_"], 2);
+	this.bufferElements(gl_, this.buff["index"], this.data["index_"]);
     } else {
-	this.bufferData(gl_, this.normBuff, this.normData, 3);
-	this.bufferData(gl_, this.posBuff, this.posData, 3);
-	this.bufferData(gl_, this.colBuff, this.colData, 3);
-	this.bufferData(gl_, this.textureBuff, this.textureData, 2);
-	this.bufferElements(gl_, this.indexBuff, this.indexData);
+	this.bufferData(gl_, this.buff["norm"], this.data["norm"], 3);
+	this.bufferData(gl_, this.buff["pos"], this.data["pos"], 3);
+	this.bufferData(gl_, this.buff["col"], this.data["col"], 3);
+	this.bufferData(gl_, this.buff["tex"], this.data["tex"], 2);
+	this.bufferElements(gl_, this.buff["index"], this.data["index"]);
     }
 };
 
@@ -294,24 +288,20 @@ GLobject.prototype.bufferElements = function(gl_, theBuff, theData, theSize) {
     theBuff.numItems = theData.length;
 };
 
-GLobject.prototype.rotate = function(vec) {
-    this.rotation[2] += vec[2]; 
-    this.rotation[1] += vec[1]; 
-    this.rotation[0] += vec[0]; 
-};
+GLobject.prototype.rotate = function(vec) {};
 
 GLobject.prototype.scale = function(num) {
-    for(var i = 0; i < this.posData.length; ++i) {
-	this.posData[i] *= num; 
+    for(var i = 0; i < this.data["pos"].length; ++i) {
+	this.data["pos"][i] *= num; 
     }
     return this;
 };
 
 GLobject.prototype.translate = function(vec) {
-    for(var i = 0; i < this.posData.length; i += 3) {
-	this.posData[i] += vec[0]; 
-	this.posData[i+1] += vec[1]; 
-	this.posData[i+2] += vec[2]; 
+    for(var i = 0; i < this.data["pos"].length; i += 3) {
+	this.data["pos"][i] += vec[0]; 
+	this.data["pos"][i+1] += vec[1]; 
+	this.data["pos"][i+2] += vec[2]; 
     }
     return this;
 };
@@ -352,10 +342,10 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 //    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
 if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
-    this.linkAttrib(gl_, shader_.attribs["vNormA"], this.normBuff);
-    this.linkAttrib(gl_, shader_.attribs["vPosA"], this.posBuff);
-    this.linkAttrib(gl_, shader_.attribs["vColA"], this.colBuff);
-    this.linkAttrib(gl_, shader_.attribs["textureA"], this.textureBuff);
+    this.linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
+    this.linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
+    this.linkAttrib(gl_, shader_.attribs["vColA"], this.buff["col"]);
+    this.linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
 };
 
 GLobject.prototype.linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
@@ -370,9 +360,9 @@ GLobject.prototype.linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
    Attributes must first be linked (as above).
 */
 GLobject.prototype.drawElements = function(gl_) {
-    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.indexBuff);
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.buff["index"]);
     gl_.drawElements(gl_.TRIANGLES, 
-        this.indexBuff.numItems, gl_.UNSIGNED_SHORT, 0);
+        this.buff["index"].numItems, gl_.UNSIGNED_SHORT, 0);
 };
 
 /**
@@ -417,60 +407,60 @@ GLobject.prototype.initFlatNorms = function() {
     c = vec3.create();
     d = vec3.create();
 
-    this.indexData_ = [];
-    this.normData_ = [];
-    this.colData_ = [];
-    this.posData_ = []; 
-    this.textureData_ = [];
+    this.data["index_"] = [];
+    this.data["norm_"] = [];
+    this.data["col_"] = [];
+    this.data["pos_"] = []; 
+    this.data["tex_"] = [];
     // We'll go over one triangle (3 indexes, 3 * data_size elements for each new buffer)
     // This will mean the new buffers will have 3/2 as many elements
     var i = 0;
-    while(i < this.indexData.length) {
+    while(i < this.data["index"].length) {
 
 	// Load up every element
-	this.indexData_.push(i);
-	ind = this.indexData[i];
-	this.colData_.push( this.colData[ind * 3] );
-	this.colData_.push( this.colData[ind * 3 + 1] );
-	this.colData_.push( this.colData[ind * 3 + 2] );
-	this.posData_.push( this.posData[ind * 3] );
-	this.posData_.push( this.posData[ind * 3 + 1] );
-	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 2] );
-	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	vec3.set(a, this.posData[ind * 3], 
-		    this.posData[ind * 3 + 1], 
-		    this.posData[ind * 3 + 2]); 
+	this.data["index_"].push(i);
+	ind = this.data["index"][i];
+	this.data["col_"].push( this.data["col"][ind * 3] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
+	this.data["pos_"].push( this.data["pos"][ind * 3] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
+	vec3.set(a, this.data["pos"][ind * 3], 
+		    this.data["pos"][ind * 3 + 1], 
+		    this.data["pos"][ind * 3 + 2]); 
 	i++;
 	// 3 times. Only the vector that's set changes.
-	this.indexData_.push(i);
-	ind = this.indexData[i];
-	this.colData_.push( this.colData[ind * 3] );
-	this.colData_.push( this.colData[ind * 3 + 1] );
-	this.colData_.push( this.colData[ind * 3 + 2] );
-	this.posData_.push( this.posData[ind * 3] );
-	this.posData_.push( this.posData[ind * 3 + 1] );
-	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 2] );
-	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	vec3.set(b, this.posData[ind * 3], 
-		    this.posData[ind * 3 + 1], 
-		    this.posData[ind * 3 + 2]); 
+	this.data["index_"].push(i);
+	ind = this.data["index"][i];
+	this.data["col_"].push( this.data["col"][ind * 3] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
+	this.data["pos_"].push( this.data["pos"][ind * 3] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
+	vec3.set(b, this.data["pos"][ind * 3], 
+		    this.data["pos"][ind * 3 + 1], 
+		    this.data["pos"][ind * 3 + 2]); 
 	i++;
 	// Last time.
-	this.indexData_.push(i);
-	ind = this.indexData[i];
-	this.colData_.push( this.colData[ind * 3] );
-	this.colData_.push( this.colData[ind * 3 + 1] );
-	this.colData_.push( this.colData[ind * 3 + 2] );
-	this.posData_.push( this.posData[ind * 3] );
-	this.posData_.push( this.posData[ind * 3 + 1] );
-	this.posData_.push( this.posData[ind * 3 + 2] );
-	this.textureData_.push( this.textureData[ind * 2] );
-	this.textureData_.push( this.textureData[ind * 2 + 1] );
-	vec3.set(c, this.posData[ind * 3], 
-		    this.posData[ind * 3 + 1], 
-		    this.posData[ind * 3 + 2]); 
+	this.data["index_"].push(i);
+	ind = this.data["index"][i];
+	this.data["col_"].push( this.data["col"][ind * 3] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
+	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
+	this.data["pos_"].push( this.data["pos"][ind * 3] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
+	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2] );
+	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
+	vec3.set(c, this.data["pos"][ind * 3], 
+		    this.data["pos"][ind * 3 + 1], 
+		    this.data["pos"][ind * 3 + 2]); 
 	i++;
 	// Calc norms for these 3 triangles.
 	vec3.sub(b, b, a);
@@ -478,15 +468,15 @@ GLobject.prototype.initFlatNorms = function() {
 	vec3.cross(c, c, b);
 	vec3.normalize(c, c);
 
-	this.normData_.push(c[0]);
-	this.normData_.push(c[1]);
-	this.normData_.push(c[2]);
-	this.normData_.push(c[0]);
-	this.normData_.push(c[1]);
-	this.normData_.push(c[2]);
-	this.normData_.push(c[0]);
-	this.normData_.push(c[1]);
-	this.normData_.push(c[2]);
+	this.data["norm_"].push(c[0]);
+	this.data["norm_"].push(c[1]);
+	this.data["norm_"].push(c[2]);
+	this.data["norm_"].push(c[0]);
+	this.data["norm_"].push(c[1]);
+	this.data["norm_"].push(c[2]);
+	this.data["norm_"].push(c[0]);
+	this.data["norm_"].push(c[1]);
+	this.data["norm_"].push(c[2]);
     }
 
     if(this.normsInverted) { this.invertFlatNorms(); }

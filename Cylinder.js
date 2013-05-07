@@ -1,5 +1,3 @@
-var rotateY;
-
 function Cylinder(base_radius, top_radius, height, slices, stacks) { 
     this.o = new GLobject();
 
@@ -109,15 +107,15 @@ Cylinder.prototype.drawScrew = function() {
 		const slicesPlus = this.slices + 1;
 	    var x = 1 * Math.cos(phi);
 	    var y = 1 * Math.sin(phi);
-		this.o.posData[index] /= 0.7;
-		this.o.posData[index+1] /= 0.7;
-		this.o.posData[index+(3*slicesPlus)] *= 0.7;
-		this.o.posData[index+1+(3*slicesPlus)] *= 0.7;
-		this.o.posData[index-(3*slicesPlus)] *= 0.7;
-		this.o.posData[index+1-(3*slicesPlus)] *= 0.7;
-		this.o.colData[index] = 1.0;
-		this.o.colData[index+1] = 1.0;
-		this.o.colData[index+2] = 1.0;
+		this.o.data["pos"][index] /= 0.7;
+		this.o.data["pos"][index+1] /= 0.7;
+		this.o.data["pos"][index+(3*slicesPlus)] *= 0.7;
+		this.o.data["pos"][index+1+(3*slicesPlus)] *= 0.7;
+		this.o.data["pos"][index-(3*slicesPlus)] *= 0.7;
+		this.o.data["pos"][index+1-(3*slicesPlus)] *= 0.7;
+		this.o.data["col"][index] = 1.0;
+		this.o.data["col"][index+1] = 1.0;
+		this.o.data["col"][index+2] = 1.0;
 	    }
 
 	    index += 3;
@@ -159,12 +157,12 @@ Cylinder.prototype.drawBlackStreak = function() {
 	    // x = r sin theta cos phi
 
 	    if(minAngle < phi && phi < maxAngle) {
-		this.o.colData[index] = 0.0;
-		this.o.colData[index+1] = 0.0;
-		this.o.colData[index+2] = 0.0;
-		this.o.colData[index+(3*this.slices)] = 0.0;
-		this.o.colData[index+1+(3*this.slices)] = 0.0;
-		this.o.colData[index+2+(3*this.slices)] = 0.0;
+		this.o.data["col"][index] = 0.0;
+		this.o.data["col"][index+1] = 0.0;
+		this.o.data["col"][index+2] = 0.0;
+		this.o.data["col"][index+(3*this.slices)] = 0.0;
+		this.o.data["col"][index+1+(3*this.slices)] = 0.0;
+		this.o.data["col"][index+2+(3*this.slices)] = 0.0;
 	    }
 
 	    index += 3;
