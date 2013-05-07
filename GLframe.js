@@ -1,21 +1,20 @@
+/**
+ * Internally manages a texture and frame.
+ */
 function GLframe(texture_num) {
     this.num = texture_num;
     this.active = GLactiveTexture();
     this.frameBuff = null;
-    this.debugHTML = document.getElementById("frameDebug");
     this.stool = new Stool();
 }
 
-GLframe.prototype.debug = function() {
-
-    if(envDEBUG === false) { return; } 
-    this.debugHTML.style.display = "inline-block";
-    this.debugHTML.innerHTML = 
-	"<b>FrameBuffer Info </b><br/>" +
-	"Width: " + this.frameBuff.width +
-	"Height: " + this.frameBuff.height;
-};
-
+/**
+ * 1. Saves state of matrices 
+ * 2. Loads matrices specific to this framebuffer into GL
+ * 3. Renders scene
+ * 4. Loads state of matrices
+ * 5. Updates texture used by main framebuffer
+ */
 GLframe.prototype.drawScene = function(gl_) {
 
     if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
@@ -30,23 +29,24 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
 
+    // 1.
     var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
-    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
-
     var tempMatrix = mat4.clone(theMatrix.vMatrix);
-    mat4.identity(theMatrix.vMatrix);
     theMatrix.vMatrixChanged = true;
-
-    theMatrix.setViewUniforms(gl_, gl_.shader);
-
     theMatrix.push();
+
+    // 2.
+    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
+    mat4.identity(theMatrix.vMatrix);
+    theMatrix.setViewUniforms(gl_, gl_.shader);
     theMatrix.modelInit();
 
+    // 3.
     theMatrix.translate([0,0,-10]);
     this.stool.draw(gl_);
 
+    // 4,
     theMatrix.pop();
-
     mat4.copy(theMatrix.vMatrix, tempMatrix);
     mat4.copy(theMatrix.pMatrix, tempMatrix1);
     theMatrix.vMatrixChanged = true;
@@ -57,6 +57,7 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
 
+    // 5.
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.generateMipmap(gl_.TEXTURE_2D);
@@ -114,7 +115,8 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
+	gl_.useProgram(gl_.shader); }
     gl_.uniform1i(gl_.getUniformLocation(
 	gl_.shader, "sampler" + this.active), this.active);
-
 };

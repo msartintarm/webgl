@@ -274,24 +274,24 @@ GLcanvas.prototype.drawScene = function() {
     this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
 };
-/*
-GLcanvas.prototype.updateShaders = function(){
-  
-}
-*/
+
 GLcanvas.prototype.changeShaders = function(frag, vert) {
     this.initShaders(frag, vert);
     this.bufferModels();
 };
 
 /**
- * Some shaders won't have these attributes. This funct should still work.
+ * Some shaders won't have these attributes.
+ *
+ * If this is the case, they will not be added to the 
+ * shaders' associative attributes list.
  */
 GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
-    gl_shader.attribs[attr] = this.gl.getAttribLocation(gl_shader, attr);
-    if(gl_shader.attribs[attr] !== -1) {
-	this.gl.enableVertexAttribArray(gl_shader.attribs[attr]);
-    }
+
+    var theAttrib = this.gl.getAttribLocation(gl_shader, attr);
+    if(theAttrib === -1) { return; }
+    this.gl.enableVertexAttribArray(theAttrib);
+    gl_shader.attribs[attr] = theAttrib;
 };
 
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {
@@ -328,5 +328,8 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
 
+    // Firefox says macs behave poorly if 
+    // an unused attribute is bound to index 0
+    this.gl.bindAttribLocation(gl_shader, 0, "vPosA");
 };
 var theCanvas;
