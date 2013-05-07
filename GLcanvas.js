@@ -147,9 +147,10 @@ GLcanvas.prototype.start = function(theScene) {
 	this.canvas.height = window.innerHeight - 150;
 
 	if(this.initGL() !== 0) {
-	    var theWindow = window.open("gl_context_error.html", 
-					"WebGL was not initialized.",
-					"height=110,width=220");
+	    var theWindow = window.open("GLerror.php?type=GL_INIT", 
+					"",
+					"height=110,width=220,location=no,scrollbars=no");
+	    theWindow.focus();
 	    return;
 	}
 
