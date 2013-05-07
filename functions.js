@@ -377,6 +377,10 @@ function handleKeyDown(theEvent) {
 	FLATNORMS = !FLATNORMS;
 	theCanvas.changeShaders('shader-fs', 'shader-vs');
 	break;
+    case 49: //1 : change ball shader
+	ball_shader_selectG++;
+	console.log("Ball shader: " + kNameG[ball_shader_selectG]);
+	break;
     default:
 	wrongKey = true;
 	document.getElementById("keyboard").innerHTML = 

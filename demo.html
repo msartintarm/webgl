@@ -220,9 +220,9 @@ varying vec2 shadowV;
 
 uniform float textureNumU;
 
-uniform vec2 gaussFilter[7];
+uniform float u_kernel[9];
 uniform float ballHitu;
-uniform vec2 u_Scale;
+uniform vec2 u_textureSize;
 
 uniform sampler2D sampler0;
 uniform sampler2D sampler1;
@@ -238,13 +238,34 @@ uniform sampler2D sampler10;
 
 
   // Specular
-vec3 getGaussianBlur(sampler2D theSampler) {
-   vec3 blurColor;
-   for( int i = 0; i < 7; i++ )
-   {
-       blurColor += texture2D(theSampler, vec2(textureV.s + gaussFilter[i].x * u_Scale.x, textureV.t + gaussFilter[i].x * u_Scale.y ) ).xyz * gaussFilter[i].y;
-   }
-   return blurColor;
+vec4 getFilterEffect(sampler2D theSampler) {
+   vec2 onePixel = vec2(1.0,1.0)/ u_textureSize;
+   vec4 blurColor =
+       texture2D(theSampler, textureV + onePixel * vec2(-1, -1)) * u_kernel[0] +
+       texture2D(theSampler, textureV + onePixel * vec2( 0, -1)) * u_kernel[1] +
+       texture2D(theSampler, textureV + onePixel * vec2( 1, -1)) * u_kernel[2] +
+       texture2D(theSampler, textureV + onePixel * vec2(-1,  0)) * u_kernel[3] +
+       texture2D(theSampler, textureV + onePixel * vec2( 0,  0)) * u_kernel[4] +
+       texture2D(theSampler, textureV + onePixel * vec2( 1,  0)) * u_kernel[5] +
+       texture2D(theSampler, textureV + onePixel * vec2(-1,  1)) * u_kernel[6] +
+       texture2D(theSampler, textureV + onePixel * vec2( 0,  1)) * u_kernel[7] +
+       texture2D(theSampler, textureV + onePixel * vec2( 1,  1)) * u_kernel[8];
+   
+       float kernelWeight =
+          u_kernel[0] +
+          u_kernel[1] +
+          u_kernel[2] +
+          u_kernel[3] +
+          u_kernel[4] +
+          u_kernel[5] +
+          u_kernel[6] +
+          u_kernel[7] +
+          u_kernel[8] ;
+
+       if (kernelWeight <= 0.0) {
+          kernelWeight = 1.0;
+       }
+       return vec4((blurColor / kernelWeight).rgb, 1.0);
 }
 
 float specular() {
@@ -269,23 +290,19 @@ void colorize() {
 }
 
 void colorTexture(sampler2D theSampler) {
-  vec3 textureColor;
+  vec4 textureColor;
   if(ballHitu == 1.0){
-	//textureColor.x = 0.0;
-	//textureColor.y = 1.0;
-        //textureColor.z = 0.0;
- 	textureColor = getGaussianBlur(theSampler); 
+ 	textureColor = getFilterEffect(theSampler); 
  }
   else{
-	textureColor.x = 0.0;
-	textureColor.y = 1.0;
-        textureColor.z = 1.0;
+	textureColor.xyz = colorV.xyz;
+	textureColor.a = 0.635;
   }
-  vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;
-  vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;
-  vec3 specColor = textureColor * specular();
+  vec3 ambColor = textureColor.xyz / 3.0 * ambient_coeff_u;
+  vec3 diffColor = textureColor.xyz * diffuseV * diffuse_coeff_u;
+  vec3 specColor = textureColor.xyz * specular();
 
-  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);
+  gl_FragColor = vec4(ambColor + diffColor + specColor, textureColor.a);
 }
 
 void main(void) {

@@ -151,7 +151,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader_ball = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
 	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
-	this.initShaders(this.gl.shader_ball, "shader-fs-ball", "shader-vs");
+	this.initShaders(this.gl.shader_ball, "shader-fs-ball", "shader-vs-ball");
 	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
 	this.gl.useProgram(this.gl.shader);
 
@@ -308,8 +308,8 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initAttribute(gl_shader, "textureA");
 
     this.initUniform(gl_shader, "ballHitu")
-    this.initUniform(gl_shader, "u_Scale")
-    this.initUniform(gl_shader, "gaussFilter")
+    this.initUniform(gl_shader, "u_kernel")
+    this.initUniform(gl_shader, "u_textureSize")
     this.initUniform(gl_shader, "ambient_coeff_u");
     this.initUniform(gl_shader, "diffuse_coeff_u");
     this.initUniform(gl_shader, "specular_coeff_u");

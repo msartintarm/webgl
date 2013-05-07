@@ -157,8 +157,10 @@ GLobject.prototype.setTexture = function(theTexture) {
 
     switch(theTexture) {
     case HELL_TEXTURE:
-	vec3.set(this.specular_color, 0.7, 0.2, 0.2);
-	this.specular_coeff = 1.0;
+	//vec3.set(this.specular_color, 0.7, 0.2, 0.2);
+	this.specular_coeff = 0.0;
+	this.ambient_coeff = 0.0;
+	this.diffuse_coeff = 1.0;
 	break;
     case FLOOR_TEXTURE:
 	this.ambient_coeff = 0.2;
@@ -319,17 +321,12 @@ GLobject.prototype.translate = function(vec) {
    Then send the divide-and-conquer 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
-    var locations = [
-	    -3.0,0.015625,
-	    -2.0,0.09375,
-	    -1.0,0.234375,
-	0.0,0.3125,
-	1.0,0.234375,
-	2.0,0.09375,
-	3.0,0.015625
-    ];
-    gl_.uniform2fv(shader_.unis["gaussFilter"], locations);
-    gl_.uniform2fv(shader_.unis["u_Scale"], [1/512,1/512] );
+
+    if(ball_shader_selectG  >= kNameG.length)
+	ball_shader_selectG = 0;
+
+    gl_.uniform1fv(shader_.unis["u_kernel"], kernelsG[kNameG[ball_shader_selectG]]);
+    gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
     //gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
 
     gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);

@@ -200,6 +200,8 @@ Stadium.prototype.updateStadium = function(){
     }
     if(ballInitOver && stadiumInit == 0){
 	stadiumInit = 1;
+    }
+    if(StadiumInitSeqNum === 3){
 	this.gameStart = Math.round(new Date().getTime()/1000);
 	console.log("gameStart %f", this.gameStart);
     }
