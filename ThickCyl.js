@@ -2,15 +2,14 @@
    ThickCyl. 
  */
 function ThickCyl(inner_radius, width, height, slices, stacks) { 
-    this.objs = [];
 
-    this.topDisk = this.Disk(
+    this.topDisk = new Disk(
 	inner_radius, inner_radius + width, slices, stacks).invertNorms();
-    this.bottomDisk = this.Disk(
+    this.bottomDisk = new Disk(
 	inner_radius, inner_radius + width, slices, stacks).translate([0, 0, height]);
-    this.innerCyl = this.Cyl(
+    this.innerCyl = new Cylinder(
 	inner_radius, inner_radius, height, slices, stacks).invertNorms();
-    this.outerCyl = this.Cyl(
+    this.outerCyl = new Cylinder(
 	inner_radius + width, inner_radius + width, height, slices, stacks);
     this.outerCyl.wrapText();
 
@@ -22,5 +21,6 @@ ThickCyl.prototype.Cyl = _Cyl;
 ThickCyl.prototype.scale = _objsScale;
 ThickCyl.prototype.setShader = _oSetShader;
 ThickCyl.prototype.translate = _objsTranslate;
+ThickCyl.prototype.scale = _objsScale;
 ThickCyl.prototype.initBuffers = _objsInitBuffers;
 ThickCyl.prototype.draw = _objsDraw;

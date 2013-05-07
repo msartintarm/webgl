@@ -38,28 +38,22 @@ function Jumbotron() {
     var heightScreen = 600; // TODO: actually measure (MST)
 
     var widthScreen = 50;   // TODO: actually measure (MST)
-
-    var a = vec3.create();
+    
     var b = vec3.create();
     var c = vec3.create();
-    var d = vec3.create();
-
+    
     // sin(angleA) = cos(angleB)
     // cos(angleB) = sin(angleA)
-    a[0] = Math.cos(angleB) * radiusA;
-    a[2] = Math.sin(angleB) * radiusA;
-    d[0] = a[2];
-    d[2] = a[0];
-    a[1] = distScreen;
-    d[1] = distScreen;
-
-    b[0] = Math.cos(angleD) * (radiusA - 140);
-    b[2] = Math.sin(angleD) * (radiusA - 140);
-    c[0] = b[2];
-    c[2] = b[0];
-    b[1] = distScreen - heightScreen;
-    c[1] = distScreen - heightScreen;
-
+    var a = vec3.fromValues(Math.cos(angleB) * radiusA, 
+			    distScreen, 
+			    Math.sin(angleB) * radiusA);
+    var d = vec3.fromValues(a[2], a[1], a[0]);
+    
+    var b = vec3.fromValues(Math.cos(angleD) * (radiusA - 140),
+			    distScreen - heightScreen,
+			    Math.sin(angleD) * (radiusA - 140));
+    var c = vec3.fromValues(b[2], b[1], b[0]);
+    
     this.frame = new GLframe(FRAME_BUFF);
 
     this.jumboScreen = new SixSidedPrism.rectangle(a, b, c, d, widthScreen);
@@ -84,11 +78,17 @@ Jumbotron.prototype.scale = function(val) {
 }
 
 Jumbotron.prototype.initBuffers = function(gl_) {
-    this.frame.init(gl_);
+
+    for (object in this) {
+	if (object.scale) object.scale(gl_);
+	if (object.init) object.init(gl_);
+	else if (object.initBuffers) object.initBuffers(gl_);
+    }
+  /*  this.frame.init(gl_);
     this.thickCylA.initBuffers(gl_);
     this.thickCylB.initBuffers(gl_);
     this.jumboScreen.initBuffers(gl_);
-}
+*/}
 
 Jumbotron.prototype.setShader = function(shader) {
     this.frame.setShader(shader);

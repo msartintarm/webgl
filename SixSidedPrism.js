@@ -86,22 +86,6 @@ SixSidedPrism.prototype.setSkyBoxTexture = function(texture) {
     return this;
 }
 
-SixSidedPrism.prototype.initBuffers = function(gl_) {
-    this.q1.initBuffers(gl_);
-    this.q2.initBuffers(gl_);
-    this.q3.initBuffers(gl_);
-    this.q4.initBuffers(gl_);
-    this.q5.initBuffers(gl_);
-    this.q6.initBuffers(gl_);
-};
-
-SixSidedPrism.prototype.draw = function(gl_) {
-
-    this.q1.draw(gl_);
-    this.q2.draw(gl_);
-    this.q3.draw(gl_);
-    this.q4.draw(gl_);
-    this.q5.draw(gl_);
-    this.q6.draw(gl_);
-};
-
+SixSidedPrism.prototype.initBuffers = _objsInitBuffers;
+SixSidedPrism.prototype.translate = _objsTranslate;
+SixSidedPrism.prototype.draw = _objsDraw;

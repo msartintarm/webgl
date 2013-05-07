@@ -149,6 +149,7 @@ GLcanvas.prototype.start = function(theScene) {
 	if(this.initGL() !== 0) {
 	    var theWindow = window.open(
 		"GLerror.php", 
+		"GLerror.php?culprit=0", 
 		"",
 		"height=110,width=220,location=no,scrollbars=no");
 	    theWindow.focus();
@@ -263,7 +264,10 @@ GLcanvas.prototype.drawScene = function() {
 	}
     }
 
-    if(envDEBUG === true && this.has_errors === true) { return; }
+    if(envDEBUG === true && this.has_errors === true) { 
+//	stop_ticking = true;
+	return; 
+    }
 
     for(var i = 0; i < this.frames.length; ++i) {
 	this.frames[i].drawScene(this.gl);

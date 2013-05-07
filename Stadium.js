@@ -25,6 +25,8 @@ function Stadium() {
     this.jumboScreen.translate([-1200,2000,-1500]);
     this.jumboScreen.scale(0.9);
 
+//    this.tv = new Jumbotron();
+
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
 
@@ -47,6 +49,7 @@ Stadium.prototype.initBuffers = function(gl_) {
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
+//    this.tv.initBuffers(gl_);
     for(i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
