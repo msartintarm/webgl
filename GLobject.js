@@ -238,54 +238,45 @@ GLobject.prototype.initBuffers = function(gl_) {
 	    gl_.textureNums[this.textureNum] = (new GLtexture(gl_, this.textureNum)).active;
 	}
     }
-    this.initFlatNorms();
+//    this.initFlatNorms();
 
-    this.buff["norm"] = gl_.createBuffer();
-    this.buff["pos"] = gl_.createBuffer();
-    this.buff["col"] = gl_.createBuffer();
-    this.buff["index"] = gl_.createBuffer();
-    this.buff["tex"] = gl_.createBuffer();
-
-    // If we have flat norms, use them
-    if(FLATNORMS === true) {
-	this.bufferData(gl_, this.buff["norm"], this.data["norm_"], 3);
-	this.bufferData(gl_, this.buff["pos"], this.data["pos_"], 3);
-	this.bufferData(gl_, this.buff["col"], this.data["col_"], 3);
-	this.bufferData(gl_, this.buff["tex"], this.data["tex_"], 2);
-	this.bufferElements(gl_, this.buff["index"], this.data["index_"]);
-    } else {
-	this.bufferData(gl_, this.buff["norm"], this.data["norm"], 3);
-	this.bufferData(gl_, this.buff["pos"], this.data["pos"], 3);
-	this.bufferData(gl_, this.buff["col"], this.data["col"], 3);
-	this.bufferData(gl_, this.buff["tex"], this.data["tex"], 2);
-	this.bufferElements(gl_, this.buff["index"], this.data["index"]);
-    }
+    this.bufferData(gl_, "norm", 3);
+    this.bufferData(gl_, "pos", 3);
+    this.bufferData(gl_, "col", 3);
+    this.bufferData(gl_, "tex", 2);
+    this.bufferElements(gl_, "index");
 };
 
 /**
    Buffer data fpr a single vertex attribute array.
 */
-GLobject.prototype.bufferData = function(gl_, theBuff, theData, theSize) {
+GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
 
+    var theData = this.data[attribute];
+    var theBuff = gl_.createBuffer();
     gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
 		   new Float32Array(theData),
 		   gl_.STATIC_DRAW);
     theBuff.itemSize = theSize; 
     theBuff.numItems = theData.length / theSize;
+    this.buff[attribute] = theBuff;
 };
 
 /**
    Buffer data fpr vertex elements.
 */
-GLobject.prototype.bufferElements = function(gl_, theBuff, theData, theSize) {
+GLobject.prototype.bufferElements = function(gl_, elem_name) {
 
+    var theData = this.data[elem_name];
+    var theBuff = gl_.createBuffer();
     gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, theBuff);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
 		   new Uint16Array(theData),
 		   gl_.STATIC_DRAW);
     theBuff.itemSize = 1;
     theBuff.numItems = theData.length;
+    this.buff[elem_name] = theBuff;
 };
 
 GLobject.prototype.rotate = function(vec) {};
@@ -336,11 +327,8 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 	    if(envDEBUG) { alert("error: texture not loaded."); }
 	}
     }
-//    if(shader_.unis["textureNumU"] !== null && (gl_.textureNums[this.textureNum])) {
-//	gl_.uniform1f(shader_.unis["textureNumU"], NO_TEXTURE);
-  //  }
-//    gl_.uniform1f(shader_.specular_coeff, this.specular_coeff);
-if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
+
+    if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
     this.linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
     this.linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
@@ -348,7 +336,14 @@ if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.
     this.linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
 };
 
+/**
+ * Does type checking to ensure these attribs exist.
+ * - If object contains it but shader does not, ignores it
+ * - If shader contains it but object does not, turns attrib off
+ * - If both have it, make sure attrib is enabled
+ */
 GLobject.prototype.linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
+
     if(gpu_attrib !== -1) {
 	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
 	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
@@ -397,6 +392,8 @@ var FLATNORMS = false;
    All position data must be stable before this point.
 */
 GLobject.prototype.initFlatNorms = function() {
+
+    alert("flat norms are unsupported now. Danger!"); return;
     
     if(FLATNORMS === false || this.hasFlatNorms === true) return;
     this.hasFlatNorms = true;
