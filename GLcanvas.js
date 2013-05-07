@@ -146,7 +146,14 @@ GLcanvas.prototype.start = function(theScene) {
 	this.canvas.width = this.canvas.offsetWidth - 16;
 	this.canvas.height = window.innerHeight - 150;
 
-	this.initGL();
+	if(this.initGL() !== 0) {
+	    var theWindow = window.open("gl_context_error.html", 
+					"WebGL was not initialized.",
+					"height=110,width=220");
+	    return;
+	}
+
+
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_ball = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
@@ -199,17 +206,16 @@ GLcanvas.prototype.initGL = function() {
 	this.gl.viewportWidth = this.canvas.width;
 	this.gl.viewportHeight = this.canvas.height;
     }
-    catch(e) {}
+    catch(e) { console.log("%s",e); }
     // If we don't have a GL context, give up now
-    if (!this.gl) {
-	alert("Unable to initialize WebGL. Your browser may not support it.");
-    }
+    if (!this.gl) { return 1; }
 
     this.gl.textureNums = [];
 
     window.onresize = function() {
 	theCanvas.resizeCounter = 30;
     };
+    return 0;
 };
 
 GLcanvas.prototype.resize = function() {
@@ -217,7 +223,6 @@ GLcanvas.prototype.resize = function() {
 	this.canvas.height = window.innerHeight - 150;
 	this.gl.viewportWidth = this.canvas.width;
 	this.gl.viewportHeight = this.canvas.height;
-
 };
 
 /**
