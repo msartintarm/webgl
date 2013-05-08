@@ -39,9 +39,6 @@ function Jumbotron() {
 
     var widthScreen = 50;   // TODO: actually measure (MST)
     
-    var b = vec3.create();
-    var c = vec3.create();
-    
     // sin(angleA) = cos(angleB)
     // cos(angleB) = sin(angleA)
     var a = vec3.fromValues(Math.cos(angleB) * radiusA, 

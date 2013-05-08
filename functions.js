@@ -58,15 +58,11 @@ function _Torus(a,b) {
  */
 function _objsInitBuffers(gl_) {
     for(obj in this)
-	if(obj.initBuffers) obj.initBuffers(gl_);
-    return this;
-}
+	if(obj.initBuffers) obj.initBuffers(gl_); }
 
 function _objsTranslate(vec_) {
     for(obj in this)
-	if(obj.translate) obj.translate(vec_);
-    return this;
-}
+	if(obj.translate) obj.translate(vec_); }
 
 function _objsScale(vec_) {
     for(obj in this)
@@ -90,9 +86,7 @@ function _objsSetShader(vec) {
 
 function _objsDraw(gl_) {
     for(obj in this)
-	if(obj.draw) obj.draw(gl_);
-    return this;
-}
+	if(obj.draw) obj.draw(gl_); }
 
 /** 
  *  Functions for low-level objects
@@ -410,16 +404,13 @@ function handleKeyDown(theEvent) {
 	break;
     }
 }
-
 var stop_ticking = false;
 function tick() {
-//    if(stop_ticking === true) return;
     requestAnimFrame(tick2);
     theCanvas.drawScene();
 }
 
 function tick2() {
-//    if(stop_ticking === true) return;
     requestAnimFrame(tick);
     theCanvas.drawScene();
 }

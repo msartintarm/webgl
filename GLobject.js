@@ -225,14 +225,6 @@ GLobject.prototype.initBuffers = function(gl_) {
 
     if(!this.textureNum) { 
 	this.setTexture(NO_TEXTURE);
-	// See if we need to create 'dummy' data
-	if(this.data["tex"].length < 1) {
-	    var i, max;
-	    for(i = 0, max = this.data["norm"].length / 3; i < max; ++i) {
-		this.data["tex"].push(0);
-		this.data["tex"].push(0);
-	    }
-	}
     } else {
 	// See if the texture has been created or not
 	if(this.textureNum < TEXT_TEXTURE && !gl_.textureNums[this.textureNum]) {
@@ -251,33 +243,29 @@ GLobject.prototype.initBuffers = function(gl_) {
 /**
    Buffer data fpr a single vertex attribute array.
 */
-GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
+GLobject.prototype.bufferData = function(gl_, attr, size) {
 
-    var theData = this.data[attribute];
-    var theBuff = gl_.createBuffer();
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
+    this.buff[attr] = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.buff[attr]);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
-		   new Float32Array(theData),
+		   new Float32Array(this.data[attr]),
 		   gl_.STATIC_DRAW);
-    theBuff.itemSize = theSize; 
-    theBuff.numItems = theData.length / theSize;
-    this.buff[attribute] = theBuff;
+    this.buff[attr].itemSize = size;
+    this.buff[attr].numItems = this.data[attr].length / size;
 };
 
 /**
    Buffer data fpr vertex elements.
 */
-GLobject.prototype.bufferElements = function(gl_, elem_name) {
+GLobject.prototype.bufferElements = function(gl_, elem) {
 
-    var theData = this.data[elem_name];
-    var theBuff = gl_.createBuffer();
-    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, theBuff);
+    this.buff["index"] = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.buff["index"]);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
-		   new Uint16Array(theData),
+		   new Uint16Array(this.data["index"]),
 		   gl_.STATIC_DRAW);
-    theBuff.itemSize = 1;
-    theBuff.numItems = theData.length;
-    this.buff[elem_name] = theBuff;
+    this.buff["index"].itemSize = 1;
+    this.buff["index"].numItems = this.data["index"].length;
 };
 
 GLobject.prototype.rotate = function(vec) {};
@@ -300,14 +288,16 @@ GLobject.prototype.translate = function(vec) {
    Link GL's pre-loaded attributes to the  program
    Then send the divide-and-conquer 'draw' signal to the GPU
 */
-GLobject.prototype.linkAttribs = function(gl_, shader_) {
+GLobject.prototype.linkAttribs = function(gl_) {
 
-
+    var shader_ = gl_.active_shader;
 
     if(ball_shader_selectG  >= kNameG.length)
 	ball_shader_selectG = 0;
 
-    gl_.uniform1fv(shader_.unis["u_kernel"], kernelsG[kNameG[ball_shader_selectG]]);
+    if(shader_.unis["u_kernel"])
+	gl_.uniform1fv(shader_.unis["u_kernel"], 
+		       kernelsG[kNameG[ball_shader_selectG]]);
     gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
     //gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
 
@@ -329,24 +319,32 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 
     if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
-    this.linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
-    this.linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
-    this.linkAttrib(gl_, shader_.attribs["vColA"], this.buff["col"]);
-    this.linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
+    this.linkAttrib(gl_, "vNormA", "norm");
+    this.linkAttrib(gl_, "vPosA", "pos");
+    this.linkAttrib(gl_, "vColA", "col");
+    this.linkAttrib(gl_, "textureA", "tex");
 };
 
 /**
  * Does type checking to ensure these attribs exist.
- * - If object contains it but shader does not, ignores it
- * - If shader contains it but object does not, turns attrib off
- * - If both have it, make sure attrib is enabled
+ * 1. If object contains it but shader does not, ignores it
+ * 2. If shader contains it but object does not, turns attrib off
+ * 3. If both have it, make sure attrib is enabled
  */
-GLobject.prototype.linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
+GLobject.prototype.linkAttrib = function(gl_, attr_name, buff_name) {
 
-    if(gpu_attrib !== -1) {
-	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
-	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
+    var attribute = gl_.active_shader.attribs[attr_name];
+    var buffer = this.buff[buff_name];
+    if(attribute === undefined) return;                              // 1.
+    if(!buffer || buffer.itemSize < 1) {                             // 2.
+	if(gl_.getVertexAttrib(attribute, gl_.VERTEX_ATTRIB_ARRAY_ENABLED) === true)
+	    gl_.disableVertexAttribArray(attribute); 
+	return;
     }
+    if(gl_.getVertexAttrib(attribute, gl_.VERTEX_ATTRIB_ARRAY_ENABLED) === false)
+	gl_.enableVertexAttribArray(attribute);     // 3.
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, buffer);
+    gl_.vertexAttribPointer(attribute, buffer.itemSize, gl_.FLOAT, false, 0, 0);
 };
 
 /**
@@ -365,116 +363,21 @@ GLobject.prototype.drawElements = function(gl_) {
 GLobject.prototype.draw = function(gl_) {
 
     var shader_;
-    if(this.textureNum === NO_TEXTURE)
-	shader_ = gl_.shader_color
-    else if(this.textureNum === HELL_TEXTURE)
+    if(this.textureNum === NO_TEXTURE) {
+	shader_ = gl_.shader_color;
+    } else if(this.textureNum === HELL_TEXTURE) {
 	shader_ = gl_.shader_ball;
-    else
+    } else {
 	shader_ = gl_.shader;
-
+    }
+    gl_.active_shader = shader_;
     if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
 	gl_.useProgram(shader_);
     }
     theMatrix.setViewUniforms(gl_, shader_);
     theMatrix.setVertexUniforms(gl_, shader_);
-    this.linkAttribs(gl_, shader_);
+    this.linkAttribs(gl_);
     this.drawElements(gl_);
 };
 
 var FLATNORMS = false;
-
-/**
-   Each quad is made up of four triangles, and hence, 
-   the norms -can- be calculated solely through their
-   positions. 
-
-   All position data must be stable before this point.
-*/
-GLobject.prototype.initFlatNorms = function() {
-
-    alert("flat norms are unsupported now. Danger!"); return;
-    
-    if(FLATNORMS === false || this.hasFlatNorms === true) return;
-    this.hasFlatNorms = true;
-
-    var a, b, c, d;
-    a = vec3.create();
-    b = vec3.create();
-    c = vec3.create();
-    d = vec3.create();
-
-    this.data["index_"] = [];
-    this.data["norm_"] = [];
-    this.data["col_"] = [];
-    this.data["pos_"] = []; 
-    this.data["tex_"] = [];
-    // We'll go over one triangle (3 indexes, 3 * data_size elements for each new buffer)
-    // This will mean the new buffers will have 3/2 as many elements
-    var i = 0;
-    while(i < this.data["index"].length) {
-
-	// Load up every element
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(a, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// 3 times. Only the vector that's set changes.
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(b, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// Last time.
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(c, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// Calc norms for these 3 triangles.
-	vec3.sub(b, b, a);
-	vec3.sub(c, c, a);
-	vec3.cross(c, c, b);
-	vec3.normalize(c, c);
-
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-    }
-
-    if(this.normsInverted) { this.invertFlatNorms(); }
-
-};

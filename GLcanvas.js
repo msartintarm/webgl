@@ -265,8 +265,8 @@ GLcanvas.prototype.drawScene = function() {
     }
 
     if(envDEBUG === true && this.has_errors === true) { 
-//	stop_ticking = true;
-	return; 
+	stop_ticking = true; // functions.js
+	return 1;
     }
 
     for(var i = 0; i < this.frames.length; ++i) {

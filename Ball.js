@@ -18,7 +18,11 @@ function Ball(position, numBalls, texture_num, active) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num,i).setActive(active);
+	this.textQuad[i] = new Quad(
+	    [0, 60, 10],
+	    [0, 30, 10],
+	    [0, 60,-10],
+	    [0, 30,-10]).setStringTexture(texture_num,i).setActive(active);
     }
 	  
     this.position = [50,this.radius,-50];
