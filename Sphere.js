@@ -1,7 +1,9 @@
-var kLong = 50;
-var kLat = 50;
 
 function Sphere(radius) { 
+
+    var kLong = 30;
+    var kLat = 30;
+
     this.o = new GLobject();
 
     for (var i = 0; i <= kLong; i++) {

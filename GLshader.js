@@ -310,3 +310,12 @@ GLshader.prototype.init = function(gl_, gl_shader, frag_name, vert_name) {
 
     return 0;
 };
+
+GLshader.prototype.cleanup = function() {
+    this.fragment = null;
+    this.vertex = null;
+
+    this.f_decls = null;
+    this.v_decls = null;
+};
+

@@ -20,8 +20,8 @@ function Jumbotron() {
 
     var distB = heightA + 106;
 
-    var slices = 60;
-    var stacks = 60;
+    var slices = 30;
+    var stacks = 30;
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks)

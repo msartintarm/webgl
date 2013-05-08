@@ -155,6 +155,7 @@ GLcanvas.prototype.start = function(theScene) {
 	    return;
 	}
 
+	this.shader_source = new GLshader;
 
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_ball = this.gl.createProgram();
@@ -180,6 +181,9 @@ GLcanvas.prototype.start = function(theScene) {
 	    return;
 	}
 	this.gl.useProgram(this.gl.shader);
+
+	// Get rid of unused JS  memory
+	this.shader_source.cleanup();
 
 	theMatrix.viewInit();
 	this.objects = [];
@@ -315,10 +319,10 @@ GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {
     gl_shader.unis[uni] = this.gl.getUniformLocation(gl_shader, uni);
 };
-var theShader = new GLshader;
+
 GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
 
-    if(theShader.init(this.gl, gl_shader, frag, vert) !== 0) return -1;
+    if(this.shader_source.init(this.gl, gl_shader, frag, vert) !== 0) return -1;
 
     gl_shader.attribs = [];
     gl_shader.unis = [];
