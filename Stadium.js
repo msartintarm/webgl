@@ -21,6 +21,9 @@ function Stadium() {
 
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9");
     this.introScreen = new GLstring("Welcome to our game. --CRA --MST");
+    this.jumboScreen = new Jumbotron();
+    this.jumboScreen.translate([-1200,2000,-1500]);
+    this.jumboScreen.scale(0.9);
 
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
@@ -40,6 +43,7 @@ function Stadium() {
 
 Stadium.prototype.initBuffers = function(gl_) {
 
+    this.jumboScreen.initBuffers(gl_);
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
@@ -116,6 +120,8 @@ Stadium.prototype.Field = function(){
 };
 
 Stadium.prototype.draw = function(gl_) {
+
+
     if(stadiumInit === 0)
 	this.intro.draw(gl_);
 
@@ -126,6 +132,7 @@ Stadium.prototype.draw = function(gl_) {
     for(i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_);
     }
+    this.jumboScreen.draw(gl_);
 };
 
 Stadium.prototype.updateStadium = function(){

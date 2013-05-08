@@ -465,11 +465,6 @@ GLmatrix.prototype.push = function() {
     this.mStack.push(copy);
 };
 
-GLmatrix.prototype.push = function() {
-    var copy = mat4.clone(this.mMatrix);
-    this.mStack.push(copy);
-};
-
 GLmatrix.prototype.pop = function() {
     if (this.mStack.length === 0) {
         throw "Invalid pop"; }

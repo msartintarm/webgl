@@ -117,6 +117,7 @@ Quad.prototype.setStringTexture = function(texture, val) {
 
 
 Quad.prototype.initBuffers = _oInitBuffers;
+Quad.prototype.scale = _oScale;
 Quad.prototype.translate = _oTranslate;
 
 Quad.prototype.draw = _oDraw;

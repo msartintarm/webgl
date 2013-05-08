@@ -70,6 +70,13 @@ function _objsTranslate(vec_) {
     return this;
 }
 
+function _objsScale(vec) {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].scale(vec);
+    }
+    return this;
+}
+
 function _objsDraw(gl_) {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].draw(gl_);

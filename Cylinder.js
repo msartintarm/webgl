@@ -175,5 +175,6 @@ Cylinder.prototype.drawBlackStreak = function() {
 }    
 
 Cylinder.prototype.initBuffers = _oInitBuffers;
+Cylinder.prototype.scale = _oScale;
 Cylinder.prototype.translate = _oTranslate;
 Cylinder.prototype.draw = _oDraw;

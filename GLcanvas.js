@@ -147,9 +147,10 @@ GLcanvas.prototype.start = function(theScene) {
 	this.canvas.height = window.innerHeight - 150;
 
 	if(this.initGL() !== 0) {
-	    var theWindow = window.open("GLerror.php?type=GL_INIT", 
-					"",
-					"height=110,width=220,location=no,scrollbars=no");
+	    var theWindow = window.open(
+		"GLerror.php?type=GL_INIT", 
+		"",
+		"height=110,width=220,location=no,scrollbars=no");
 	    theWindow.focus();
 	    return;
 	}
@@ -233,9 +234,9 @@ GLcanvas.prototype.drawScene = function() {
     
     // Clear the canvas before we start drawing on it.
     var error = this.gl.getError();
-    if (error != this.gl.NO_ERROR) {
+    if (error !== this.gl.NO_ERROR) {
 	this.has_errors = true;
-	while (error != this.gl.NO_ERROR) {
+	while (error !== this.gl.NO_ERROR) {
 	    alert("error: " + error);
 	    error = this.gl.getError();
 	}

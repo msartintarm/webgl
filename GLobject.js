@@ -124,6 +124,7 @@ GLobject.prototype.Quad = function(a, b, c, d) {
     this.addQuadIndexes(this.indexPos,
 			this.indexPos + 2);
     this.indexPos += 4;
+    return this;
 };
 
 GLobject.prototype.initTextures = function(at, bt, ct, dt) { 
@@ -289,10 +290,8 @@ GLobject.prototype.scale = function(num) {
 };
 
 GLobject.prototype.translate = function(vec) {
-    for(var i = 0; i < this.data["pos"].length; i += 3) {
-	this.data["pos"][i] += vec[0]; 
-	this.data["pos"][i+1] += vec[1]; 
-	this.data["pos"][i+2] += vec[2]; 
+    for(var i = 0; i < this.data["pos"].length; ++i) {
+	this.data["pos"][i] += vec[i%3]; 
     }
     return this;
 };
