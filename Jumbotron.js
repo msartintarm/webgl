@@ -64,8 +64,8 @@ function Jumbotron() {
 
     this.jumboScreen = new SixSidedPrism.rectangle(a, b, c, d, widthScreen);
 
-    this.jumboScreen.setSixTextures(TEXT_TEXTURE, FRAME_BUFF, TEXT_TEXTURE,
-				    TEXT_TEXTURE, TEXT_TEXTURE, TEXT_TEXTURE) ;
+    this.jumboScreen.setSixTextures(FRAME_BUFF, FRAME_BUFF, FRAME_BUFF, 
+				    FRAME_BUFF, FRAME_BUFF, FRAME_BUFF);
     return this;
 }
 
@@ -88,6 +88,13 @@ Jumbotron.prototype.initBuffers = function(gl_) {
     this.thickCylA.initBuffers(gl_);
     this.thickCylB.initBuffers(gl_);
     this.jumboScreen.initBuffers(gl_);
+}
+
+Jumbotron.prototype.setShader = function(shader) {
+    this.frame.setShader(shader);
+    this.thickCylA.setShader(shader);
+    this.thickCylB.setShader(shader);
+    this.jumboScreen.setShader(shader);
 }
 
 Jumbotron.prototype.draw = function(gl_) {

@@ -3,12 +3,12 @@
 <!-- All text on this page is property of Aberger / Sartin-Tarm. (c) 2013. -->
 <html xmlns='http://www.w3.org/1999/xhtml'>
   <head> 
-    <title>WebGL Error</title> 
+    <title>WebGL Shader Error</title> 
     <script type"text/javascript" src="GLerror.js"></script>
   </head>
   
   <body style="color:#fedcba; background-color:#111111;" 
-	onload="determine_error(0);" >
+	onload="determine_error(1);" >
     <p id="the_error"></p>
     <p>Email 
       <a style="color:#abcdef;" href=craberger@gmail.com>Aberger</a> or 

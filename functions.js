@@ -77,6 +77,13 @@ function _objsScale(vec) {
     return this;
 }
 
+function _objsSetShader(vec) {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].setShader(vec);
+    }
+    return this;
+}
+
 function _objsDraw(gl_) {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].draw(gl_);
@@ -108,6 +115,11 @@ function _oTranslate(vec_) {
 
 function _oScale(vec_) {
     this.o.scale(vec_);
+    return this;
+}
+
+function _oSetShader(shader) {
+    this.o.shader = shader;
     return this;
 }
 

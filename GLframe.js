@@ -63,10 +63,12 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
-	gl_.useProgram(gl_.shader); }
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader_frame) {
+	gl_.useProgram(gl_.shader_frame); }
+
+
     gl_.uniform1i(gl_.getUniformLocation(
-	gl_.shader, "sampler" + this.active), this.active);
+	gl_.shader_frame, "sampler0"), this.active);
 };
 
 /**
@@ -78,8 +80,8 @@ GLframe.prototype.init = function(gl_) {
  */
 GLframe.prototype.drawScene = function(gl_) {
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
-	gl_.useProgram(gl_.shader);
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader_frame) {
+	gl_.useProgram(gl_.shader_frame);
     }
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
@@ -99,7 +101,7 @@ GLframe.prototype.drawScene = function(gl_) {
     // 2.
     theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
     mat4.identity(theMatrix.vMatrix);
-    theMatrix.setViewUniforms(gl_, gl_.shader);
+    theMatrix.setViewUniforms(gl_, gl_.shader_frame);
     theMatrix.modelInit();
 
     // 3.

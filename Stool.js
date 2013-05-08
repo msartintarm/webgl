@@ -59,7 +59,7 @@ Stool.prototype.Prism = _Prism;
 Stool.prototype.Disk = _Disk;
 Stool.prototype.Cyl = _Cyl;
 Stool.prototype.Torus = _Torus;
-
+Stool.prototype.setShader = _objsSetShader;
 Stool.prototype.initBuffers = _objsInitBuffers;
 
 var seat_location;

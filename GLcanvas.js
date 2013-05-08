@@ -148,7 +148,7 @@ GLcanvas.prototype.start = function(theScene) {
 
 	if(this.initGL() !== 0) {
 	    var theWindow = window.open(
-		"GLerror.php?type=GL_INIT", 
+		"GLerror.php", 
 		"",
 		"height=110,width=220,location=no,scrollbars=no");
 	    theWindow.focus();
@@ -158,10 +158,27 @@ GLcanvas.prototype.start = function(theScene) {
 
 	this.gl.shader = this.gl.createProgram();
 	this.gl.shader_ball = this.gl.createProgram();
+	this.gl.shader_frame = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
-	this.initShaders(this.gl.shader, "shader-fs", "shader-vs");
-	this.initShaders(this.gl.shader_ball, "shader-fs-ball", "shader-vs-ball");
-	this.initShaders(this.gl.shader_color, "shader-fs-color", "shader-vs");
+	if(this.initShaders(this.gl.shader, 
+			    "default", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_frame, 
+			    "frame", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_ball, 
+			    "ball", 
+			    "ball") !== 0 ||
+	   this.initShaders(this.gl.shader_color, 
+			    "color", 
+			    "default") !== 0) {
+	    var theWindow = window.open(
+		"GLerror_shader.php", 
+		"",
+		"height=110,width=250,location=no,scrollbars=no");
+	    theWindow.focus();
+	    return;
+	}
 	this.gl.useProgram(this.gl.shader);
 
 	theMatrix.viewInit();
@@ -298,14 +315,11 @@ GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {
     gl_shader.unis[uni] = this.gl.getUniformLocation(gl_shader, uni);
 };
-
+var theShader = new GLshader;
 GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
-    this.gl.attachShader(gl_shader, getShader(this.gl, frag));
-    this.gl.attachShader(gl_shader, getShader(this.gl, vert));
-    this.gl.linkProgram(gl_shader);
 
-    if (!this.gl.getProgramParameter(gl_shader, this.gl.LINK_STATUS)) {
-        alert("Could not initialise shaders"); }
+    if(theShader.init(this.gl, gl_shader, frag, vert) !== 0) return -1;
+
     gl_shader.attribs = [];
     gl_shader.unis = [];
 
@@ -332,5 +346,7 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     // Firefox says macs behave poorly if 
     // an unused attribute is bound to index 0
     this.gl.bindAttribLocation(gl_shader, 0, "vPosA");
+    
+    return 0;
 };
 var theCanvas;

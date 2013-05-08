@@ -52,6 +52,7 @@ function Torus(innerRadius, outerRadius) {
     
 }
 
+Torus.prototype.setShader = _oSetShader;
 Torus.prototype.translate = _oTranslate;
 Torus.prototype.initBuffers = _oInitBuffers;
 Torus.prototype.draw = _oDraw;
