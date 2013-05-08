@@ -298,7 +298,7 @@ GLobject.prototype.translate = function(vec) {
 
 /**
    Link GL's pre-loaded attributes to the  program
-   Then send the divide-and-conquer 'draw' signal to the GPU
+   Then send the 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
 
