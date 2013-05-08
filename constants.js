@@ -1,27 +1,26 @@
 // -- Textures -- // 
-var zz = 0;
-const WOOD_TEXTURE = zz; zz++;
-const HEAVEN_TEXTURE = zz; zz++;
-const HELL_TEXTURE = zz; zz++;
-const FLOOR_TEXTURE = zz; zz++;
-const OPERA_TEXTURE = zz; zz++;
-const BRICK_TEXTURE = zz; zz++;
-const TILE_TEXTURE = zz; zz++;
-const NO_TEXTURE = zz; zz++;
-const SKYBOX_TEXTURE_0 = zz; zz++;
-const SKYBOX_TEXTURE_1 = zz; zz++;
-const SKYBOX_TEXTURE_2 = zz; zz++;
-const SKYBOX_TEXTURE_3 = zz; zz++;
-const SKYBOX_TEXTURE_4 = zz; zz++;
-const SKYBOX_TEXTURE_5 = zz; zz++;
-const RUG_TEXTURE = zz; zz++;
-const SKYBOX_TEXTURE_REAL = zz; zz++;
+const WOOD_TEXTURE = 0;
+const HEAVEN_TEXTURE = 1;
+const HELL_TEXTURE = 2;
+const FLOOR_TEXTURE = 3;
+const OPERA_TEXTURE = 4;
+const BRICK_TEXTURE = 5;
+const TILE_TEXTURE = 6;
+const NO_TEXTURE = 7;
+const SKYBOX_TEXTURE_0 = 8;
+const SKYBOX_TEXTURE_1 = 9;
+const SKYBOX_TEXTURE_2 = 10;
+const SKYBOX_TEXTURE_3 = 11;
+const SKYBOX_TEXTURE_4 = 12;
+const SKYBOX_TEXTURE_5 = 13;
+const RUG_TEXTURE = 14;
+const SKYBOX_TEXTURE_REAL = 15;
 // -- Framebuffer -- // 
-const FRAME_BUFF = zz; zz++;
-const TEXT_TEXTURE = zz; zz++;
-const TEXT_TEXTURE2 = zz; zz++;
-const TEXT_TEXTURE3 = zz; zz++;
-const TEXT_TEXTURE4 = zz; zz++;
+const FRAME_BUFF = 16;
+const TEXT_TEXTURE = 17;
+const TEXT_TEXTURE2 = 18;
+const TEXT_TEXTURE3 = 19;
+const TEXT_TEXTURE4 = 20;
 
 // -- Maze Piece wall locations -- //
 const FRONT = 0x1; // 0001

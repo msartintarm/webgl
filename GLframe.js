@@ -8,7 +8,6 @@
  */
 function GLframe(texture_num) {
     this.num = texture_num;
-    this.active = GLactiveTexture();
     this.frameBuff = null;
     this.stool = new Stool();
 }
@@ -20,6 +19,8 @@ GLframe.prototype.init = function(gl_) {
     this.frameBuff = gl_.createFramebuffer();
     this.frameBuff.width = 512;
     this.frameBuff.height = 512;
+
+    this.active = gl_.active++;
     
     this.texture = gl_.createTexture();
 
@@ -69,6 +70,7 @@ GLframe.prototype.init = function(gl_) {
 
     gl_.uniform1i(gl_.getUniformLocation(
 	gl_.shader_frame, "sampler0"), this.active);
+    console.log("frame: [" + this.active + ",0," + this.num + "]");
 };
 
 /**

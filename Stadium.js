@@ -19,8 +19,8 @@ function Stadium() {
     this.size = pieceLength;
     this.width = piecesPerSide;
 
-    this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9");
-    this.introScreen = new GLstring("Welcome to our game. --CRA --MST");
+    this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
+    this.introScreen = new GLstring("Welcome to our game. --CRA --MST", TEXT_TEXTURE);
     this.jumboScreen = new Jumbotron();
     this.jumboScreen.translate([-1200,2000,-1500]);
     this.jumboScreen.scale(0.9);
@@ -32,7 +32,7 @@ function Stadium() {
 	[-1200 + 70, 760 + 175, 1200 + 70],
 	[-1200 + 70, 760 + 125, 1200 + 70],
 	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(this.introScreen.texture_num).setActive(this.introScreen.active);
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
     
 
     //initializes the field...floor and walls
@@ -62,8 +62,7 @@ Stadium.prototype.InitBalls = function(){
 	var z_dist = Math.round(Math.random()*-5000);
 	this.balls.push(new Ball([x_dist,0,z_dist], 
 				 this.numberBalls,
-				 this.numbers.texture_num, 
-				 this.numbers.active));
+				 this.numbers.num));
     }
 };
 

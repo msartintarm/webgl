@@ -15,7 +15,7 @@ function GLobject() {
     this.data["index"] = [];
     this.data["tex"] =  [];
 
-    this.textureNum = null;
+    this.textureNum = NO_TEXTURE;
 
     // Quads use an index position counter
     this.indexPos = 0;
@@ -24,6 +24,12 @@ function GLobject() {
     //  of this object's data will do it correctly
     this.normsInverted = false;
     this.hasFlatNorms = false;
+    
+    // default values
+    this.ambient_coeff = 0.1;
+    this.diffuse_coeff = 0.7;
+    this.specular_coeff = 0.0;
+    this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
 }
 
 /**
@@ -142,14 +148,8 @@ GLobject.prototype.initTextures = function(at, bt, ct, dt) {
  *   These values are uniforms - the same for each vertice
 */
 GLobject.prototype.setTexture = function(theTexture) { 
-
-    this.textureNum = theTexture;
     
-    // default values
-    this.ambient_coeff = 0.1;
-    this.diffuse_coeff = 0.7;
-    this.specular_coeff = 0.0;
-    this.specular_color = vec3.fromValues(0.8, 0.8, 0.8);
+    this.textureNum = theTexture;
 
     switch(theTexture) {
     case HELL_TEXTURE:
@@ -171,6 +171,10 @@ GLobject.prototype.setTexture = function(theTexture) {
 	this.ambient_coeff = 0.1;
 	this.diffuse_coeff = 0.3;
 	break;
+    case RUG_TEXTURE:
+	this.ambient_coeff = 0.9;
+	this.specular_coeff = 1.0;
+	break;
     case SKYBOX_TEXTURE_0:
     case SKYBOX_TEXTURE_1:
     case SKYBOX_TEXTURE_2:
@@ -178,6 +182,9 @@ GLobject.prototype.setTexture = function(theTexture) {
     case SKYBOX_TEXTURE_4:
     case SKYBOX_TEXTURE_5:
     case SKYBOX_TEXTURE_REAL:
+    case WOOD_TEXTURE:
+    case HEAVEN_TEXTURE: 
+	break;
     case TEXT_TEXTURE:
     case TEXT_TEXTURE2:
     case TEXT_TEXTURE3:
@@ -188,33 +195,17 @@ GLobject.prototype.setTexture = function(theTexture) {
 	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
 //	this.specular_coeff = 1.0;
 	break;
-    case RUG_TEXTURE:
-	this.ambient_coeff = 0.9;
-	this.specular_coeff = 1.0;
-	break;
     case FRAME_BUFF:
 	this.ambient_coeff = 0.3;
 	break;
-    case WOOD_TEXTURE:
-    case HEAVEN_TEXTURE: 
     case NO_TEXTURE:
 	break;
     default:
-	alert("Unsupported texture number %d in GLobject.js", theTexture);
+	alert("Unsupported texture number " + theTexture + " in GLobject.js", theTexture);
 	break;
     }
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
     return this;
-};
-
-/**
- *   Based upon the enumerated texture chosen,
- *   selects which lighting attributes this object
- *   will receive. 
- *
- *   These values are uniforms - the same for each vertice
-*/
-GLobject.prototype.setActive = function(theActive) { 
-    this.active = theActive;
 };
 
 /**
@@ -223,8 +214,7 @@ GLobject.prototype.setActive = function(theActive) {
  */
 GLobject.prototype.initBuffers = function(gl_) {
 
-    if(!this.textureNum) { 
-	this.setTexture(NO_TEXTURE);
+    if(this.textureNum === NO_TEXTURE) { 
 	// See if we need to create 'dummy' data
 	if(this.data["tex"].length < 1) {
 	    var i, max;
@@ -233,13 +223,7 @@ GLobject.prototype.initBuffers = function(gl_) {
 		this.data["tex"].push(0);
 	    }
 	}
-    } else {
-	// See if the texture has been created or not
-	if(this.textureNum < TEXT_TEXTURE && !gl_.textureNums[this.textureNum]) {
-	    gl_.textureNums[this.textureNum] = (new GLtexture(gl_, this.textureNum)).active;
-	}
     }
-//    this.initFlatNorms();
 
     this.bufferData(gl_, "norm", 3);
     this.bufferData(gl_, "pos", 3);
@@ -315,16 +299,9 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
 
     // check to see if texture is used in shader
-    if(shader_.unis["textureNumU"] && (this.textureNum !== NO_TEXTURE)) {
-
-	// check to see if texture is a text texture
-	if(this.textureNum >= FRAME_BUFF) {
-	    gl_.uniform1f(shader_.unis["textureNumU"], this.active);
-	} else if (gl_.textureNums[this.textureNum]) {
-	    gl_.uniform1f(shader_.unis["textureNumU"], gl_.textureNums[this.textureNum]);
-	} else { 
-	    if(envDEBUG) { alert("error: texture not loaded."); }
-	}
+    if(shader_.unis["textureNumU"] !== undefined) {
+	gl_.uniform1f(shader_.unis["textureNumU"], 
+		      gl_.tex_enum[this.textureNum]);
     }
 
     if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
@@ -382,99 +359,3 @@ GLobject.prototype.draw = function(gl_) {
 };
 
 var FLATNORMS = false;
-
-/**
-   Each quad is made up of four triangles, and hence, 
-   the norms -can- be calculated solely through their
-   positions. 
-
-   All position data must be stable before this point.
-*/
-GLobject.prototype.initFlatNorms = function() {
-
-    alert("flat norms are unsupported now. Danger!"); return;
-    
-    if(FLATNORMS === false || this.hasFlatNorms === true) return;
-    this.hasFlatNorms = true;
-
-    var a, b, c, d;
-    a = vec3.create();
-    b = vec3.create();
-    c = vec3.create();
-    d = vec3.create();
-
-    this.data["index_"] = [];
-    this.data["norm_"] = [];
-    this.data["col_"] = [];
-    this.data["pos_"] = []; 
-    this.data["tex_"] = [];
-    // We'll go over one triangle (3 indexes, 3 * data_size elements for each new buffer)
-    // This will mean the new buffers will have 3/2 as many elements
-    var i = 0;
-    while(i < this.data["index"].length) {
-
-	// Load up every element
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(a, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// 3 times. Only the vector that's set changes.
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(b, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// Last time.
-	this.data["index_"].push(i);
-	ind = this.data["index"][i];
-	this.data["col_"].push( this.data["col"][ind * 3] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 1] );
-	this.data["col_"].push( this.data["col"][ind * 3 + 2] );
-	this.data["pos_"].push( this.data["pos"][ind * 3] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 1] );
-	this.data["pos_"].push( this.data["pos"][ind * 3 + 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2] );
-	this.data["tex_"].push( this.data["tex"][ind * 2 + 1] );
-	vec3.set(c, this.data["pos"][ind * 3], 
-		    this.data["pos"][ind * 3 + 1], 
-		    this.data["pos"][ind * 3 + 2]); 
-	i++;
-	// Calc norms for these 3 triangles.
-	vec3.sub(b, b, a);
-	vec3.sub(c, c, a);
-	vec3.cross(c, c, b);
-	vec3.normalize(c, c);
-
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-	this.data["norm_"].push(c[0]);
-	this.data["norm_"].push(c[1]);
-	this.data["norm_"].push(c[2]);
-    }
-
-    if(this.normsInverted) { this.invertFlatNorms(); }
-
-};
