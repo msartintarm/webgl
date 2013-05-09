@@ -43,7 +43,6 @@ function Stadium() {
 
 Stadium.prototype.initBuffers = function(gl_) {
 
-    this.jumboScreen.initBuffers(gl_);
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
@@ -54,6 +53,7 @@ Stadium.prototype.initBuffers = function(gl_) {
     for(var i=0; i < this.balls.length; ++i){
 	this.balls[i].initBuffers(gl_);
     }
+    this.jumboScreen.initBuffers(gl_);
 };
 
 Stadium.prototype.InitBalls = function(){

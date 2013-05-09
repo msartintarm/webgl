@@ -145,17 +145,9 @@ void main(void) {\n\
 ";
 
     this.fragment["frame"] = "\
-void colorTexture(sampler2D theSampler) {\n\
-  vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
-  vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
-  vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
-  vec3 specColor = textureColor * specular();\n\
-\n\
-  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);\n\
-}\n\
-\n\
 void main(void) {\n\
-colorTexture(sampler0);\n\
+\n\
+  gl_FragColor = vec4(colorV, 1.0);\n\
 }\n\
 ";
 
@@ -232,6 +224,31 @@ void main(void) {\n\
 }\n\
 ";
 
+    this.vertex["color"] = "\
+void main(void) {\n\
+\n\
+// Viewing space coordinates of light / vertex\n\
+vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;\n\
+lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
+\n\
+  // -- Position -- //\n\
+\n\
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);\n\
+\n\
+  // -- Lighting -- //\n\
+\n\
+  // Ambient components we'll leave until frag shader\n\
+  colorV = vColA;\n\
+\n\
+  // Diffuse component\n\
+  lightNorm = normalize(lModel.xyz - vModel.xyz);\n\
+\n\
+  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);\n\
+  diffuseV = dot(vertNorm, lightNorm);\n\
+  if (diffuseV < 0.0) { diffuseV = 0.0; }\n\
+}       \n\
+";
+
     this.vertex["default"] = "\
 void main(void) {\n\
 \n\
@@ -257,33 +274,6 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
   if (diffuseV < 0.0) { diffuseV = 0.0; }\n\
 }       \n\
 ";
-
-    this.vertex["ball"] = "\n\
-precision mediump float;\n\
-void main(void) {\n\
-\n\
-// Viewing space coordinates of light / vertex\n\
-vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;\n\
-lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
-\n\
-  // -- Position -- //\n\
-\n\
-  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);\n\
-\n\
-  // -- Lighting -- //\n\
-\n\
-  // Ambient components we'll leave until frag shader\n\
-  colorV = vColA;\n\
-  textureV = textureA;\n\
-\n\
-  // Diffuse component\n\
-  lightNorm = normalize(lModel.xyz - vModel.xyz);\n\
-\n\
-  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);\n\
-  diffuseV = dot(vertNorm, lightNorm);\n\
-  if (diffuseV < 0.0) { diffuseV = 0.0; }\n\
-}     \n\
-";
 }    
 
 
@@ -302,6 +292,11 @@ GLshader.prototype.init = function(gl_, gl_shader, frag_name, vert_name) {
 
     gl_.attachShader(gl_shader, v_shader);
     gl_.attachShader(gl_shader, f_shader);
+
+    // Firefox says macs behave poorly if 
+    // an unused attribute is bound to index 0
+    gl_.bindAttribLocation(gl_shader, 0, "vPosA");
+
     gl_.linkProgram(gl_shader);
 
     if (!gl_.getProgramParameter(gl_shader, gl_.LINK_STATUS)) {

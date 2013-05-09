@@ -7,7 +7,7 @@ function GLobject() {
 
     this.data = [];
     this.buff = [];
-    this.shader = null;
+    this.shader = -1;
 
     // Data to load into buffers
     this.data["norm"] = [];
@@ -158,23 +158,27 @@ GLobject.prototype.setTexture = function(theTexture) {
 	this.specular_coeff = 0.0;
 	this.ambient_coeff = 0.0;
 	this.diffuse_coeff = 1.0;
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break;
     case FLOOR_TEXTURE:
 	this.ambient_coeff = 0.2;
 	this.diffuse_coeff = 0.4;
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break;
     case BRICK_TEXTURE:
 	this.ambient_coeff = 0.1;
 	this.diffuse_coeff = 0.2;
-	
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break; 
     case TILE_TEXTURE:
 	this.ambient_coeff = 0.1;
 	this.diffuse_coeff = 0.3;
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break;
     case RUG_TEXTURE:
 	this.ambient_coeff = 0.9;
 	this.specular_coeff = 1.0;
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break;
     case SKYBOX_TEXTURE_0:
     case SKYBOX_TEXTURE_1:
@@ -185,6 +189,7 @@ GLobject.prototype.setTexture = function(theTexture) {
     case SKYBOX_TEXTURE_REAL:
     case WOOD_TEXTURE:
     case HEAVEN_TEXTURE: 
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
 	break;
     case TEXT_TEXTURE:
     case TEXT_TEXTURE2:
@@ -206,7 +211,6 @@ GLobject.prototype.setTexture = function(theTexture) {
 	alert("Unsupported texture number " + theTexture + " in GLobject.js", theTexture);
 	break;
     }
-    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
     return this;
 };
 
@@ -218,6 +222,7 @@ GLobject.prototype.initBuffers = function(gl_) {
 
     if(this.textureNum === NO_TEXTURE) { 
 	// See if we need to create 'dummy' data
+/*
 	if(this.data["tex"].length < 1) {
 	    var i, max;
 	    for(i = 0, max = this.data["norm"].length / 3; i < max; ++i) {
@@ -225,6 +230,7 @@ GLobject.prototype.initBuffers = function(gl_) {
 		this.data["tex"].push(0);
 	    }
 	}
+*/
     }
 
     this.bufferData(gl_, "norm", 3);
@@ -237,17 +243,17 @@ GLobject.prototype.initBuffers = function(gl_) {
 /**
    Buffer data fpr a single vertex attribute array.
 */
-GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
+GLobject.prototype.bufferData = function(gl_, attribute, size) {
 
     var theData = this.data[attribute];
-    var theBuff = gl_.createBuffer();
-    gl_.bindBuffer(gl_.ARRAY_BUFFER, theBuff);
+    if(theData.length < 1) { this.buff[attribute] = -1; return; }
+    this.buff[attribute] = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ARRAY_BUFFER, this.buff[attribute]);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
 		   new Float32Array(theData),
 		   gl_.STATIC_DRAW);
-    theBuff.itemSize = theSize; 
-    theBuff.numItems = theData.length / theSize;
-    this.buff[attribute] = theBuff;
+    this.buff[attribute].itemSize = size; 
+    this.buff[attribute].numItems = theData.length / size;
 };
 
 /**
@@ -256,14 +262,13 @@ GLobject.prototype.bufferData = function(gl_, attribute, theSize) {
 GLobject.prototype.bufferElements = function(gl_, elem_name) {
 
     var theData = this.data[elem_name];
-    var theBuff = gl_.createBuffer();
-    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, theBuff);
+    this.buff[elem_name] = gl_.createBuffer();
+    gl_.bindBuffer(gl_.ELEMENT_ARRAY_BUFFER, this.buff[elem_name]);
     gl_.bufferData(gl_.ELEMENT_ARRAY_BUFFER, 
 		   new Uint16Array(theData),
 		   gl_.STATIC_DRAW);
-    theBuff.itemSize = 1;
-    theBuff.numItems = theData.length;
-    this.buff[elem_name] = theBuff;
+    this.buff[elem_name].itemSize = 1;
+    this.buff[elem_name].numItems = theData.length;
 };
 
 GLobject.prototype.rotate = function(vec) {};
@@ -293,25 +298,30 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     if(ball_shader_selectG  >= kNameG.length)
 	ball_shader_selectG = 0;
 
-    gl_.uniform1fv(shader_.unis["u_kernel"], kernelsG[kNameG[ball_shader_selectG]]);
+    if(shader_.unis["u_kernel"] !== -1)
+	gl_.uniform1fv(shader_.unis["u_kernel"], kernelsG[kNameG[ball_shader_selectG]]);
+    if(shader_.unis["u_textureSize"] !== -1)
     gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
     //gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
 
-    gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
-    gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
+    if(shader_.unis["ambient_coeff_u"] !== -1)
+	gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
+    if(shader_.unis["diffuse_coeff_u"] !== -1)
+	gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
 
     // check to see if texture is used in shader
-    if(shader_.unis["textureNumU"] !== undefined) {
+    if(shader_.unis["textureNumU"] !== -1) {
 	gl_.uniform1f(shader_.unis["textureNumU"], 
 		      gl_.tex_enum[this.textureNum]);
     }
 
-    if(this.specular_color) { gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
+    if(shader_.unis["specular_color_u"] !== -1) { 
+	gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }
 
-    this.linkAttrib(gl_, shader_.attribs["vNormA"], this.buff["norm"]);
-    this.linkAttrib(gl_, shader_.attribs["vPosA"], this.buff["pos"]);
-    this.linkAttrib(gl_, shader_.attribs["vColA"], this.buff["col"]);
-    this.linkAttrib(gl_, shader_.attribs["textureA"], this.buff["tex"]);
+    this.linkAttrib(gl_, shader_, "vNormA", "norm");
+    this.linkAttrib(gl_, shader_, "vPosA", "pos");
+    this.linkAttrib(gl_, shader_, "vColA", "col");
+    this.linkAttrib(gl_, shader_, "textureA", "tex");
 };
 
 /**
@@ -320,11 +330,25 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
  * - If shader contains it but object does not, turns attrib off
  * - If both have it, make sure attrib is enabled
  */
-GLobject.prototype.linkAttrib = function(gl_, gpu_attrib, cpu_attrib) {
+GLobject.prototype.linkAttrib = function(gl_, gl_shader, gpu_name, cpu_name) {
+
+    var gpu_attrib = gl_shader.attribs[gpu_name];
+    var cpu_attrib = this.buff[cpu_name];
 
     if(gpu_attrib !== -1) {
-	gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
-	gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
+	if(cpu_attrib === -1) {
+	    if(gl_shader.attrib_enabled[gpu_name] === true) {
+		gl_.disableVertexAttribArray(gpu_attrib);
+		gl_shader.attrib_enabled[gpu_name] = false;
+	    }
+	} else {
+	    if(gl_shader.attrib_enabled[gpu_name] === false) {
+		gl_.enableVertexAttribArray(gpu_attrib);
+		gl_shader.attrib_enabled[gpu_name] = true;
+	    }
+	    gl_.bindBuffer(gl_.ARRAY_BUFFER, cpu_attrib);
+	    gl_.vertexAttribPointer(gpu_attrib, cpu_attrib.itemSize, gl_.FLOAT, false, 0, 0);
+	}
     }
 };
 
@@ -344,17 +368,16 @@ GLobject.prototype.drawElements = function(gl_) {
 GLobject.prototype.draw = function(gl_) {
 
     var shader_;
-    if(this.shader !== null) shader_ = this.shader;
-       else if(this.textureNum === NO_TEXTURE)
+    if(this.shader !== -1) shader_ = this.shader;
+    else if(this.textureNum === NO_TEXTURE)
 	shader_ = gl_.shader_color;
     else if(this.textureNum === HELL_TEXTURE)
 	shader_ = gl_.shader_ball;
     else
 	shader_ = gl_.shader;
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
-	gl_.useProgram(shader_);
-    }
+    theCanvas.changeShader(shader_);
+
     theMatrix.setViewUniforms(gl_, shader_);
     theMatrix.setVertexUniforms(gl_, shader_);
     this.linkAttribs(gl_, shader_);

@@ -57,6 +57,7 @@ SixSidedPrism.rectangle = function(a, b, c, d, width) {
 
 SixSidedPrism.prototype.Quad = _Quad;
 SixSidedPrism.prototype.scale = _objsScale;
+SixSidedPrism.prototype.setShader = _objsSetShader;
 SixSidedPrism.prototype.translate = _objsTranslate;
 
 SixSidedPrism.prototype.setTexture = function(texture) {

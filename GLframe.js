@@ -15,6 +15,8 @@ function GLframe(texture_num) {
 
 GLframe.prototype.init = function(gl_) {
 
+    this.stool.setShader(gl_.shader_frame);
+
     this.stool.initBuffers(gl_);
 
     this.frameBuff = gl_.createFramebuffer();

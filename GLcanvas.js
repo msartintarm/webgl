@@ -105,7 +105,6 @@ GLcanvas.prototype.createScene = function(objToDraw) {
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
     }
-    this.objects.push(new Light());
 };
 
 GLcanvas.prototype.bufferModels = function() {
@@ -160,10 +159,10 @@ GLcanvas.prototype.start = function(theScene) {
 			    "default") !== 0 ||
 	   this.initShaders(this.gl.shader_ball, 
 			    "ball", 
-			    "ball") !== 0 ||
+			    "default") !== 0 ||
 	   this.initShaders(this.gl.shader_color, 
 			    "color", 
-			    "default") !== 0) {
+			    "color") !== 0) {
 	    var theWindow = window.open(
 		"GLerror_shader.php", 
 		"",
@@ -297,28 +296,25 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.changeShaders = function(frag, vert) {
-    this.initShaders(frag, vert);
-    this.bufferModels();
+GLcanvas.prototype.changeShader = function(new_shader) {
+
+    var old_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
+    if(old_shader === new_shader) return;
+
+    this.disableAttribute(old_shader, "vPosA");
+    this.disableAttribute(old_shader, "vNormA");
+    this.disableAttribute(old_shader, "vColA");
+    this.disableAttribute(old_shader, "textureA");
+
+    this.gl.useProgram(new_shader);
 };
 
-/**
- * Some shaders won't have these attributes.
- *
- * If this is the case, they will not be added to the 
- * shaders' associative attributes list.
- */
-GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
+GLcanvas.prototype.disableAttribute = function(gl_shader, name) {
 
-    var theAttrib = this.gl.getAttribLocation(gl_shader, attr);
-    if(theAttrib === -1) { return; }
-    this.gl.enableVertexAttribArray(theAttrib);
-    gl_shader.attribs[attr] = theAttrib;
-};
-
-GLcanvas.prototype.initUniform = function(gl_shader, uni) {
-    gl_shader.unis[uni] = this.gl.getUniformLocation(gl_shader, uni);
-};
+    if(gl_shader.attribs[name] === -1) return;
+    this.gl.disableVertexAttribArray(gl_shader.attribs[name]);
+    gl_shader.attrib_enabled[name] = false;
+}
 
 GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
 
@@ -326,9 +322,12 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
 
     gl_shader.sampler = 0;
     gl_shader.attribs = [];
+    gl_shader.attrib_enabled = [];
     gl_shader.unis = [];
 
+
     this.initAttribute(gl_shader, "vPosA");
+
     this.initAttribute(gl_shader, "vNormA");
     this.initAttribute(gl_shader, "vColA");
     this.initAttribute(gl_shader, "textureA");
@@ -347,11 +346,27 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lMatU"); // Lighting matrix
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
-
-    // Firefox says macs behave poorly if 
-    // an unused attribute is bound to index 0
-    this.gl.bindAttribLocation(gl_shader, 0, "vPosA");
     
     return 0;
 };
+
+/**
+ * Some shaders won't have these attributes.
+ *
+ * If this is the case, they will not be added to the 
+ * shaders' associative attributes list.
+ */
+GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
+
+    var theAttrib = this.gl.getAttribLocation(gl_shader, attr);
+    gl_shader.attribs[attr] = theAttrib;
+    gl_shader.attrib_enabled[attr] = false;
+    if(theAttrib === -1) { return; }
+    gl_shader.attrib_enabled[attr] = false;
+};
+
+GLcanvas.prototype.initUniform = function(gl_shader, uni) {
+    gl_shader.unis[uni] = this.gl.getUniformLocation(gl_shader, uni);
+};
+
 var theCanvas;
