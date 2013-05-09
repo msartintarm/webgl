@@ -293,7 +293,7 @@ GLcanvas.prototype.drawScene = function() {
 	}
     }
 
-    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
+//    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
 };
 

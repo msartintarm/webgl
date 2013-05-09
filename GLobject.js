@@ -7,6 +7,7 @@ function GLobject() {
 
     this.data = [];
     this.buff = [];
+    this.shader = null;
 
     // Data to load into buffers
     this.data["norm"] = [];
@@ -196,7 +197,8 @@ GLobject.prototype.setTexture = function(theTexture) {
 //	this.specular_coeff = 1.0;
 	break;
     case FRAME_BUFF:
-	this.ambient_coeff = 0.3;
+	this.ambient_coeff = 3.0;
+	this.diffuse_coeff = 0.7;
 	break;
     case NO_TEXTURE:
 	break;
@@ -342,8 +344,9 @@ GLobject.prototype.drawElements = function(gl_) {
 GLobject.prototype.draw = function(gl_) {
 
     var shader_;
-    if(this.textureNum === NO_TEXTURE)
-	shader_ = gl_.shader_color
+    if(this.shader !== null) shader_ = this.shader;
+       else if(this.textureNum === NO_TEXTURE)
+	shader_ = gl_.shader_color;
     else if(this.textureNum === HELL_TEXTURE)
 	shader_ = gl_.shader_ball;
     else

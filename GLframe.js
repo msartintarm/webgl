@@ -8,6 +8,7 @@
  */
 function GLframe(texture_num) {
     this.num = texture_num;
+    theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
     this.stool = new Stool();
 }
@@ -35,7 +36,7 @@ GLframe.prototype.init = function(gl_) {
 		      gl_.TEXTURE_MAG_FILTER, gl_.LINEAR);
     gl_.texParameteri(gl_.TEXTURE_2D, 
 		      gl_.TEXTURE_MIN_FILTER, 
-		      gl_.LINEAR_MIPMAP_NEAREST);
+		      gl_.LINEAR_MIPMAP_LINEAR);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 
     this.renderBuff = gl_.createRenderbuffer();
@@ -64,13 +65,15 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader_frame) {
-	gl_.useProgram(gl_.shader_frame); }
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
+	gl_.useProgram(gl_.shader); }
 
+    var sampler_num = gl_.shader.sampler ++;
+    theCanvas.gl.tex_enum[this.num] = this.active;
 
     gl_.uniform1i(gl_.getUniformLocation(
-	gl_.shader_frame, "sampler0"), this.active);
-    console.log("frame: [" + this.active + ",0," + this.num + "]");
+	gl_.shader, "sampler" + sampler_num), this.active);
+    console.log("frame: [" + this.active + "," + sampler_num + "," + this.num + "]");
 };
 
 /**
@@ -80,30 +83,33 @@ GLframe.prototype.init = function(gl_) {
  * 4. Loads state of matrices
  * 5. Updates texture used by main framebuffer
  */
-GLframe.prototype.drawScene = function(gl_) {
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader_frame) {
-	gl_.useProgram(gl_.shader_frame);
+var every_other = 0;
+GLframe.prototype.drawScene = function(gl_) {
+    if((every_other++) % 2 === 0) return;
+    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
+	gl_.useProgram(gl_.shader);
     }
 
-    gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
-			this.frameBuff);
+    gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.viewportWidth = this.frameBuff.width;
     gl_.viewportHeight = this.frameBuff.height;
     gl_.viewport(0, 0, this.frameBuff.width, this.frameBuff.height);
+    gl_.bindTexture(gl_.TEXTURE_2D, null);
+    gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
+			this.frameBuff);
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
 
     // 1.
     var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
     var tempMatrix = mat4.clone(theMatrix.vMatrix);
-    theMatrix.vMatrixChanged = true;
     theMatrix.push();
 
     // 2.
     theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
     mat4.identity(theMatrix.vMatrix);
-    theMatrix.setViewUniforms(gl_, gl_.shader_frame);
+    theMatrix.vMatrixChanged = true;
     theMatrix.modelInit();
 
     // 3.
@@ -117,15 +123,13 @@ GLframe.prototype.drawScene = function(gl_) {
     theMatrix.vMatrixChanged = true;
     theMatrix.pMatrixChanged = true;
 
-    gl_.viewportWidth = theCanvas.canvas.width;
-    gl_.viewportHeight = theCanvas.canvas.height;
-    gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
+    gl_.clear(gl_.COLOR_BUFFER_BIT | 
+	      gl_.DEPTH_BUFFER_BIT);
+    gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
+    gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
 
     // 5.
-    gl_.activeTexture(gl_.TEXTURE0 + this.active);
-    gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
-    gl_.generateMipmap(gl_.TEXTURE_2D);
 //    gl_.bindTexture(gl_.TEXTURE_2D, null);
 //    this.debug;
 };

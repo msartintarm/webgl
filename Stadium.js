@@ -62,7 +62,7 @@ Stadium.prototype.InitBalls = function(){
 	var z_dist = Math.round(Math.random()*-5000);
 	this.balls.push(new Ball([x_dist,0,z_dist], 
 				 this.numberBalls,
-				 this.numbers.num));
+				 TEXT_TEXTURE2));
     }
 };
 

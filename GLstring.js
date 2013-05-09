@@ -7,6 +7,7 @@ function GLstring(text_to_write, string_num) {
     this.text = text_to_write;
     this.canvas = document.getElementById('textureCanvas');
     this.num = string_num;
+    theCanvas.gl.tex_enum[this.num] = -1;
     return this;
 }
 
@@ -52,7 +53,7 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.tex_enum[this.num] = active_num;
     gl_.uniform1i(gl_sampler, active_num);
 
-    gl_.activeTexture(gl_.TEXTURE0 + gl_.active);
+    gl_.activeTexture(gl_.TEXTURE0 + active_num);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
 
     gl_.texParameteri(gl_.TEXTURE_2D, 
@@ -69,8 +70,10 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.texParameteri(gl_.TEXTURE_2D, gl_.TEXTURE_MIN_FILTER, gl_.LINEAR);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     
+    console.log("str:[" + active_num + "," + 
+		sampler_num + "," + this.num + "]");
     document.getElementById("glcanvas_status").innerHTML += 
-    "str:[" + active_num + "," + sampler_num + "]</br>";
+    "str:[" + active_num + "," + sampler_num + "," + this.num + "]</br>";
     
 };
 
