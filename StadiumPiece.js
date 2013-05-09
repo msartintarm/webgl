@@ -166,12 +166,15 @@ StadiumPiece.prototype.initBuffers = function(gl_){
 
     var i;
     for(i = 0; i < this.objs.length; ++i) {
+//	this.objs[i].setShader(gl_.shader_stadium);
 	this.objs[i].initBuffers(gl_);
     }
     for(i = 0; i < this.objsMoveFront.length; ++i) {
+//	this.objsMoveFront[i].setShader(gl_.shader_stadium);
 	this.objsMoveFront[i].initBuffers(gl_);
     }
     for(i = 0; i < this.objsMoveRight.length; ++i) {
+//	this.objsMoveRight[i].setShader(gl_.shader_stadium);
 	this.objsMoveRight[i].initBuffers(gl_);
     }
 };

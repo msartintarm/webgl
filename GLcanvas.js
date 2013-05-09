@@ -151,6 +151,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader_ball = this.gl.createProgram();
 	this.gl.shader_frame = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
+//	this.gl.shader_stadium = this.gl.createProgram();
 	if(this.initShaders(this.gl.shader, 
 			    "default", 
 			    "default") !== 0 ||
@@ -160,6 +161,9 @@ GLcanvas.prototype.start = function(theScene) {
 	   this.initShaders(this.gl.shader_ball, 
 			    "ball", 
 			    "default") !== 0 ||
+//	   this.initShaders(this.gl.shader_stadium, 
+//			    "stadium", 
+//			    "stadium") !== 0 ||
 	   this.initShaders(this.gl.shader_color, 
 			    "color", 
 			    "color") !== 0) {
@@ -296,19 +300,6 @@ GLcanvas.prototype.drawScene = function() {
 
 };
 
-GLcanvas.prototype.changeShader = function(new_shader) {
-
-    var old_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
-    if(old_shader === new_shader) return;
-
-    this.disableAttribute(old_shader, "vPosA");
-    this.disableAttribute(old_shader, "vNormA");
-    this.disableAttribute(old_shader, "vColA");
-    this.disableAttribute(old_shader, "textureA");
-
-    this.gl.useProgram(new_shader);
-};
-
 GLcanvas.prototype.disableAttribute = function(gl_shader, name) {
 
     if(gl_shader.attribs[name] === -1) return;
@@ -363,6 +354,19 @@ GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
     gl_shader.attrib_enabled[attr] = false;
     if(theAttrib === -1) { return; }
     gl_shader.attrib_enabled[attr] = false;
+};
+
+GLcanvas.prototype.changeShader = function(new_shader) {
+
+    var old_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
+    if(old_shader === new_shader) return;
+
+    this.disableAttribute(old_shader, "vPosA");
+    this.disableAttribute(old_shader, "vNormA");
+    this.disableAttribute(old_shader, "vColA");
+    this.disableAttribute(old_shader, "textureA");
+
+    this.gl.useProgram(new_shader);
 };
 
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {

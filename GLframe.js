@@ -31,14 +31,14 @@ GLframe.prototype.init = function(gl_) {
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
 
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
-    gl_.texImage2D(gl_.TEXTURE_2D, 0, gl_.RGBA, 
-		   this.frameBuff.width, this.frameBuff.height, 
-		   0, gl_.RGBA, gl_.UNSIGNED_BYTE, null);
     gl_.texParameteri(gl_.TEXTURE_2D, 
 		      gl_.TEXTURE_MAG_FILTER, gl_.LINEAR);
     gl_.texParameteri(gl_.TEXTURE_2D, 
 		      gl_.TEXTURE_MIN_FILTER, 
 		      gl_.LINEAR_MIPMAP_LINEAR);
+    gl_.texImage2D(gl_.TEXTURE_2D, 0, gl_.RGBA, 
+		   this.frameBuff.width, this.frameBuff.height, 
+		   0, gl_.RGBA, gl_.UNSIGNED_BYTE, null);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 
     this.renderBuff = gl_.createRenderbuffer();
@@ -89,9 +89,8 @@ GLframe.prototype.init = function(gl_) {
 var every_other = 0;
 GLframe.prototype.drawScene = function(gl_) {
     if((every_other++) % 2 === 0) return;
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
-	gl_.useProgram(gl_.shader);
-    }
+
+    theCanvas.changeShader(gl_.shader);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.viewportWidth = this.frameBuff.width;
@@ -129,6 +128,7 @@ GLframe.prototype.drawScene = function(gl_) {
     gl_.clear(gl_.COLOR_BUFFER_BIT | 
 	      gl_.DEPTH_BUFFER_BIT);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
+    gl_.generateMipmap(gl_.TEXTURE_2D);
     gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
 
     // 5.

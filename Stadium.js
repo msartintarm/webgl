@@ -11,7 +11,7 @@ function Stadium() {
     this.height = 7;
 
     this.balls = [];
-    this.numberBalls = 50;
+    this.numberBalls = 10;
     //# of maze pieces per side of the square floor
     //must be divisble by 5280
     var piecesPerSide = 24;
@@ -21,9 +21,9 @@ function Stadium() {
 
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.introScreen = new GLstring("Welcome to our game. --CRA --MST", TEXT_TEXTURE);
-    this.jumboScreen = new Jumbotron();
-    this.jumboScreen.translate([-1200,2000,-1500]);
-    this.jumboScreen.scale(0.9);
+//    this.jumboScreen = new Jumbotron();
+//    this.jumboScreen.translate([-1200,2000,-1500]);
+//    this.jumboScreen.scale(0.9);
 
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
@@ -46,14 +46,14 @@ Stadium.prototype.initBuffers = function(gl_) {
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
-    for(i=0; i < this.pieces.length; ++i){
+    for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
 
-    for(var i=0; i < this.balls.length; ++i){
+    for(i=0; i < this.balls.length; ++i){
 	this.balls[i].initBuffers(gl_);
     }
-    this.jumboScreen.initBuffers(gl_);
+//    this.jumboScreen.initBuffers(gl_);
 };
 
 Stadium.prototype.InitBalls = function(){
@@ -131,7 +131,7 @@ Stadium.prototype.draw = function(gl_) {
     for(i = 0; i<this.pieces.length; i++){
 	this.pieces[i].draw(gl_);
     }
-    this.jumboScreen.draw(gl_);
+//    this.jumboScreen.draw(gl_);
 };
 
 Stadium.prototype.updateStadium = function(){

@@ -98,9 +98,7 @@ Jumbotron.prototype.setShader = function(shader) {
 }
 
 Jumbotron.prototype.draw = function(gl_) {
-
     this.frame.drawScene(gl_);
-
 
     theMatrix.push();
     theMatrix.rotate(Math.PI / 2, [1, 0, 0]);
