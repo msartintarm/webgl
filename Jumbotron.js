@@ -23,6 +23,7 @@ function Jumbotron() {
     var slices = 30;
     var stacks = 30;
 
+    this.translateVec = [0,0,0];
     this.display = new GLstring("You are playing the game.", TEXT_TEXTURE3);
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
@@ -79,9 +80,7 @@ function Jumbotron() {
 }
 
 Jumbotron.prototype.translate = function(vec) {
-    this.thickCylA.translate(vec);
-    this.thickCylB.translate(vec);
-    this.jumboScreen.translate(vec);
+    this.translateVec = vec;
     return this;
 }
 
@@ -108,12 +107,15 @@ Jumbotron.prototype.setShader = function(shader) {
 }
 
 Jumbotron.prototype.draw = function(gl_) {
+    theMatrix.push();
+    theMatrix.translate(this.translateVec);
     this.frame.drawScene(gl_);
-
+    
     this.thickCylA.draw(gl_);
     this.thickCylB.draw(gl_);
     for(var i = 0; i < 4; ++i) {
 	this.jumboScreen.draw(gl_);
 	theMatrix.rotate(Math.PI / 2, [0, 1, 0]);
     }
+    theMatrix.pop();
 }

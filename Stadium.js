@@ -23,8 +23,8 @@ function Stadium() {
 				    TEXT_TEXTURE);
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.jumboScreen = new Jumbotron();
-    this.jumboScreen.translate([1200,1200,-1200]);
-    this.jumboScreen.scale(0.9);
+    this.jumboScreen.translate([2640,1500,-2640]);
+    //this.jumboScreen.scale(0.9);
 
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
@@ -211,6 +211,7 @@ Stadium.prototype.updateStadium = function(){
 	stadiumInit = 1;
     }
     if(StadiumInitSeqNum === 3){
+	priveledgedMode.toggle();
 	this.gameStart = Math.round(new Date().getTime()/1000);
 	console.log("gameStart %f", this.gameStart);
     }
