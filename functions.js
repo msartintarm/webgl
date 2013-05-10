@@ -355,10 +355,19 @@ var mouseIsDown = false;
 var lastMouseX = null;
 var lastMouseY = null;
 
+var mouse_movement = false;
+
 function handleMouseDown(event) {
-    mouseIsDown = true;
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
+
+
+	mouseIsDown = true;
+	
+	mouse_movement = !mouse_movement;
+	
+	lastMouseX = event.clientX;
+	mouseY = event.clientY;
+    }
 }
 
 function handleMouseUp(event) {
@@ -366,12 +375,12 @@ function handleMouseUp(event) {
 }
 
 function handleMouseMove(event) {
-    if (!mouseIsDown) { return; }
+    if (mouse_movement === false) { return; }
 
-    var newX = event.clientX;
+    var newX = event.clientX - lastMouseX;
     var newY = event.clientY;
     
-    theMatrix.lookRight(Math.PI / 180 * 2 * ((newX - mouseX) / 5));
+    theMatrix.lookRight(Math.PI / 180 * 2 * ((newX) / 5));
 /*
     if(!stadiumMode){
 	if(lightWillRotate) {
