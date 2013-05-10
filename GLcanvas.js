@@ -210,6 +210,9 @@ GLcanvas.prototype.start = function(theScene) {
 	this.createScene(theScene);
 	this.bufferModels();
     }
+    // After the scene is complete, see if we have textures to load..?
+    // If not, let's draw right away
+    if(textures_loading === 0) { this.done_loading(); }
 };
 
 GLcanvas.prototype.done_loading = function() { tick(); }

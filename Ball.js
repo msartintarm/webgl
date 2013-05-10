@@ -5,7 +5,11 @@ function Ball(position, numBalls, texture_num) {
     this.radius = 25;
     this.timeLeft = 100;
     this.hit = false;
-    this.sphere = new Sphere(this.radius).setTexture(HELL_TEXTURE);
+
+    this.sphere = new Sphere(this.radius);
+    this.sphere.setTexture(HELL_TEXTURE);
+    this.sphere.setShader(theCanvas.gl.shader_ball);
+
     this.timer = 0;
     this.birthTime = 0;
     this.numberBalls = numBalls;
@@ -18,10 +22,10 @@ function Ball(position, numBalls, texture_num) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num);
+	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num, i);
     }
 	  
-    this.position = [50,this.radius,-50];
+    this.position = vec3.fromValues(50,this.radius,-50);
     this.init = true;
     this.velocityVec = vec3.create();
     this.velocity = 0;

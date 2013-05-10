@@ -371,11 +371,9 @@ GLobject.prototype.drawElements = function(gl_) {
 GLobject.prototype.draw = function(gl_) {
 
     var shader_;
-    if(this.shader != -1) shader_ = this.shader;
+    if(this.shader !== -1) shader_ = this.shader;
     else if(this.textureNum === NO_TEXTURE)
 	shader_ = gl_.shader_color;
-    else if(this.textureNum === HELL_TEXTURE)
-	shader_ = gl_.shader_ball;
     else
 	shader_ = gl_.shader;
 

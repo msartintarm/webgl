@@ -58,6 +58,7 @@ Sphere.prototype.setTexture = function(texture) {
 
 
 Sphere.prototype.initBuffers = _oInitBuffers;
+Sphere.prototype.setShader = _oSetShader;
 Sphere.prototype.draw = _oDraw;
 Sphere.prototype.drawAgain = _oDrawAgain;
 Sphere.prototype.translate = _oTranslate;

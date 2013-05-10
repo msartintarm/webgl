@@ -19,8 +19,8 @@ function Stadium() {
     this.size = pieceLength;
     this.width = piecesPerSide;
 
-//    this.introScreen = new GLstring("Welcome to our game. --CRA --MST", TEXT_TEXTURE);
-//    this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
+    this.introScreen = new GLstring("Welcome to our game. --CRA --MST", TEXT_TEXTURE);
+    this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
 //    this.jumboScreen = new Jumbotron();
 //    this.jumboScreen.translate([-1200,2000,-1500]);
 //    this.jumboScreen.scale(0.9);
@@ -28,11 +28,11 @@ function Stadium() {
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
 
-//    this.intro = new Quad(
-//	[-1200 + 70, 760 + 175, 1200 + 70],
-//	[-1200 + 70, 760 + 125, 1200 + 70],
-//	[-1200 - 70, 760 + 175, 1200 - 70],
-//	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
+    this.intro = new Quad(
+	[-1200 + 70, 760 + 175, 1200 + 70],
+	[-1200 + 70, 760 + 125, 1200 + 70],
+	[-1200 - 70, 760 + 175, 1200 - 70],
+	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
     
 
     //initializes the field...floor and walls
@@ -43,9 +43,9 @@ function Stadium() {
 
 Stadium.prototype.initBuffers = function(gl_) {
 
-//    this.intro.initBuffers(gl_);
-//    this.introScreen.initBuffers(gl_);
-//    this.numbers.initBuffers(gl_);
+    this.intro.initBuffers(gl_);
+    this.introScreen.initBuffers(gl_);
+    this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
     }
@@ -122,10 +122,10 @@ Stadium.prototype.draw = function(gl_) {
 
 
     if(stadiumInit === 0)
-//	this.intro.draw(gl_);
+	this.intro.draw(gl_);
 
     for(i = 0; i < this.balls.length; i++){
-//	this.balls[i].draw(gl_, this.gameStart);
+	this.balls[i].draw(gl_, this.gameStart);
     }
 
     for(i = 0; i<this.pieces.length; i++){
