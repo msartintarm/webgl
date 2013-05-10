@@ -46,7 +46,10 @@ function Disk(inner_radius, outer_radius, slices, loops) {
 
 Disk.prototype.initBuffers = _oInitBuffers;
 Disk.prototype.invertNorms = _oInvertNorms;
+Disk.prototype.rotatePos = _oRotatePos;
+Disk.prototype.rotateNeg = _oRotateNeg;
 Disk.prototype.scale = _oScale;
+Disk.prototype.flip = _oFlip;
 Disk.prototype.setShader = _oSetShader;
 Disk.prototype.translate = _oTranslate;
 Disk.prototype.draw = _oDraw;

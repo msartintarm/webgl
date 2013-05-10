@@ -26,6 +26,9 @@ ThickCyl.prototype.wrapTexture = function(the_texture) {
 
 ThickCyl.prototype.Disk = _Disk;
 ThickCyl.prototype.Cyl = _Cyl;
+ThickCyl.prototype.rotatePos = _objsRotatePos;
+ThickCyl.prototype.rotateNeg = _objsRotateNeg;
+ThickCyl.prototype.flip = _objsFlip;
 ThickCyl.prototype.scale = _objsScale;
 ThickCyl.prototype.setShader = _oSetShader;
 ThickCyl.prototype.translate = _objsTranslate;

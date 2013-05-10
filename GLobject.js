@@ -276,7 +276,46 @@ GLobject.prototype.bufferElements = function(gl_, elem_name) {
     this.buff[elem_name].numItems = theData.length;
 };
 
-GLobject.prototype.rotate = function(vec) {};
+// Flip across the Z-axis.
+GLobject.prototype.flip = function(vec) {
+    for(var i = 0; i < this.data["pos"].length; i += 3) {
+	this.data["pos"][i+2] = -this.data["pos"][i+2];
+	this.data["norm"][i+2] = -this.data["norm"][i+2];
+    }
+    return this;
+};
+
+// X becomes Y, Y becomes Z, Z becomes X
+GLobject.prototype.rotatePos = function(vec) {
+    var temp;
+    for(var i = 0; i < this.data["pos"].length; i += 3) {
+	temp = this.data["pos"][i];
+	this.data["pos"][i]   = this.data["pos"][i+1];
+	this.data["pos"][i+1] = this.data["pos"][i+2];
+	this.data["pos"][i+2] = temp;
+	temp = this.data["norm"][i];
+	this.data["norm"][i]   = this.data["norm"][i+1];
+	this.data["norm"][i+1] = this.data["norm"][i+2];
+	this.data["norm"][i+2] = temp;
+    }
+    return this;
+};
+
+// X becomes Z, Y becomes X, Z becomes Y
+GLobject.prototype.rotateNeg = function(vec) {
+    var temp;
+    for(var i = 0; i < this.data["pos"].length; i += 3) {
+	temp = this.data["pos"][i+2];
+	this.data["pos"][i+2]   = this.data["pos"][i+1];
+	this.data["pos"][i+1] = this.data["pos"][i];
+	this.data["pos"][i] = temp;
+	temp = this.data["norm"][i+2];
+	this.data["norm"][i+2]   = this.data["norm"][i+1];
+	this.data["norm"][i+1] = this.data["norm"][i];
+	this.data["norm"][i] = temp;
+    }
+    return this;
+};
 
 GLobject.prototype.scale = function(num) {
     for(var i = 0; i < this.data["pos"].length; ++i) {

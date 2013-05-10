@@ -74,6 +74,8 @@ GLframe.prototype.init = function(gl_) {
 
     gl_.uniform1i(gl_.getUniformLocation(
 	gl_.shader, "sampler" + sampler_num), this.active);
+    document.getElementById("glcanvas_status").innerHTML += 
+    "frame: [" + this.active + "," + sampler_num + "," + this.num + "]</br>";
     console.log("frame: [" + this.active + "," + sampler_num + "," + this.num + "]");
 };
 
@@ -122,8 +124,8 @@ GLframe.prototype.drawScene = function(gl_) {
     theMatrix.pMatrixChanged = true;
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
-    gl_.clear(gl_.COLOR_BUFFER_BIT | 
-	      gl_.DEPTH_BUFFER_BIT);
+//    gl_.clear(gl_.COLOR_BUFFER_BIT | 
+//	      gl_.DEPTH_BUFFER_BIT);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     gl_.viewport(0, 0, 

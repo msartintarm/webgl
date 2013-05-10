@@ -70,12 +70,34 @@ function _objsTranslate(vec_) {
     return this;
 }
 
+function _objsFlip() {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].flip();
+    }
+    return this;
+}
+
 function _objsScale(vec) {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].scale(vec);
     }
     return this;
 }
+
+function _objsRotatePos() {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].rotatePos();
+    }
+    return this;
+}
+
+function _objsRotateNeg() {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].rotateNeg();
+    }
+    return this;
+}
+
 
 function _objsSetShader(vec) {
     for(var i = 0; i < this.objs.length; ++i) {
@@ -115,6 +137,21 @@ function _oTranslate(vec_) {
 
 function _oScale(vec_) {
     this.o.scale(vec_);
+    return this;
+}
+
+function _oFlip() {
+    this.o.flip();
+    return this;
+}
+
+function _oRotatePos() {
+    this.o.rotatePos();
+    return this;
+}
+
+function _oRotateNeg() {
+    this.o.rotateNeg();
     return this;
 }
 

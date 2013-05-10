@@ -26,7 +26,10 @@ function Jumbotron() {
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);
     this.thickCylB.translate([0, 0, distB]);
-
+    this.thickCylA.flip();
+    this.thickCylB.flip();
+    this.thickCylA.rotatePos();
+    this.thickCylB.rotatePos();
     // RectangularPrism: a, b, c, d, width
     // The Jumbotrons's screen's corners are symmetrical to the center of the plane,
     // and near the second and third ThickCyl.
@@ -100,11 +103,8 @@ Jumbotron.prototype.setShader = function(shader) {
 Jumbotron.prototype.draw = function(gl_) {
     this.frame.drawScene(gl_);
 
-    theMatrix.push();
-    theMatrix.rotate(Math.PI / 2, [1, 0, 0]);
     this.thickCylA.draw(gl_);
     this.thickCylB.draw(gl_);
-    theMatrix.pop();
     for(var i = 0; i < 4; ++i) {
 	this.jumboScreen.draw(gl_);
 	theMatrix.rotate(Math.PI / 2, [0, 1, 0]);
