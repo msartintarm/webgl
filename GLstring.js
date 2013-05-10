@@ -7,13 +7,16 @@ function GLstring(text_to_write, string_num) {
     this.text = text_to_write;
     this.canvas = document.getElementById('textureCanvas');
     this.num = string_num;
-    theCanvas.gl.tex_enum[this.num] = -1;
+    this.sampler = theCanvas.gl.shader.sampler ++;
+    this.active = theCanvas.gl.active ++;
+    this.texture = theCanvas.gl.createTexture();
+
+
+    theCanvas.gl.tex_enum[this.num] = this.active;
     return this;
 }
 
 GLstring.prototype.initBuffers = function(gl_) {
-
-    if(!this.texture) this.texture = gl_.createTexture();
 
     var ctx = this.canvas.getContext("2d");
     if(!ctx) { alert("Error initializing text."); }
@@ -41,19 +44,7 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.fillStyle = "#112233";
     ctx.fillText(this.text, this.canvas.width/2 + 3, this.canvas.height/2 + 3);
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
-	gl_.useProgram(gl_.shader);
-    }
-
-    var sampler_num = gl_.shader.sampler ++;
-    var active_num = gl_.active ++;
-
-    var gl_sampler = gl_.getUniformLocation(
-	gl_.shader, "sampler" + sampler_num);
-    gl_.tex_enum[this.num] = active_num;
-    gl_.uniform1i(gl_sampler, active_num);
-
-    gl_.activeTexture(gl_.TEXTURE0 + active_num);
+    gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
 
     gl_.texParameteri(gl_.TEXTURE_2D, 
@@ -70,10 +61,17 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.texParameteri(gl_.TEXTURE_2D, gl_.TEXTURE_MIN_FILTER, gl_.LINEAR);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     
-    console.log("str:[" + active_num + "," + 
-		sampler_num + "," + this.num + "]");
+
+    theCanvas.changeShader(gl_.shader);
+
+    var gl_sampler = gl_.getUniformLocation(
+	gl_.shader, "sampler" + this.sampler);
+    gl_.uniform1i(gl_sampler, this.active);
+
+    console.log("str: [" + this.active + "," + 
+		this.sampler + "," + this.num + "]");
     document.getElementById("glcanvas_status").innerHTML += 
-    "str:[" + active_num + "," + sampler_num + "," + this.num + "]</br>";
+    "str: [" + this.active + "," + this.sampler + "," + this.num + "]</br>";
     
 };
 

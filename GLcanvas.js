@@ -56,6 +56,7 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.objects.push(new Stool());
     } else if(objToDraw == "jumbotron") {
 	this.objects.push(new Jumbotron());
+	this.objects.push(new Skybox());
     } else if(objToDraw == "shadow") {
 	this.objects.push(new MazePiece(5, NO_LEFT, TILE_TEXTURE));
 	this.objects.push(new Stool());
@@ -89,18 +90,17 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	this.string2 = new GLstring("testing 2.", TEXT_TEXTURE2);
 	this.objects.push(this.string1);
 	this.objects.push(this.string2);
+	this.objects.push(new Skybox());
 	this.objects.push(new Quad(
 	    [ 1.5, 0.8,-4.0],
 	    [ 1.5,-0.8,-4.0],
 	    [-1.5, 0.8,-4.0],
-	    [-1.5,-0.8,-4.0]).setTexture(
-		this.string1.num));
+	    [-1.5,-0.8,-4.0]).setTexture(TEXT_TEXTURE));
 	this.objects.push(new Quad(
 	    [ 1.5, 2.4,-4.0],
 	    [ 1.5, 0.8,-4.0],
 	    [-1.5, 2.4,-4.0],
-	    [-1.5, 0.8,-4.0]).setTexture(
-		this.string2.num));
+	    [-1.5, 0.8,-4.0]).setTexture(TEXT_TEXTURE2));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -204,7 +204,6 @@ GLcanvas.prototype.start = function(theScene) {
 	document.onmouseup = handleMouseUp;
 	document.onmousemove = handleMouseMove;
 	document.onkeydown = handleKeyDown;
-	tick();
     } else {
 	// If we have started GL already, 
 	//  just add the new model.
@@ -212,6 +211,9 @@ GLcanvas.prototype.start = function(theScene) {
 	this.bufferModels();
     }
 };
+
+GLcanvas.prototype.done_loading = function() { tick(); }
+
 
 /*
  * Initialize WebGL, returning the GL context or null if
@@ -359,7 +361,7 @@ GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
 GLcanvas.prototype.changeShader = function(new_shader) {
 
     var old_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
-    if(old_shader === new_shader) return;
+//    if(old_shader === new_shader) return;
 
     this.disableAttribute(old_shader, "vPosA");
     this.disableAttribute(old_shader, "vNormA");

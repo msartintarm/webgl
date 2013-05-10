@@ -18,7 +18,7 @@ function Ball(position, numBalls, texture_num) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num,i);
+	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num);
     }
 	  
     this.position = [50,this.radius,-50];
@@ -79,10 +79,9 @@ Ball.prototype.getRotationAngle= function (viewerPos){
 Ball.prototype.draw = function(gl_, gameStart) {
     if(this.init) this.initBalls();
 
-    var shader_ = gl_.shader_ball
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== shader_) {
-	gl_.useProgram(shader_);
-    }
+    var shader_ = gl_.shader_ball;
+
+    theCanvas.changeShader(shader_);
 
     if(this.hit == true)
 	gl_.uniform1f(shader_.unis["ballHitu"], 0.0);

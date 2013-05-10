@@ -24,8 +24,8 @@ function Jumbotron() {
     var stacks = 30;
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
-    this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks)
-	.translate([0, 0, distB]);
+    this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);
+    this.thickCylB.translate([0, 0, distB]);
 
     // RectangularPrism: a, b, c, d, width
     // The Jumbotrons's screen's corners are symmetrical to the center of the plane,

@@ -77,7 +77,7 @@ Quad.prototype.setSkyTexture = function(texture, val) {
     return this;
 }
 
-Quad.prototype.setStringTexture = function(texture, val) { 
+Quad.prototype.setStringTexture = function(texture) { 
     this.o.setTexture(texture);
     var x_dist = 0.120;
     var x_dist_1 = 0.115

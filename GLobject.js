@@ -187,6 +187,11 @@ GLobject.prototype.setTexture = function(theTexture) {
     case SKYBOX_TEXTURE_4:
     case SKYBOX_TEXTURE_5:
     case SKYBOX_TEXTURE_REAL:
+	this.ambient_coeff = 2.4;
+	this.diffuse_coeff = 0.0;
+	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
+    var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
+	break;
     case WOOD_TEXTURE:
     case HEAVEN_TEXTURE: 
     var theTexture = new GLtexture(theCanvas.gl, this.textureNum);
@@ -310,10 +315,8 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 	gl_.uniform1f(shader_.unis["diffuse_coeff_u"], this.diffuse_coeff);
 
     // check to see if texture is used in shader
-    if(shader_.unis["textureNumU"] !== -1) {
-	gl_.uniform1f(shader_.unis["textureNumU"], 
-		      gl_.tex_enum[this.textureNum]);
-    }
+    gl_.uniform1f(shader_.unis["textureNumU"], 
+		  gl_.tex_enum[this.textureNum]);
 
     if(shader_.unis["specular_color_u"] !== -1) { 
 	gl_.uniform3fv(shader_.unis["specular_color_u"], this.specular_color); }

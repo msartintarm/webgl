@@ -19,6 +19,12 @@ div#map_canvas {
     height: 400px;
 }
 
+p#glcanvas_status {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 14px;
+    font-weight:bold;
+}
+
 canvas#glcanvas {
     position: absolute 0px 0px;
     background-color: red;

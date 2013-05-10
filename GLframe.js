@@ -67,8 +67,7 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
-    if(gl_.getParameter(gl_.CURRENT_PROGRAM) !== gl_.shader) {
-	gl_.useProgram(gl_.shader); }
+    theCanvas.changeShader(gl_.shader);
 
     var sampler_num = gl_.shader.sampler ++;
     theCanvas.gl.tex_enum[this.num] = this.active;
