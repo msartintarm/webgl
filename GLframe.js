@@ -92,8 +92,6 @@ GLframe.prototype.drawScene = function(gl_) {
     theCanvas.changeShader(gl_.shader);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
-    gl_.viewportWidth = this.frameBuff.width;
-    gl_.viewportHeight = this.frameBuff.height;
     gl_.viewport(0, 0, this.frameBuff.width, this.frameBuff.height);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, 
@@ -128,7 +126,9 @@ GLframe.prototype.drawScene = function(gl_) {
 	      gl_.DEPTH_BUFFER_BIT);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.generateMipmap(gl_.TEXTURE_2D);
-    gl_.viewport(0, 0, theCanvas.canvas.width, theCanvas.canvas.height);
+    gl_.viewport(0, 0, 
+		 gl_.drawingBufferWidth,
+		 gl_.drawingBufferHeight);
 
     // 5.
 //    gl_.bindTexture(gl_.TEXTURE_2D, null);

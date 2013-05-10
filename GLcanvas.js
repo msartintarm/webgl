@@ -184,6 +184,11 @@ GLcanvas.prototype.start = function(theScene) {
 	priveledgedMode.reset();
 	mazeMode = 0;
 
+    theMatrix.perspective(zoom.val,
+			  this.canvas.clientWidth / 
+			  Math.max(1, this.canvas.clientHeight),
+			  0.1, 30000.0);
+
 	// Instantiate models
 	this.createScene(theScene);
 
@@ -225,8 +230,6 @@ GLcanvas.prototype.done_loading = function() { tick(); }
 GLcanvas.prototype.initGL = function() {
     try {
 	this.gl = this.canvas.getContext("experimental-webgl");
-	this.gl.viewportWidth = this.canvas.width;
-	this.gl.viewportHeight = this.canvas.height;
     }
     catch(e) { console.log("%s",e); }
     // If we don't have a GL context, give up now
@@ -250,10 +253,15 @@ GLcanvas.prototype.initGL = function() {
 };
 
 GLcanvas.prototype.resize = function() {
-	this.canvas.width = this.canvas.offsetWidth - 16;
-	this.canvas.height = window.innerHeight - 150;
-	this.gl.viewportWidth = this.canvas.width;
-	this.gl.viewportHeight = this.canvas.height;
+    this.canvas.width = this.canvas.offsetWidth - 16;
+    this.canvas.height = window.innerHeight - 150;
+    this.gl.viewport(0, 0, this.gl.drawingBufferWidth, 
+		     this.gl.drawingBufferHeight);
+    theMatrix.perspective(zoom.val,
+			  this.gl.drawingBufferWidth / 
+			  this.gl.drawingBufferHeight,
+			  0.1, 30000.0);
+
 };
 
 /**
@@ -279,11 +287,6 @@ GLcanvas.prototype.drawScene = function() {
 
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | 
 		  this.gl.DEPTH_BUFFER_BIT);
-
-    theMatrix.perspective(zoom.val,
-			  this.gl.viewportWidth / 
-			  this.gl.viewportHeight,
-			  0.1, 30000.0);
 
     // Draw all our objects
     theMatrix.push();
