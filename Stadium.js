@@ -297,7 +297,10 @@ Stadium.prototype.checkPosition = function() {
 	alert("You got eaten by the wall.  You lose and die");
     }
 
+    if(GLobject.has_collided > 0) { GLobject.has_collided --; }
+
     for(var i = 0; i<this.balls.length; i++){
+	GLobject.has_collided += 40 *
 	this.balls[i].detectViewerCollision(curPos, newPos, true);
 	this.balls[i].getRotationAngle(curPos);
     }

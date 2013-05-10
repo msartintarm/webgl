@@ -19,6 +19,7 @@ varying vec3 colorV;\n\
 \n\
 uniform vec2 gaussFilter[7];\n\
 uniform float ballHitu;\n\
+uniform float has_collided_u;\n\
 uniform vec2 u_Scale;\n\
 \n\
 varying vec3 reflectionV;\n\
@@ -138,7 +139,10 @@ void colorize() {\n\
 \n\
 void colorTexture(sampler2D theSampler) {\n\
   vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
-//  textureColor = textureColor * 1.5 * textureColor * textureColor;\n\
+\n\
+  if(has_collided_u > 0.0) {\n\
+    textureColor = textureColor * has_collided_u * textureColor * textureColor;\n\
+  }\n\
   vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
   vec3 specColor = textureColor * specular();\n\

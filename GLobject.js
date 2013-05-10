@@ -342,13 +342,19 @@ GLobject.prototype.translate = function(vec) {
     return this;
 };
 
+GLobject.has_collided = 0;
+
 /**
    Link GL's pre-loaded attributes to the  program
    Then send the 'draw' signal to the GPU
 */
 GLobject.prototype.linkAttribs = function(gl_, shader_) {
 
+    if(shader_.unis["has_collided_u"] !== -1)
+    gl_.uniform1f(shader_.unis["has_collided_u"], GLobject.has_collided);
 
+    if(shader_.unis["u_textureSize"] !== -1)
+    gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
 
     if(ball_shader_selectG  >= kNameG.length)
 	ball_shader_selectG = 0;
@@ -357,7 +363,6 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
 	gl_.uniform1fv(shader_.unis["u_kernel"], kernelsG[kNameG[ball_shader_selectG]]);
     if(shader_.unis["u_textureSize"] !== -1)
     gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
-    //gl_.uniform1f(shader_.unis["ballHitu"], 0.0);
 
     if(shader_.unis["ambient_coeff_u"] !== -1)
 	gl_.uniform1f(shader_.unis["ambient_coeff_u"], this.ambient_coeff);
