@@ -3,14 +3,14 @@
    'theStr ing.texture_num' should be used externally to find
    the texture to set
  */
-function GLstring(text_to_write, string_num) {
+function GLstring(text_to_write, string_num, gl_shader) {
+    this.shader = (gl_shader)? gl_shader: theCanvas.gl.shader;
     this.text = text_to_write;
     this.canvas = document.getElementById('textureCanvas');
     this.num = string_num;
-    this.sampler = theCanvas.gl.shader.sampler ++;
+    this.sampler = this.shader.sampler ++;
     this.active = theCanvas.gl.active ++;
     this.texture = theCanvas.gl.createTexture();
-
 
     theCanvas.gl.tex_enum[this.num] = this.active;
     return this;
@@ -37,11 +37,11 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(this.text, this.canvas.width/2, this.canvas.height/2);
-    ctx.fillStyle = "#423518";
+    ctx.fillStyle = "#B8A47A";
     ctx.fillText(this.text, this.canvas.width/2 + 1, this.canvas.height/2 + 1);
     ctx.fillStyle = "#127596";
     ctx.fillText(this.text, this.canvas.width/2 + 2, this.canvas.height/2 + 2);
-    ctx.fillStyle = "#112233";
+    ctx.fillStyle = "#556677";
     ctx.fillText(this.text, this.canvas.width/2 + 3, this.canvas.height/2 + 3);
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
@@ -61,11 +61,10 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.texParameteri(gl_.TEXTURE_2D, gl_.TEXTURE_MIN_FILTER, gl_.LINEAR);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     
-
-    theCanvas.changeShader(gl_.shader);
+    theCanvas.changeShader(this.shader);
 
     var gl_sampler = gl_.getUniformLocation(
-	gl_.shader, "sampler" + this.sampler);
+	this.shader, "sampler" + this.sampler);
     gl_.uniform1i(gl_sampler, this.active);
 
     console.log("str: [" + this.active + "," + 

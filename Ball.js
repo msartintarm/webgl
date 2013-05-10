@@ -22,7 +22,12 @@ function Ball(position, numBalls, texture_num) {
     this.textQuad = [];
     
     for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],[0,30,10],[0,60,-10],[0,30,-10]).setStringTexture(texture_num, i);
+	this.textQuad[i] = new Quad([0,60,10],
+				    [0,30,10],
+				    [0,60,-10],
+				    [0,30,-10]);
+	this.textQuad[i].setStringTexture(texture_num, i);
+//	this.textQuad[i].setShader(theCanvas.gl.shader_canvas);
     }
 	  
     this.position = vec3.fromValues(50,this.radius,-50);

@@ -23,6 +23,8 @@ function Jumbotron() {
     var slices = 30;
     var stacks = 30;
 
+    this.display = new GLstring("You are playing the game.", TEXT_TEXTURE3);
+
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);
     this.thickCylB.translate([0, 0, distB]);
@@ -30,6 +32,9 @@ function Jumbotron() {
     this.thickCylB.flip();
     this.thickCylA.rotatePos();
     this.thickCylB.rotatePos();
+    this.thickCylA.wrapTexture(TEXT_TEXTURE3);
+    this.thickCylB.wrapTexture(TEXT_TEXTURE3);
+
     // RectangularPrism: a, b, c, d, width
     // The Jumbotrons's screen's corners are symmetrical to the center of the plane,
     // and near the second and third ThickCyl.
@@ -88,6 +93,7 @@ Jumbotron.prototype.scale = function(val) {
 }
 
 Jumbotron.prototype.initBuffers = function(gl_) {
+    this.display.initBuffers(gl_);
     this.frame.init(gl_);
     this.thickCylA.initBuffers(gl_);
     this.thickCylB.initBuffers(gl_);

@@ -18,10 +18,7 @@ function ThickCyl(inner_radius, width, height, slices, stacks) {
 }
 
 ThickCyl.prototype.wrapTexture = function(the_texture) {
-
-
-
-
+    this.outerCyl.wrapTexture(the_texture);
 }
 
 ThickCyl.prototype.Disk = _Disk;

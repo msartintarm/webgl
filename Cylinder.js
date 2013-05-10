@@ -128,51 +128,23 @@ Cylinder.prototype.drawScrew = function() {
 
 };
 
-Cylinder.prototype.drawBlackStreak = function() {
 
-    var radius_change = this.top_radius - this.base_radius;
-    var radius_step_size = radius_change/this.stacks;
-    var radius = this.base_radius;
+Cylinder.prototype.wrapTexture = function(the_texture) {
 
-    var theta = Math.atan(Math.abs(this.top_radius-this.base_radius)/this.height);
-    var z_norm = Math.sin(theta);
-    var xy =  Math.cos(theta);
+    this.o.setTexture(the_texture);
 
-    var radius = this.base_radius;
+    var x_, y_;
 
-    var index = 0;
-
-    var minAngle = 0;
-    var maxAngle = 3 / (this.slices/2) * Math.PI;
-
-    for (var i = 0; i <= this.stacks - 4; i++) {
-	// From 0 to height
-	var z = (i/this.stacks)*this.height;
-	if(i!=0) radius += radius_step_size;
-
+    for (var i = 0; i <= this.stacks; i++) {
+	y_ = i / this.stacks;
 	for (var j = 0; j <= this.slices; j++) {
-
-	    // From 0 to 2 pi
-	    var phi = j / (this.slices/2) * Math.PI;
-	    // x = r sin theta cos phi
-
-	    if(minAngle < phi && phi < maxAngle) {
-		this.o.data["col"][index] = 0.0;
-		this.o.data["col"][index+1] = 0.0;
-		this.o.data["col"][index+2] = 0.0;
-		this.o.data["col"][index+(3*this.slices)] = 0.0;
-		this.o.data["col"][index+1+(3*this.slices)] = 0.0;
-		this.o.data["col"][index+2+(3*this.slices)] = 0.0;
-	    }
-
-	    index += 3;
+	    x_ = (4 * j / this.stacks) % 1;
+	    this.o.data["tex"].push(x_);
+	    this.o.data["tex"].push(y_);
 	}
-	minAngle += 1 / this.slices * Math.PI * 2;
-	maxAngle += 1 / this.slices * Math.PI * 2;
-	minAngle %= Math.PI * 2; 
-	maxAngle %= Math.PI * 2;
     }
-}    
+
+};
 
 Cylinder.prototype.initBuffers = _oInitBuffers;
 Cylinder.prototype.flip = _oFlip;
