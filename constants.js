@@ -45,7 +45,7 @@ const envDEBUG = true;
 //-- Bakk shader variables -- //
 //Code for the special ball shader was taken from 
 //https://code.google.com/p/html5rocks/source/browse/www.html5rocks.com/content/tutorials/webgl/webgl_fundamentals/static/webgl/webgl-2d-image-3x3-convolution.html?r=daa158f1e6a08e0c889ca9ceb09f77c57420740c
-var ball_shader_selectG = 0;
+var ball_shader_selectG = 19;
 var kNameG = new Array(
 	'normal',
 	'gaussianBlur',
@@ -80,14 +80,14 @@ var kNameG = new Array(
 	    0.045, 0.122, 0.045
 	],
 	gaussianBlur2: [
-	    1, 2, 1,
-	    2, 4, 2,
-	    1, 2, 1
+	    .01, 0, 0,
+	    0, 0, 0,
+	    0.01, 0, 0
 	],
 	gaussianBlur3: [
-	    0, 1, 0,
-	    1, 1, 1,
-	    0, 1, 0
+	    2, 2, 2,
+	    2, 0, 2,
+	    2, 2, 2
 	],
 	unsharpen: [
 		-1, -1, -1,
