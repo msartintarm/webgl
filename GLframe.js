@@ -89,7 +89,8 @@ GLframe.prototype.init = function(gl_) {
 
 var every_other = 0;
 GLframe.prototype.drawScene = function(gl_) {
-    if((every_other++) % 5 === 0) return;
+    if(frame_draw === true || (++every_other) % 5 !== 0) return;
+
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.viewport(0, 0, this.frameBuff.width, this.frameBuff.height);
@@ -112,8 +113,9 @@ GLframe.prototype.drawScene = function(gl_) {
 
     // 3.
 //    theMatrix.translate([0,0,-10]);
-
+    frame_draw = true;
     theCanvas.drawScene();
+    frame_draw = false;
 
 
 //    this.stool.draw(gl_);

@@ -90,7 +90,9 @@ Ball.prototype.getRotationAngle= function (viewerPos){
 }
 
 Ball.prototype.draw = function(gl_) {
-    if(this.init) this.initBalls();
+    if(frame_draw === false) {
+	if(this.init) this.initBalls();
+    }
 
     var shader_ = gl_.shader_ball;
 

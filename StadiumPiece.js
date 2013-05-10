@@ -365,10 +365,13 @@ StadiumPiece.prototype.draw = function(gl_) {
 
     
     if(stadiumInit == 1){
-	this.y_positionEWMoving = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
-	this.y_positionNSMoving = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
-	if(timeStep == 540) timeStep = 0;
-	else timeStep++;
+
+	if(frame_draw === false) { 
+	    this.y_positionEWMoving = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
+	    this.y_positionNSMoving = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
+	    if(timeStep == 540) timeStep = 0;
+	    else timeStep++;
+	}
 	
 	if(this.y_positionEWMoving >= -125){
 	    for(i = 0; i < this.objsMoveFront.length; ++i) {

@@ -478,6 +478,12 @@ function tick() {
     theMatrix.update();
     // Update side display as well
     drawDashboard();
+    if(theCanvas.resizeCounter > 0) {
+	theCanvas.resizeCounter -= 1;
+	if(theCanvas.resizeCounter === 0) {
+	    theCanvas.resize();
+	}
+    }
 }
 
 function tick2() {
@@ -487,6 +493,12 @@ function tick2() {
     theMatrix.update();
     // Update side display as well
     drawDashboard();
+    if(theCanvas.resizeCounter > 0) {
+	theCanvas.resizeCounter -= 1;
+	if(theCanvas.resizeCounter === 0) {
+	    theCanvas.resize();
+	}
+    }
 }
 
 function expand(contentID, titleID) {

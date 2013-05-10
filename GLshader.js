@@ -138,7 +138,7 @@ void colorize() {\n\
 \n\
 void colorTexture(sampler2D theSampler) {\n\
   vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
-  textureColor = textureColor * 1.5 * textureColor * textureColor;\n\
+//  textureColor = textureColor * 1.5 * textureColor * textureColor;\n\
   vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
   vec3 specColor = textureColor * specular();\n\

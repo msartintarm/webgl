@@ -1,5 +1,9 @@
 var stadiumInit;
+
+var frame_draw = false;
+
 function Stadium() {  
+
     moveDist = 100.1;
     lookDist = 1/15;
     stadiumInit = 0;
