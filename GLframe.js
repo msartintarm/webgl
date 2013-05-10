@@ -10,14 +10,16 @@ function GLframe(texture_num) {
     this.num = texture_num;
     theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
-    this.person = new Sphere(200).translate([0,-400,0]);
+    this.height = 400;
+    var playa_radius = 25;
+    this.playa = new Sphere(playa_radius).translate([0, 0, playa_radius - this.height]);
 }
 
 GLframe.prototype.init = function(gl_) {
 
-//    this.person.setShader(gl_.shader);
+//    this.playa.setShader(gl_.shader);
 
-    this.person.initBuffers(gl_);
+    this.playa.initBuffers(gl_);
 
     this.frameBuff = gl_.createFramebuffer();
     this.frameBuff.width = 512;
@@ -116,7 +118,7 @@ GLframe.prototype.drawScene = function(gl_) {
 
     mat4.translate(theMatrix.vMatrix, 
 		   theMatrix.vMatrix, 
-		   [0,4000,0]);
+		   [0, this.height, 0]);
     mat4.rotate(theMatrix.vMatrix, 
 		theMatrix.vMatrix, 
 		-Math.PI/2, [1,0,0]);
@@ -129,11 +131,8 @@ GLframe.prototype.drawScene = function(gl_) {
 
     mat4.identity(theMatrix.vMatrix);
 
-    mat4.translate(theMatrix.vMatrix, 
-		   theMatrix.vMatrix, 
-		   [0,4000,0]);
     theMatrix.vMatrixChanged = true;
-    this.person.draw(gl_);
+    this.playa.draw(gl_);
 
 
 
