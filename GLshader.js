@@ -12,6 +12,7 @@ uniform float diffuse_coeff_u;\n\
 uniform float specular_coeff_u;\n\
 uniform vec3 specular_color_u;\n\
 \n\
+varying vec3 distanceV;\n\
 varying float diffuseV;\n\
 varying float specularV;\n\
 varying vec3 colorV;\n\
@@ -28,7 +29,6 @@ varying vec3 lightNorm;\n\
 varying vec3 vertNorm;\n\
 \n\
 varying vec2 textureV;\n\
-varying vec2 shadowV;\n\
 \n\
 uniform float textureNumU;\n\
 \n\
@@ -84,10 +84,10 @@ uniform vec3 lightPosU;\n\
 uniform vec3 viewPosU;\n\
 \n\
 // Passed to the fragment shader\n\
+varying vec3 distanceV;\n\
 varying float diffuseV;\n\
 varying vec3 colorV;\n\
 varying vec2 textureV;\n\
-varying vec2 shadowV;\n\
 \n\
 varying vec3 viewPosV;\n\
 varying vec3 vModel;\n\
@@ -143,7 +143,9 @@ void colorTexture(sampler2D theSampler) {\n\
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
   vec3 specColor = textureColor * specular();\n\
 \n\
-  gl_FragColor = vec4(ambColor + diffColor + specColor, 1.0);\n\
+  vec3 blendColor = mod(distanceV, 50.0) / 50.0;\n\
+  vec3 normalColor = ambColor + diffColor + specColor;\n\
+  gl_FragColor = vec4(blendColor + normalColor, 1.0);\n\
 }\n\
 \n\
 void main(void) {\n\
@@ -278,7 +280,8 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
   textureV = textureA;\n\
 \n\
   // Diffuse component\n\
-  lightNorm = normalize(lModel.xyz - vModel.xyz);\n\
+  distanceV = lModel.xyz - vModel.xyz;\n\
+  lightNorm = normalize(distanceV);\n\
 \n\
   vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);\n\
   diffuseV = dot(vertNorm, lightNorm);\n\
