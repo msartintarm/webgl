@@ -10,7 +10,7 @@ function GLframe(texture_num) {
     this.num = texture_num;
     theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
-    this.stool = new Sphere(2);
+    this.stool = new Stool();
 }
 
 GLframe.prototype.init = function(gl_) {
@@ -89,9 +89,7 @@ GLframe.prototype.init = function(gl_) {
 
 var every_other = 0;
 GLframe.prototype.drawScene = function(gl_) {
-    if((every_other++) % 2 === 0) return;
-
-    theCanvas.changeShader(gl_.shader);
+    if((every_other++) % 5 === 0) return;
 
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.viewport(0, 0, this.frameBuff.width, this.frameBuff.height);
@@ -102,30 +100,32 @@ GLframe.prototype.drawScene = function(gl_) {
 	      gl_.DEPTH_BUFFER_BIT);
 
     // 1.
-    var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
-    var tempMatrix = mat4.clone(theMatrix.vMatrix);
-    theMatrix.push();
+//    var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
+//    var tempMatrix = mat4.clone(theMatrix.vMatrix);
+//    theMatrix.push();
 
     // 2.
-    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
-    mat4.identity(theMatrix.vMatrix);
-    theMatrix.vMatrixChanged = true;
-    theMatrix.modelInit();
+//    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
+//    mat4.identity(theMatrix.vMatrix);
+//    theMatrix.vMatrixChanged = true;
+//    theMatrix.modelInit();
 
     // 3.
-    theMatrix.translate([0,0,-10]);
-    this.stool.draw(gl_);
+//    theMatrix.translate([0,0,-10]);
+
+    theCanvas.drawScene();
+
+
+//    this.stool.draw(gl_);
 
     // 4,
-    theMatrix.pop();
-    mat4.copy(theMatrix.vMatrix, tempMatrix);
-    mat4.copy(theMatrix.pMatrix, tempMatrix1);
-    theMatrix.vMatrixChanged = true;
-    theMatrix.pMatrixChanged = true;
+//    theMatrix.pop();
+//    mat4.copy(theMatrix.vMatrix, tempMatrix);
+//    mat4.copy(theMatrix.pMatrix, tempMatrix1);
+//    theMatrix.vMatrixChanged = true;
+//    theMatrix.pMatrixChanged = true;
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
-//    gl_.clear(gl_.COLOR_BUFFER_BIT | 
-//	      gl_.DEPTH_BUFFER_BIT);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
     gl_.generateMipmap(gl_.TEXTURE_2D);
     gl_.viewport(0, 0, 

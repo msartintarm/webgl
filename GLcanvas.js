@@ -17,9 +17,9 @@ function GLcanvas() {
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
 	
-	// Create status bar
-	var display = document.getElementById("display");
-	display.innerHTML = "<p id=\"glcanvas_status\"></p>" + display.innerHTML;
+    // Create status bar
+    var display = document.getElementById("display");
+    display.innerHTML = "<p id=\"glcanvas_status\"></p>" + display.innerHTML;
 	
     // if we have errors, don't keep trying to draw the scene
     this.has_errors = false;
@@ -312,10 +312,6 @@ GLcanvas.prototype.drawScene = function() {
     theMatrix.push();
     this.drawModels();
     theMatrix.pop();
-    // Update viewer's matrix
-    theMatrix.update();
-    // Update side display as well
-    drawDashboard();
 
     if(this.resizeCounter > 0) {
 	this.resizeCounter -= 1;

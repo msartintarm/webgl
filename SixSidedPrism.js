@@ -77,6 +77,16 @@ SixSidedPrism.prototype.setSixTextures = function(a,b,c,d,e,f) {
     return this;
 }
 
+SixSidedPrism.prototype.flipTextures = function() {
+    this.q1.flipTexture();
+    this.q2.flipTexture();
+    this.q3.flipTexture();
+    this.q4.flipTexture();
+    this.q5.flipTexture();
+    this.q6.flipTexture();
+    return this;
+}
+
 SixSidedPrism.prototype.setSkyBoxTexture = function(texture) {
     this.q1.setSkyTexture(texture, 0);
     this.q2.setSkyTexture(texture, 1);

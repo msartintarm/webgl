@@ -38,6 +38,17 @@ Quad.prototype.setTexture = function(texture) {
     return this;
 }
 
+/*
+ * Invert the Y-coords of the texture within
+ */
+Quad.prototype.flipTexture = function(texture) { 
+    for(var i = 0; i < this.o.data["tex"].length; i += 2) {
+	this.o.data["tex"][i+1] += 1;
+	this.o.data["tex"][i+1] %= 2;
+    }
+    return this;
+}
+
 Quad.prototype.setActive = function(active) { 
     this.o.setActive(active);
     return this;

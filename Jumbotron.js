@@ -70,11 +70,10 @@ function Jumbotron() {
     c[1] = distScreen - heightScreen;
 
     this.frame = new GLframe(FRAME_BUFF);
-
     this.jumboScreen = new SixSidedPrism.rectangle(a, b, c, d, widthScreen);
-
     this.jumboScreen.setSixTextures(FRAME_BUFF, FRAME_BUFF, FRAME_BUFF, 
 				    FRAME_BUFF, FRAME_BUFF, FRAME_BUFF);
+    this.jumboScreen.flipTextures();
 //    this.jumboScreen.setShader(theCanvas.gl.shader_canvas);
     return this;
 }
@@ -82,14 +81,14 @@ function Jumbotron() {
 Jumbotron.prototype.translate = function(vec) {
     this.translateVec = vec;
     return this;
-}
+};
 
 Jumbotron.prototype.scale = function(val) {
     this.thickCylA.scale(val);
     this.thickCylB.scale(val);
     this.jumboScreen.scale(val);
     return this;
-}
+};
 
 Jumbotron.prototype.initBuffers = function(gl_) {
     this.display.initBuffers(gl_);
@@ -97,20 +96,20 @@ Jumbotron.prototype.initBuffers = function(gl_) {
     this.thickCylA.initBuffers(gl_);
     this.thickCylB.initBuffers(gl_);
     this.jumboScreen.initBuffers(gl_);
-}
+};
 
 Jumbotron.prototype.setShader = function(shader) {
     this.frame.setShader(shader);
     this.thickCylA.setShader(shader);
     this.thickCylB.setShader(shader);
     this.jumboScreen.setShader(shader);
-}
+};
 
 Jumbotron.prototype.draw = function(gl_) {
-    theMatrix.push();
-    theMatrix.translate(this.translateVec);
     this.frame.drawScene(gl_);
     
+    theMatrix.push();
+    theMatrix.translate(this.translateVec);
     this.thickCylA.draw(gl_);
     this.thickCylB.draw(gl_);
     for(var i = 0; i < 4; ++i) {
@@ -118,4 +117,4 @@ Jumbotron.prototype.draw = function(gl_) {
 	theMatrix.rotate(Math.PI / 2, [0, 1, 0]);
     }
     theMatrix.pop();
-}
+};

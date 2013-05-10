@@ -93,6 +93,13 @@ function _objsRotatePos() {
     return this;
 }
 
+function _objsRotateXZ() {
+    for(var i = 0; i < this.objs.length; ++i) {
+	this.objs[i].rotateXZ();
+    }
+    return this;
+}
+
 function _objsRotateNeg() {
     for(var i = 0; i < this.objs.length; ++i) {
 	this.objs[i].rotateNeg();
@@ -144,6 +151,11 @@ function _oScale(vec_) {
 
 function _oFlip() {
     this.o.flip();
+    return this;
+}
+
+function _oRotateXZ() {
+    this.o.rotateXZ();
     return this;
 }
 
@@ -462,11 +474,19 @@ function handleKeyDown(theEvent) {
 function tick() {
     requestAnimFrame(tick2);
     theCanvas.drawScene();
+    // Update viewer's matrix
+    theMatrix.update();
+    // Update side display as well
+    drawDashboard();
 }
 
 function tick2() {
     requestAnimFrame(tick);
     theCanvas.drawScene();
+    // Update viewer's matrix
+    theMatrix.update();
+    // Update side display as well
+    drawDashboard();
 }
 
 function expand(contentID, titleID) {

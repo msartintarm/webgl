@@ -285,6 +285,17 @@ GLobject.prototype.flip = function(vec) {
     return this;
 };
 
+// Rotate around the Y-axis
+GLobject.prototype.rotateXZ = function(vec) {
+    var temp;
+    for(var i = 0; i < this.data["pos"].length; i += 3) {
+	temp = this.data["pos"][i];
+	this.data["pos"][i]   = -this.data["pos"][i+2];
+	this.data["pos"][i+2] = temp;
+    }
+    return this;
+};
+
 // X becomes Y, Y becomes Z, Z becomes X
 GLobject.prototype.rotatePos = function(vec) {
     var temp;
