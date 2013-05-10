@@ -1,5 +1,5 @@
 /* 
-this function stamps out the walls for one maze piece
+This function stamps out the walls for one maze piece
 
 the number of walls to build and texture for each wall is an input variable
 

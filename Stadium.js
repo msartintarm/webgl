@@ -128,7 +128,7 @@ Stadium.prototype.draw = function(gl_) {
 	this.intro.draw(gl_);
 
     for(i = 0; i < this.balls.length; i++){
-	this.balls[i].draw(gl_, this.gameStart);
+	this.balls[i].draw(gl_);
     }
 
     for(i = 0; i<this.pieces.length; i++){
@@ -205,6 +205,7 @@ Stadium.prototype.updateStadium = function(){
 	    if(this.pieces[newPiece] && !this.pieces[curPiece].ballReflected)
 		this.pieces[newPiece].ballPositionLegal(curPos, newPos, this.balls[i]);
 	}
+	this.balls[i].update(this.gameStart);
 	
     }
     if(ballInitOver && stadiumInit == 0){

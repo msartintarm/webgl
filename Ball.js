@@ -12,6 +12,9 @@ function Ball(position, numBalls, texture_num) {
 
     this.frozenTime = 0;
     this.timer = 0;
+    this.hundreds = 0;
+    this.tens = 0;
+    this.ones = 0;
     this.birthTime = 0;
     this.numberBalls = numBalls;
     this.localFrame = 0;
@@ -86,7 +89,7 @@ Ball.prototype.getRotationAngle= function (viewerPos){
     this.ballRotationAngle = Math.asin(oppo/hypt)+ compAngle;
 }
 
-Ball.prototype.draw = function(gl_, gameStart) {
+Ball.prototype.draw = function(gl_) {
     if(this.init) this.initBalls();
 
     var shader_ = gl_.shader_ball;
@@ -104,7 +107,22 @@ Ball.prototype.draw = function(gl_, gameStart) {
     theMatrix.rotate(this.ballRotationAngle, [0,1,0]);
     this.sphere.draw(gl_);
 
-    if(this.timer>0 && this.hit){
+    //center quad
+    this.textQuad[this.tens].draw(gl_);
+
+    //right quad
+    theMatrix.translate([0,0,20]);
+    this.textQuad[this.ones].draw(gl_);
+
+    //left quad
+    theMatrix.translate([0,0,-40]);
+    this.textQuad[this.hundreds].draw(gl_);
+
+    theMatrix.pop();
+}
+
+Ball.prototype.update = function(gameStart){
+   if(this.timer>0 && this.hit){
 	if(freezeOff){
 	    this.frozenTime += Math.round((new Date().getTime()/1000)-freezeBirth);
 	    freezeOff = 0;
@@ -120,29 +138,16 @@ Ball.prototype.draw = function(gl_, gameStart) {
 	this.gameOver = true;
     }
 
-
-    var hundreds = Math.floor(this.timer/100);
-    var tens = Math.floor((this.timer - hundreds*100)/10);
-    var ones = Math.floor((this.timer - hundreds*100 - tens*10));
+    this.hundreds = Math.floor(this.timer/100);
+    this.tens = Math.floor((this.timer - this.hundreds*100)/10);
+    this.ones = Math.floor((this.timer - this.hundreds*100 - this.tens*10));
 
     if(this.timer <= 0){
-	hundreds = 0;
-	tens = 0;
-	ones = 0;
+	this.hundreds = 0;
+	this.tens = 0;
+	this.ones = 0;
     }
 
-    //center quad
-    this.textQuad[tens].draw(gl_);
-
-    //right quad
-    theMatrix.translate([0,0,20]);
-    this.textQuad[ones].draw(gl_);
-
-    //left quad
-    theMatrix.translate([0,0,-40]);
-    this.textQuad[hundreds].draw(gl_);
-
-    theMatrix.pop();
 }
 
 Ball.prototype.drawAgain = function(gl_) {
