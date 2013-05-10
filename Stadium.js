@@ -116,7 +116,7 @@ Stadium.prototype.Field = function(){
 	    this.pieces.push(
 		new StadiumPiece(
 		    this.size, wall, movingWall, BRICK_TEXTURE,
-		    sbX_, sh_, sbZ_, sbW_).atCoord(j,i));	    
+		    sbX_, sh_, sbZ_, sbW_).atCoord(j,i));	 
 	}
     }
 };

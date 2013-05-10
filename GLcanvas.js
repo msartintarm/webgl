@@ -85,6 +85,15 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [ 1, 1,-4],
 	    [ 1,-1,-4]).setTexture(FRAME_BUFF));
 
+    } else if(objToDraw == "stadiumPiece") {
+	this.objects.push(new StadiumPiece(
+	    220, (FRONT|BACK|RIGHT|LEFT), 0, BRICK_TEXTURE,
+		    110, 110, 110, 30.0).atCoord(0,0));
+	this.string1 = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE);
+	this.objects.push(this.string1);
+	this.objects.push(new Ball([0,0,0], 
+				 1,
+				 this.string1.num));
     } else if(objToDraw == "text") {
 	this.string1 = new GLstring("testing 1.", TEXT_TEXTURE);
 	this.string2 = new GLstring("testing 2.", TEXT_TEXTURE2);
