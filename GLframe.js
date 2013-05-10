@@ -10,14 +10,14 @@ function GLframe(texture_num) {
     this.num = texture_num;
     theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
-    this.stool = new Stool();
+    this.person = new Sphere(200).translate([0,-400,0]);
 }
 
 GLframe.prototype.init = function(gl_) {
 
-    this.stool.setShader(gl_.shader_frame);
+//    this.person.setShader(gl_.shader);
 
-    this.stool.initBuffers(gl_);
+    this.person.initBuffers(gl_);
 
     this.frameBuff = gl_.createFramebuffer();
     this.frameBuff.width = 512;
@@ -102,29 +102,50 @@ GLframe.prototype.drawScene = function(gl_) {
 
     // 1.
 //    var tempMatrix1 = mat4.clone(theMatrix.pMatrix);
-//    var tempMatrix = mat4.clone(theMatrix.vMatrix);
 //    theMatrix.push();
 
     // 2.
 //    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
-//    mat4.identity(theMatrix.vMatrix);
-//    theMatrix.vMatrixChanged = true;
+
+    frame_draw = true;
+
+
+
+    
+    var tempMatrix = mat4.clone(theMatrix.vMatrix);
+
+    mat4.translate(theMatrix.vMatrix, 
+		   theMatrix.vMatrix, 
+		   [0,4000,0]);
+    mat4.rotate(theMatrix.vMatrix, 
+		theMatrix.vMatrix, 
+		-Math.PI/2, [1,0,0]);
+    theMatrix.vMatrixChanged = true;
 //    theMatrix.modelInit();
 
     // 3.
 //    theMatrix.translate([0,0,-10]);
-    frame_draw = true;
     theCanvas.drawScene();
+
+    mat4.identity(theMatrix.vMatrix);
+
+    mat4.translate(theMatrix.vMatrix, 
+		   theMatrix.vMatrix, 
+		   [0,4000,0]);
+    theMatrix.vMatrixChanged = true;
+    this.person.draw(gl_);
+
+
+
     frame_draw = false;
 
 
-//    this.stool.draw(gl_);
 
     // 4,
 //    theMatrix.pop();
-//    mat4.copy(theMatrix.vMatrix, tempMatrix);
+    mat4.copy(theMatrix.vMatrix, tempMatrix);
 //    mat4.copy(theMatrix.pMatrix, tempMatrix1);
-//    theMatrix.vMatrixChanged = true;
+    theMatrix.vMatrixChanged = true;
 //    theMatrix.pMatrixChanged = true;
 
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);

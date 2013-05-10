@@ -78,8 +78,11 @@
 -->
 	  <div id="display" style="padding-top:30%; width:90%;">
 	    <p id="webgl_status"></p>
-	    <input id="inputz" type="text" style="padding-left:24px;width:80%;"
-		   value="Cylinder"/>
+	    <div id="stadium_params">
+	      <div style="float:left;">Number of Balls:</div>
+	    <input id="stadium_balls" type="text" style="float:right; width:30px;"
+		   value="20"/>
+	    </div>
 	    <input type="button" class="button_add"
 		   onclick="stadium_check_position = !stadium_check_position;" 
 		   value="Debug Mode"/>

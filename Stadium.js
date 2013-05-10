@@ -15,7 +15,8 @@ function Stadium() {
     this.height = 7;
 
     this.balls = [];
-    this.numberBalls = 10;
+    this.numberBalls = document.getElementById("stadium_balls").value;
+    document.getElementById("stadium_params").style.display = "none";
     //# of maze pieces per side of the square floor
     //must be divisble by 5280
     var piecesPerSide = 24;

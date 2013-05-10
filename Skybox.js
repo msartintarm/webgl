@@ -6,7 +6,7 @@
 function Skybox() { 
     
     // First, create an enormous cube
-    const size = 10000;
+    const size = 100000;
     this.o = new SixSidedPrism(
 	[-size, size, size],
 	[-size,-size, size],

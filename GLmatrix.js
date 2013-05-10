@@ -337,10 +337,10 @@ GLmatrix.prototype.gradualRotate = function() {
 
 GLmatrix.prototype.jump = function() {
     this.up3 = 2;
-    this.up2 = 4;
-    this.up1 = 7;
-    this.dn1 = 7;
-    this.dn2 = 4;
+    this.up2 = 8;
+    this.up1 = 16;
+    this.dn1 = 16;
+    this.dn2 = 8;
     this.dn3 = 2;
     this.inJump = true;
 };
@@ -378,7 +378,7 @@ GLmatrix.prototype.update = function() {
 
     this.gradualMove();
     this.gradualRotate();
-    const x = 0.1;
+    const x = 50.0;
     if(this.inJump === false) {
 	if(this.vMatrixNewChanged === false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
@@ -395,20 +395,26 @@ GLmatrix.prototype.update = function() {
     }
     if(this.up3 >= 0) { 
 	this.vTranslate([0, 3*x, 0]); 
+	this.vRotate(Math.PI/64,[-1, 0, 0]); 
 	this.up3--;
     } else if(this.up2 >= 0) { 
 	this.vTranslate([0, 2*x, 0]); 
+	this.vRotate(Math.PI/128,[-1, 0, 0]); 
 	this.up2--;
     } else if(this.up1 >= 0) {
 	this.vTranslate([0, 1*x, 0]); 
+	this.vRotate(Math.PI/256,[-1, 0, 0]); 
 	this.up1--; 
     } else if(this.dn1 >= 0) { 
+	this.vRotate(Math.PI/256,[1, 0, 0]); 
 	this.vTranslate([0,-1*x, 0]);
 	this.dn1--;
     } else if(this.dn2 >= 0) {
+	this.vRotate(Math.PI/128,[1, 0, 0]); 
 	this.vTranslate([0,-2*x, 0]);
 	this.dn2--;
     } else if(this.dn3 >= 0) {
+	this.vRotate(Math.PI/64,[1, 0, 0]); 
 	this.vTranslate([0,-3*x, 0]);
 	this.dn3--;
     } else {

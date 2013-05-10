@@ -198,7 +198,7 @@ GLcanvas.prototype.start = function(theScene) {
     theMatrix.perspective(zoom.val,
 			  this.canvas.clientWidth / 
 			  Math.max(1, this.canvas.clientHeight),
-			  0.1, 30000.0);
+			  0.1, 300000.0);
 
 	// Instantiate models
 	this.createScene(theScene);
