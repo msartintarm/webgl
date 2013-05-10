@@ -370,7 +370,9 @@ function handleMouseMove(event) {
 
     var newX = event.clientX;
     var newY = event.clientY;
-
+    
+    theMatrix.lookRight(Math.PI / 180 * 2 * ((newX - mouseX) / 5));
+/*
     if(!stadiumMode){
 	if(lightWillRotate) {
 	    theMatrix.lightRotate(
@@ -385,6 +387,9 @@ function handleMouseMove(event) {
 	mouseX = newX;
 	mouseY = newY;
     }
+
+*/
+
 }
 
 var wrongKey = false;
@@ -422,10 +427,10 @@ function handleKeyDown(theEvent) {
 	theMatrix.moveBack();
 	break;
     case 65: // a
-	theMatrix.lookLeft();
+	theMatrix.lookLeft(2);
 	break;
     case 68: // d
-	theMatrix.lookRight();
+	theMatrix.lookRight(2);
 	break;	
     case 73: // i
 	if(priveledgedMode.val)

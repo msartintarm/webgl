@@ -186,17 +186,17 @@ GLmatrix.prototype.lookDown = function() {
     }
 };
 
-GLmatrix.prototype.lookLeft = function() {
+GLmatrix.prototype.lookLeft = function(distance) {
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
-	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	radiansToRotate = (lookDist * distance * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [0,1,0];
     }
 };
 
-GLmatrix.prototype.lookRight = function() {
+GLmatrix.prototype.lookRight = function(distance) {
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
-	radiansToRotate = (lookDist * 2 * Math.PI)/10;
+	radiansToRotate = (lookDist * distance * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [0,-1,0];
     }
