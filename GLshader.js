@@ -145,7 +145,7 @@ void colorTexture(sampler2D theSampler) {\n\
 \n\
   vec3 blendColor = mod(distanceV, 50.0) / 50.0;\n\
   vec3 normalColor = ambColor + diffColor + specColor;\n\
-  gl_FragColor = vec4(blendColor + normalColor, 1.0);\n\
+  gl_FragColor = vec4(normalColor, 1.0);\n\
 }\n\
 \n\
 void main(void) {\n\
