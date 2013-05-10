@@ -252,29 +252,31 @@ Ball.prototype.checkBallCollision = function(ball){
 Ball.prototype.updatePosition = function(revert){
     //updates position if we have a velocity
     //gives the option to revert the position (not make the move)
-    if(revert){
-	this.position[0] = this.oldPosition[0];
-	this.position[2] = this.oldPosition[2];
+    if(!freeze){
+	if(revert){
+	    this.position[0] = this.oldPosition[0];
+	    this.position[2] = this.oldPosition[2];
+	}
+	else{
+	    this.oldPosition[0] = this.position[0];
+	    this.oldPosition[2] = this.position[2];
+	}
+	this.position[0] += this.velocityVec[0] * this.velocity/5;
+	this.position[2] += this.velocityVec[2] * this.velocity/5;
+	if(this.velocity < 0)
+            this.velocity = 0;
+	else if(this.velocity < 100)
+            this.velocity -= 0.5;
+	else if(this.velocity < 200)
+            this.velocity-= 2.5;
+	else if(this.velocity < 300)
+            this.velocity -= 5;
+	else if(this.velocity < 400)
+            this.velocity -= 25;
+	else if(this.velocity < 500)
+            this.velocity -=  50;
+	else if(this.velocity > 550)
+            alert("something is fucked");
     }
-    else{
-	this.oldPosition[0] = this.position[0];
-	this.oldPosition[2] = this.position[2];
-    }
-    this.position[0] += this.velocityVec[0] * this.velocity/5;
-    this.position[2] += this.velocityVec[2] * this.velocity/5;
-    if(this.velocity < 0)
-        this.velocity = 0;
-    else if(this.velocity < 100)
-        this.velocity -= 0.5;
-    else if(this.velocity < 200)
-        this.velocity-= 2.5;
-    else if(this.velocity < 300)
-        this.velocity -= 5;
-    else if(this.velocity < 400)
-        this.velocity -= 25;
-    else if(this.velocity < 500)
-        this.velocity -=  50;
-    else if(this.velocity > 550)
-        alert("something is fucked");
 }
 
