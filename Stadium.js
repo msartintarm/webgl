@@ -143,6 +143,7 @@ Stadium.prototype.draw = function(gl_) {
 };
 
 Stadium.prototype.updateStadium = function(){
+
     //we haven't looked at any balls yet so lets reset the collisions
     //this flag will tell us when we have a collision so that we 
     //do not encounter a deadlock type situation where both balls
@@ -162,9 +163,12 @@ Stadium.prototype.updateStadium = function(){
     }
     //this is how you win the game
     if(numBallsHit == this.numberBalls){
-	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart-this.ball[i].frozenTime; 
-	alert("You won the game in " + endTime + " seconds!");
 	gameOver = true;
+	var theWindow = window.open(
+	    "GLvictory.html", 
+	    "",
+	    "height=148,width=410,location=no,scrollbars=no");
+	theWindow.focus();
     }
     
     for(i = 0; i < this.balls.length; i++){
