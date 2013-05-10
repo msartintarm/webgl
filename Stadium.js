@@ -32,7 +32,9 @@ function Stadium() {
 	[-1200 + 70, 760 + 175, 1200 + 70],
 	[-1200 + 70, 760 + 125, 1200 + 70],
 	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]).setTexture(TEXT_TEXTURE);
+	[-1200 - 70, 760 + 125, 1200 - 70]);
+    this.intro.setTexture(TEXT_TEXTURE);
+    this.intro.setShader(theCanvas.gl.shader_canvas);
     
 
     //initializes the field...floor and walls
@@ -241,7 +243,7 @@ Stadium.prototype.checkPosition = function() {
     var piecePosX = newPos[0] % this.size;
     var piecePosZ = newPos[2] % this.size;
 
-    if(envDEBUG === true) {
+    if(false === true) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 

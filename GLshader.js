@@ -109,6 +109,25 @@ void main(void) {\n\
 }\n\
 ";
 
+    this.fragment["canvas"] = "\
+void colorTexture(sampler2D theSampler) {\n\
+  vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
+  vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
+\n\
+  gl_FragColor = vec4(ambColor, 1.0);\n\
+}\n\
+\n\
+void main(void) {\n\
+\n\
+  if (textureNumU < 0.1) { colorTexture(sampler0);\n\
+  } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
+  } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
+  } else if (textureNumU < 3.1) { colorTexture(sampler3);\n\
+  } else { colorTexture(sampler4);\n\
+  }\n\
+}\n\
+";
+
     this.fragment["default"] = "\
 void colorize() {\n\
   vec3 ambColor = colorV / 3.0 * ambient_coeff_u;\n\
@@ -119,6 +138,7 @@ void colorize() {\n\
 \n\
 void colorTexture(sampler2D theSampler) {\n\
   vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
+  textureColor = textureColor * 1.5 * textureColor * textureColor;\n\
   vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
   vec3 specColor = textureColor * specular();\n\

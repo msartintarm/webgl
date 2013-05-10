@@ -201,7 +201,7 @@ GLobject.prototype.setTexture = function(theTexture) {
     case TEXT_TEXTURE3:
     case TEXT_TEXTURE4:
 	// For certain textures, we want _no_ position-dependent lighting.
-	this.ambient_coeff = 2.4;
+	this.ambient_coeff = 5.0;
 	this.diffuse_coeff = 0.0;
 	vec3.set(this.specular_color, 0.0, 0.0, 0.0);
 //	this.specular_coeff = 1.0;

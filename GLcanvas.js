@@ -151,7 +151,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.shader_ball = this.gl.createProgram();
 	this.gl.shader_frame = this.gl.createProgram();
 	this.gl.shader_color = this.gl.createProgram();
-//	this.gl.shader_stadium = this.gl.createProgram();
+	this.gl.shader_canvas = this.gl.createProgram();
 	if(this.initShaders(this.gl.shader, 
 			    "default", 
 			    "default") !== 0 ||
@@ -161,9 +161,9 @@ GLcanvas.prototype.start = function(theScene) {
 	   this.initShaders(this.gl.shader_ball, 
 			    "ball", 
 			    "default") !== 0 ||
-//	   this.initShaders(this.gl.shader_stadium, 
-//			    "stadium", 
-//			    "stadium") !== 0 ||
+	   this.initShaders(this.gl.shader_canvas, 
+			    "canvas", 
+			    "default") !== 0 ||
 	   this.initShaders(this.gl.shader_color, 
 			    "color", 
 			    "color") !== 0) {
@@ -281,16 +281,16 @@ GLcanvas.prototype.resize = function() {
 GLcanvas.prototype.drawScene = function() {
     
     // Clear the canvas before we start drawing on it.
-    var error = this.gl.getError();
-    if (error !== this.gl.NO_ERROR) {
-	this.has_errors = true;
-	while (error !== this.gl.NO_ERROR) {
-	    alert("error: " + error);
-	    error = this.gl.getError();
-	}
-    }
+//    var error = this.gl.getError();
+//    if (error !== this.gl.NO_ERROR) {
+//	this.has_errors = true;
+//	while (error !== this.gl.NO_ERROR) {
+//	    alert("error: " + error);
+//	    error = this.gl.getError();
+//	}
+  //  }
 
-    if(envDEBUG === true && this.has_errors === true) { return; }
+//    if(envDEBUG === true && this.has_errors === true) { return; }
 
     for(var i = 0; i < this.frames.length; ++i) {
 	this.frames[i].drawScene(this.gl);

@@ -69,6 +69,7 @@ function Jumbotron() {
 
     this.jumboScreen.setSixTextures(FRAME_BUFF, FRAME_BUFF, FRAME_BUFF, 
 				    FRAME_BUFF, FRAME_BUFF, FRAME_BUFF);
+//    this.jumboScreen.setShader(theCanvas.gl.shader_canvas);
     return this;
 }
 
