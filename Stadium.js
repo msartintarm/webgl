@@ -217,7 +217,7 @@ Stadium.prototype.updateStadium = function(){
     }
 }
 
-
+var stadium_check_position = false;
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is
  *  bottom right, in the xz plane
@@ -245,7 +245,7 @@ Stadium.prototype.checkPosition = function() {
     var piecePosX = newPos[0] % this.size;
     var piecePosZ = newPos[2] % this.size;
 
-    if(false === true) {
+    if(stadium_check_position === true) {
 	var posStats = document.getElementById("positionCheckStats");
 	posStats.style.display = "inline-block";
 	posStats.innerHTML = "old position: " + 
