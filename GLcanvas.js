@@ -175,6 +175,8 @@ GLcanvas.prototype.start = function(theScene) {
 	    return;
 	}
 	this.gl.useProgram(this.gl.shader);
+	    document.getElementById("glcanvas_status").innerHTML = 
+	    "Shaders compiled.</br>";
 
 	// Get rid of unused JS  memory
 	this.shader_source.cleanup();
@@ -196,6 +198,10 @@ GLcanvas.prototype.start = function(theScene) {
 	for(var i = 0; i < this.frames.length; ++i) {
 	    this.frames[i].init(this.gl);
 	}
+
+	if(textures_loading !== 0) 
+	    document.getElementById("glcanvas_status").innerHTML += 
+	    "" + textures_loading + " textures.</br>";
 	this.bufferModels();
 
 	// Set background color, clear everything, and
@@ -217,10 +223,15 @@ GLcanvas.prototype.start = function(theScene) {
     }
     // After the scene is complete, see if we have textures to load..?
     // If not, let's draw right away
-    if(textures_loading === 0) { this.done_loading(); }
+    if(textures_loading === 0) this.done_loading(1500);
+
 };
 
-GLcanvas.prototype.done_loading = function() { tick(); }
+
+GLcanvas.prototype.done_loading = function(timeout) { 
+    // Wait 1.5 seconds for no reason
+    setTimeout(tick,timeout); 
+};
 
 
 /*
