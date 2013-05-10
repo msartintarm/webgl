@@ -90,10 +90,6 @@ Ball.prototype.getRotationAngle= function (viewerPos){
 }
 
 Ball.prototype.draw = function(gl_) {
-    if(frame_draw === false) {
-	if(this.init) this.initBalls();
-    }
-
     var shader_ = gl_.shader_ball;
 
     theCanvas.changeShader(shader_);
@@ -124,7 +120,9 @@ Ball.prototype.draw = function(gl_) {
 }
 
 Ball.prototype.update = function(gameStart){
-   if(this.timer>0 && this.hit){
+    if(this.init) this.initBalls();
+
+    if(this.timer>0 && this.hit){
 	if(freezeOff){
 	    this.frozenTime += Math.round((new Date().getTime()/1000)-freezeBirth);
 	    freezeOff = 0;
