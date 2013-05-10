@@ -10,6 +10,7 @@ function Ball(position, numBalls, texture_num) {
     this.sphere.setTexture(HELL_TEXTURE);
     this.sphere.setShader(theCanvas.gl.shader_ball);
 
+    this.frozenTime = 0;
     this.timer = 0;
     this.birthTime = 0;
     this.numberBalls = numBalls;
@@ -104,11 +105,17 @@ Ball.prototype.draw = function(gl_, gameStart) {
     this.sphere.draw(gl_);
 
     if(this.timer>0 && this.hit){
+	if(freezeOff){
+	    this.frozenTime += Math.round((new Date().getTime()/1000)-freezeBirth);
+	    freezeOff = 0;
+	}
 	//subtract starting time with difference between birthtime and now
-	this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-this.birthTime));
+	if(!freeze){
+	this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-(this.birthTime+this.frozenTime)));
+	}
     }
     if(this.timer == 0 && this.hit && !this.gameOver){
-	var endTime = Math.round(new Date().getTime()/1000)-gameStart;
+	var endTime = Math.round(new Date().getTime()/1000)-gameStart-this.frozenTime;
 	alert("You lost the game in " + endTime + " seconds");
 	this.gameOver = true;
     }

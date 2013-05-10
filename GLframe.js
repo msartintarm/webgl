@@ -10,7 +10,7 @@ function GLframe(texture_num) {
     this.num = texture_num;
     theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
-    this.stool = new Stool();
+    this.stool = new Sphere(2);
 }
 
 GLframe.prototype.init = function(gl_) {

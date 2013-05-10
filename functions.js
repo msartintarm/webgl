@@ -2,7 +2,9 @@
  * A bunch of utility functions we created.
  */
 var colorVec;
-
+var freeze = 0;
+var freezeBirth = 0;
+var freezeOff = 0;
 // Default lighting and viewer positions
 var lightPos =  [0.5, 0.4, -2];
 var viewPos = [0, 0, 1];
@@ -420,6 +422,18 @@ function handleKeyDown(theEvent) {
     case 75: // k
 	if(priveledgedMode.val)
 	    theMatrix.lookDown();
+	break;
+    case 80: 
+	if(freeze === 0 && (StadiumInitSeqNum === 4 && stadiumMode)){
+	    freezeBirth = Math.round(new Date().getTime()/1000);
+	    freeze = 1;
+	    alert("Game Paused");
+	}
+	else if(stadiumMode && StadiumInitSeqNum===4){
+	    freeze = 0;
+	    freezeOff = 1;
+	    alert("Game back in play");
+	}
 	break;
     case 87: // w
 	if(priveledgedMode.val)

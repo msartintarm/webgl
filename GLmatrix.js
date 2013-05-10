@@ -171,7 +171,7 @@ GLmatrix.prototype.vMul = function(v) {
 };
 
 GLmatrix.prototype.lookUp = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	radiansToRotate = (lookDist * 2 * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [1,0,0];
@@ -179,7 +179,7 @@ GLmatrix.prototype.lookUp = function() {
 };
 
 GLmatrix.prototype.lookDown = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	radiansToRotate = (lookDist * 2 * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [-1,0,0];
@@ -187,7 +187,7 @@ GLmatrix.prototype.lookDown = function() {
 };
 
 GLmatrix.prototype.lookLeft = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	radiansToRotate = (lookDist * 2 * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [0,1,0];
@@ -195,7 +195,7 @@ GLmatrix.prototype.lookLeft = function() {
 };
 
 GLmatrix.prototype.lookRight = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	radiansToRotate = (lookDist * 2 * Math.PI)/10;
 	rotateCount = 10;
 	vectorRotation = [0,-1,0];
@@ -212,35 +212,35 @@ var moveDist = 20.1; //default to maze
 var lookDist = 1/10; //default to maze
 
 GLmatrix.prototype.moveRight = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	distToMove = [-moveDist/10,0,0];
 	moveCount = 10;
     }
 };
 
 GLmatrix.prototype.moveLeft = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	distToMove = [moveDist/10,0,0];
 	moveCount = 10;
     }
 };
 
 GLmatrix.prototype.moveUp = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	distToMove = [0,moveDist/10,0];
 	moveCount = 10;
     }
 };
 
 GLmatrix.prototype.moveDown = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 	distToMove = [0,-moveDist/10,0];
 	moveCount = 10;
     }
 };
 
 GLmatrix.prototype.moveForward = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
         if(moveCount != 0  && moveAccel <= 5){
             moveAccel +=0.1;
         }
@@ -253,7 +253,7 @@ GLmatrix.prototype.moveForward = function() {
     }
 };
 GLmatrix.prototype.moveBack = function() {
-    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4)){
+    if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4) && !freeze){
 	distToMove = [0,0,moveDist/10];
 	moveCount = 10;
     }

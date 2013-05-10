@@ -157,7 +157,7 @@ Stadium.prototype.updateStadium = function(){
     }
     //this is how you win the game
     if(numBallsHit == this.numberBalls){
-	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart; 
+	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart-this.ball[i].frozenTime; 
 	alert("You won the game in " + endTime + " seconds!");
 	gameOver = true;
     }
@@ -211,7 +211,7 @@ Stadium.prototype.updateStadium = function(){
 	stadiumInit = 1;
     }
     if(StadiumInitSeqNum === 3){
-	priveledgedMode.toggle();
+	//priveledgedMode.toggle();
 	this.gameStart = Math.round(new Date().getTime()/1000);
 	console.log("gameStart %f", this.gameStart);
     }
