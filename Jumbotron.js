@@ -24,7 +24,8 @@ function Jumbotron() {
     var stacks = 30;
 
     this.translateVec = [0,0,0];
-    this.display = new GLstring("You are playing the game.", TEXT_TEXTURE3);
+    this.numberBalls = document.getElementById("stadium_balls").value;
+    this.display = new GLstring("Balls count: " + this.numberBalls, TEXT_TEXTURE3);
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);

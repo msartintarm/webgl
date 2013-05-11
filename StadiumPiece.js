@@ -385,7 +385,7 @@ StadiumPiece.prototype.draw = function(gl_) {
 	
 	if(this.y_positionNSMoving >= -125){
 	    for(i = 0; i < this.objsMoveRight.length; ++i) {
-		console.log("here3 %f", this.y_positionNSMoving);
+//		console.log("here3 %f", this.y_positionNSMoving);
 		theMatrix.push();
 		theMatrix.translate([0,this.y_positionNSMoving,0]);
 		this.objsMoveRight[i].draw(gl_);

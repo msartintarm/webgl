@@ -141,7 +141,7 @@ Stadium.prototype.draw = function(gl_) {
     }
     this.jumboScreen.draw(gl_);
 };
-
+var locker = 0;
 Stadium.prototype.updateStadium = function(){
 
     //we haven't looked at any balls yet so lets reset the collisions
@@ -166,7 +166,7 @@ Stadium.prototype.updateStadium = function(){
 	gameOver = true;
 	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart-this.balls[0].frozenTime;
 	var theWindow = window.open(
-	    "GLvictory.html", 
+	    "GLvictory.html?time=" + endTime, 
 	    "",
 	    "height=148,width=410,location=no,scrollbars=no");
 	theWindow.focus();
@@ -305,7 +305,7 @@ Stadium.prototype.checkPosition = function() {
     if(GLobject.has_collided > 0) { GLobject.has_collided --; }
 
     for(var i = 0; i<this.balls.length; i++){
-	GLobject.has_collided += 40 *
+	GLobject.has_collided += 20 *
 	this.balls[i].detectViewerCollision(curPos, newPos, true);
 	this.balls[i].getRotationAngle(curPos);
     }
