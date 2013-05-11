@@ -23,6 +23,7 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
     this.bM = movingWalls & BACK;
     this.lM = movingWalls & LEFT;
 
+    this.timeStep = 0;
     this.ballReflected = false;
     this.viewerReflected = false;
 
@@ -354,7 +355,6 @@ StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition
     return true;
 };
 
-var timeStep = 0;
 StadiumPiece.prototype.draw = function(gl_) {
 
     var i;
@@ -365,16 +365,17 @@ StadiumPiece.prototype.draw = function(gl_) {
 
     
     if(stadiumInit == 1){
-
 	if(frame_draw === false) { 
-	    this.y_positionEWMoving = 100*(Math.sin(timeStep/(10000*Math.PI))) - 100;
-	    this.y_positionNSMoving = 100*(Math.cos(timeStep/(10000*Math.PI))) - 100;
-	    if(timeStep == 540) timeStep = 0;
-	    else timeStep++;
+	    //console.log("timeStep: %d", this.timeStep);
+	    this.y_positionEWMoving = 100*(Math.sin(this.timeStep/(2*Math.PI)))-100;
+	    this.y_positionNSMoving = 100*Math.cos(this.timeStep/(2*Math.PI))-100;
+	    if(this.timeStep == 540) this.timeStep = 0;
+	    else this.timeStep += 0.1;
 	}
 	
 	if(this.y_positionEWMoving >= -125){
 	    for(i = 0; i < this.objsMoveFront.length; ++i) {
+		//console.log("here2 %f", this.y_positionEWMoving);
 		theMatrix.push();
 		theMatrix.translate([0,this.y_positionEWMoving,0]);
 		this.objsMoveFront[i].draw(gl_);
@@ -384,6 +385,7 @@ StadiumPiece.prototype.draw = function(gl_) {
 	
 	if(this.y_positionNSMoving >= -125){
 	    for(i = 0; i < this.objsMoveRight.length; ++i) {
+		console.log("here3 %f", this.y_positionNSMoving);
 		theMatrix.push();
 		theMatrix.translate([0,this.y_positionNSMoving,0]);
 		this.objsMoveRight[i].draw(gl_);
