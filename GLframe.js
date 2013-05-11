@@ -11,6 +11,7 @@ function GLframe(texture_num) {
     theCanvas.gl.tex_enum[this.num] = -1;
     this.frameBuff = null;
     this.height = 400;
+    lightPos[1] = this.height;
     var playa_radius = 25;
     this.playa = new Sphere(playa_radius).translate([0, 0, playa_radius - this.height]);
 }
@@ -110,7 +111,7 @@ GLframe.prototype.drawScene = function(gl_) {
 //    theMatrix.ortho(-10, 10, -10, 10, -1000, 1000);
 
     frame_draw = true;
-
+    theMatrix.lightTranslate([0,-400,0]); 
 
 
     
@@ -130,12 +131,9 @@ GLframe.prototype.drawScene = function(gl_) {
     theCanvas.drawScene();
 
     mat4.identity(theMatrix.vMatrix);
-
+    theMatrix.lightTranslate([0, 400,0]); 
     theMatrix.vMatrixChanged = true;
     this.playa.draw(gl_);
-
-
-
     frame_draw = false;
 
 

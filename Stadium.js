@@ -16,7 +16,8 @@ function Stadium() {
 
     this.balls = [];
     this.numberBalls = document.getElementById("stadium_balls").value;
-    document.getElementById("stadium_params").style.display = "none";
+    toggle_element("stadium_params");
+    toggle_element("stadium_options");
     //# of maze pieces per side of the square floor
     //must be divisble by 5280
     var piecesPerSide = 24;
@@ -24,8 +25,10 @@ function Stadium() {
     this.size = pieceLength;
     this.width = piecesPerSide;
 
-    this.introScreen = new GLstring("Welcome to our game. --CRA --MST", 
-				    TEXT_TEXTURE);
+    this.introScreen = new GLstring(
+	"Welcome to our game, " +
+	    document.getElementById("stadium_name").value + ".",
+	TEXT_TEXTURE);
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.jumboScreen = new Jumbotron();
     this.jumboScreen.translate([2640,1500,-2640]);

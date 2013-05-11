@@ -76,19 +76,34 @@
 	  <div class="lowLeft" ></div>
           <div class="lowRight" ></div>
 -->
-	  <div id="display" style="padding-top:30%; width:90%;">
-	    <p id="webgl_status"></p>
-	    <div id="stadium_params">
-	      <div style="float:left;">Number of Balls:</div>
-	    <input id="stadium_balls" type="text" style="float:right; width:30px;"
-		   value="20"/>
+	  <div id="display" style="padding-top:8px; width:100%;">
+
+	    <!-- Toggled off when stadium loads -->
+	    <div id="stadium_params" style="display:inline-block;">
+	      <div style="float:left; width:30%;">Name:</div>
+	      <input id="stadium_name" type="text" style="float:right; width:60%;"
+		     value="Professor K" class="button_add stadium_input"/>
+	      <br/>
+	      <div style="float:left;">Balls:</div>
+	      <input id="stadium_balls" type="text" style="float:right; width:60%;"
+		     value="20" class="button_add stadium_input"/>
 	    </div>
-	    <input type="button" class="button_add"
-		   onclick="stadium_check_position = !stadium_check_position;" 
-		   value="Debug Mode"/>
+
+	    <!-- Toggled on when stadium loads -->
+	    <div id="stadium_options" style="display:none;">
+	      <input type="button" class="button_add"
+		     onclick="toggle_element('debug_modes');"
+		     value="Debug Modes"/>
+	      <div id="debug_modes" style="display:none;">
+		<input type="button" class="button_add"
+		       onclick="stadium_check_position = !stadium_check_position;" 
+		       value="Stadium Position"/>
+	      </div>
 	    <input type="button" class="button_add"
 		   onclick="theCanvas.start('stadium');" 
 		   value="Restart"/>
+	      </div>
+
 	  </div>
 
 

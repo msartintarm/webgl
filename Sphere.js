@@ -1,8 +1,8 @@
 
 function Sphere(radius) { 
 
-    var kLong = 30;
-    var kLat = 30;
+    var kLong = 25;
+    var kLat = 25;
 
     this.o = new GLobject();
 

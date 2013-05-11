@@ -38,6 +38,9 @@ function GLcanvas() {
 
     this.resizeCounter = 0;
 
+    document.getElementById("stadium_name").focus();
+    document.getElementById("stadium_name").value = "Professor K";
+
     return this;
 }
 

@@ -11,6 +11,9 @@ function GLmatrix() {
     this.vMatrix = mat4.create();
     this.pMatrix = mat4.create();
     this.lightMatrix = mat4.create();
+    mat4.translate(this.lightMatrix,
+		   this.lightMatrix, 
+		   [0,400,0]); 
 
     // Contains rotation or translation that is applied to 
     // viewing matrix upon next frame (set externally)
@@ -241,14 +244,16 @@ GLmatrix.prototype.moveDown = function() {
 
 GLmatrix.prototype.moveForward = function() {
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
-        if(moveCount != 0  && moveAccel <= 5){
-            moveAccel +=0.1;
+        if(moveCount !== 0  && moveAccel <= 5){
+            moveAccel += 0.1;
         }
-        else if(moveCount == 0){
+        else if(moveCount === 0){
             moveAccel = 1;
         }
         distToMove = [0,0,(-moveDist/10)*moveAccel];
-        console.log("Accelerating %d", moveAccel);
+
+
+//        console.log("Accelerating %d", moveAccel);
         moveCount = 10;
     }
 };
@@ -335,7 +340,13 @@ GLmatrix.prototype.gradualRotate = function() {
     }
 };
 
+/*
+ * Jumps upwards, and rotates the user towards the Jumbotron
+ */
 GLmatrix.prototype.jump = function() {
+
+//    this.jumboScreen.translate([2640,1500,-2640]);
+
     this.up3 = 2;
     this.up2 = 8;
     this.up1 = 16;
@@ -376,10 +387,10 @@ GLmatrix.prototype.update = function() {
 	StadiumInitSeqNum = 4;
     }
 
-    this.gradualMove();
-    this.gradualRotate();
     const x = 50.0;
     if(this.inJump === false) {
+	this.gradualMove();
+	this.gradualRotate();
 	if(this.vMatrixNewChanged === false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
 	    // We only check the view if we are
@@ -445,9 +456,14 @@ GLmatrix.prototype.setViewUniforms = function(gl_, shader_) {
 
     gl_.uniformMatrix4fv(shader_.unis["pMatU"], false, this.pMatrix);
     gl_.uniformMatrix4fv(shader_.unis["vMatU"], false, this.ivMatrix);
+
+
+
     gl_.uniformMatrix4fv(shader_.unis["lMatU"], false, this.ilMatrix);
     gl_.uniform3fv(shader_.unis["lightPosU"], lightPos);
 };
+
+
 
 /**
  * Per-vertex uniforms must be set each time.

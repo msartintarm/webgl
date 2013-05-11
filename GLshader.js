@@ -112,7 +112,7 @@ void main(void) {\n\
 
     this.fragment["canvas"] = "\
 void colorTexture(sampler2D theSampler) {\n\
-  vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
+  vec3 textureColor = texture2D(theSampler, textureV).xyz;\n\
   vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
 \n\
   gl_FragColor = vec4(ambColor, 1.0);\n\
@@ -139,6 +139,7 @@ void colorize() {\n\
 \n\
 void colorTexture(sampler2D theSampler) {\n\
   vec3 textureColor = texture2D(theSampler, vec2(textureV.s, textureV.t)).xyz;\n\
+  \n\
 \n\
   if(has_collided_u > 0.0) {\n\
     textureColor = textureColor * has_collided_u * textureColor * textureColor;\n\
@@ -268,13 +269,13 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
 
     this.vertex["default"] = "\
 void main(void) {\n\
-\n\
-// Viewing space coordinates of light / vertex\n\
-vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;\n\
-lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
-\n\
-  // -- Position -- //\n\
-\n\
+                                                    \n\
+// Viewing space coordinates of light / vertex      \n\
+vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;   \n\
+lModel = vMatU * lMatU * vec4(lightPosU, 1.0);      \n\
+                        \n\
+  // -- Position -- //  \n\
+                        \n\
   gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);\n\
 \n\
   // -- Lighting -- //\n\

@@ -6,8 +6,7 @@ var freeze = 0;
 var freezeBirth = 0;
 var freezeOff = 0;
 // Default lighting and viewer positions
-var lightPos =  [0.5, 0.4, -2];
-var viewPos = [0, 0, 1];
+var lightPos =  [0,0,0];
 
 function MatrixData(htmlID) { 
     this.val = 0; 
@@ -228,6 +227,12 @@ booleanData.prototype.reset = function(){
     this.val = 1;
 };
 
+function toggle_element(element_name){
+    var this_style = document.getElementById(element_name).style;
+    this_style.display = 
+	(this_style.display === "inline-block")? "none": "inline-block";
+};
+
 booleanData.prototype.toggle = function(){
     if(this.val === 0) this.val = 1;
     else this.val = 0;
@@ -351,36 +356,33 @@ function getShader(gl_, id) {
     return shader;
 }
 
-var mouseIsDown = false;
-var lastMouseX = null;
-var lastMouseY = null;
+var click_x = null;
+var click_y = null;
 
 var mouse_movement = false;
 
 function handleMouseDown(event) {
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 
-
-	mouseIsDown = true;
-	
 	mouse_movement = !mouse_movement;
-	
-	lastMouseX = event.clientX;
-	mouseY = event.clientY;
+	click_x = event.clientX;
+	click_y = event.clientY;
     }
 }
 
-function handleMouseUp(event) {
-    mouseIsDown = false;
-}
+function handleMouseUp(event) {}
 
 function handleMouseMove(event) {
     if (mouse_movement === false) { return; }
 
-    var newX = event.clientX - lastMouseX;
-    var newY = event.clientY;
+    var move_x = event.clientX - click_x;
+    var move_y = event.clientY - click_y;
     
-    theMatrix.lookRight(Math.PI / 180 * 2 * ((newX) / 5));
+    if((move_x < -0.2) || (move_x > 0.2))
+	theMatrix.lookRight(Math.PI / 180 * 2 * ((move_x) / 3));
+
+    if(move_y < -0.1) theMatrix.moveForward();
+    else if(move_y > 0.1) theMatrix.moveBack();
 /*
     if(!stadiumMode){
 	if(lightWillRotate) {

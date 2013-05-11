@@ -96,6 +96,18 @@ div.content {
     margin: 17px 17px;
     text-align: center; }
 
+div#stadium_params {
+    font-family: Helvetica, sans-serif;
+    font-variant: small-caps;
+    text-align: left;
+    margin-left: 20px;
+}
+
+input.stadium_input {
+    font-family: Impact, fantasy;
+    font-variant: small-caps;
+}
+
 input.button_add {
     width:100%;
     background-color: transparent; /* make the button transparent */
