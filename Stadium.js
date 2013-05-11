@@ -164,6 +164,7 @@ Stadium.prototype.updateStadium = function(){
     //this is how you win the game
     if(numBallsHit == this.numberBalls){
 	gameOver = true;
+	var endTime = Math.round(new Date().getTime()/1000)-this.gameStart-this.balls[0].frozenTime;
 	var theWindow = window.open(
 	    "GLvictory.html", 
 	    "",
