@@ -26,9 +26,9 @@ function Stadium() {
     this.width = piecesPerSide;
 
     this.introScreen = new GLstring(
-	"Welcome to our game, " +
-	    document.getElementById("stadium_name").value + ".",
-	TEXT_TEXTURE);
+	"Welcome to our game, ", TEXT_TEXTURE);
+    this.introScreen2 = new GLstring(document.getElementById("stadium_name").value + ".",
+	TEXT_TEXTURE4);
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.jumboScreen = new Jumbotron();
     this.jumboScreen.translate([2640,1500,-2640]);
@@ -37,12 +37,22 @@ function Stadium() {
     if(5280%piecesPerSide !== 0)
 	alert("Not a proper selection of pieces per side");
 
+    var dist = 300;
+    var length = 80;
+    var height = 700;
+    var width = 50;
+    this.intro2 = new Quad(
+	[-dist + length, height + width, dist + length],
+	[-dist + length, height,         dist + length],
+	[-dist - length, height + width, dist - length],
+	[-dist - length, height,         dist - length]);
     this.intro = new Quad(
-	[-1200 + 70, 760 + 175, 1200 + 70],
-	[-1200 + 70, 760 + 125, 1200 + 70],
-	[-1200 - 70, 760 + 175, 1200 - 70],
-	[-1200 - 70, 760 + 125, 1200 - 70]);
+	[-dist + length, height + (2 * width), dist + length],
+	[-dist + length, height + width,       dist + length],
+	[-dist - length, height + (2 * width), dist - length],
+	[-dist - length, height + width,       dist - length]);
     this.intro.setTexture(TEXT_TEXTURE);
+    this.intro2.setTexture(TEXT_TEXTURE4);
     this.intro.setShader(theCanvas.gl.shader_canvas);
     
 
@@ -56,6 +66,8 @@ Stadium.prototype.initBuffers = function(gl_) {
 
     this.intro.initBuffers(gl_);
     this.introScreen.initBuffers(gl_);
+    this.intro2.initBuffers(gl_);
+    this.introScreen2.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
@@ -132,8 +144,10 @@ Stadium.prototype.Field = function(){
 Stadium.prototype.draw = function(gl_) {
 
 
-    if(stadiumInit === 0)
+    if(stadiumInit === 0) {
 	this.intro.draw(gl_);
+	this.intro2.draw(gl_);
+    }
 
     for(i = 0; i < this.balls.length; i++){
 	this.balls[i].draw(gl_);
@@ -304,8 +318,6 @@ Stadium.prototype.checkPosition = function() {
     if(!this.pieces[newPiece] && !this.pieces[curPiece]){
 	alert("You got eaten by the wall.  You lose and die");
     }
-
-    if(GLobject.has_collided > 0) { GLobject.has_collided --; }
 
     for(var i = 0; i<this.balls.length; i++){
 	GLobject.has_collided += 20 *
