@@ -26,8 +26,9 @@ GLframe.prototype.init = function(gl_) {
     this.frameBuff.width = 512;
     this.frameBuff.height = 512;
 
-    this.active = gl_.active++;
-    
+    this.active = (++(gl_.active));
+    gl_.tex_enum[this.num] = this.active;
+
     this.texture = gl_.createTexture();
 
     // don't really need this unless it's overwriting another texture
@@ -70,13 +71,12 @@ GLframe.prototype.init = function(gl_) {
     gl_.bindFramebuffer(gl_.FRAMEBUFFER, null);
     gl_.bindTexture(gl_.TEXTURE_2D, null);
 
+    var sampler_num = (++(gl_.shader.sampler));
+
     theCanvas.changeShader(gl_.shader);
-
-    var sampler_num = gl_.shader.sampler ++;
-    theCanvas.gl.tex_enum[this.num] = this.active;
-
     gl_.uniform1i(gl_.getUniformLocation(
 	gl_.shader, "sampler" + sampler_num), this.active);
+
     document.getElementById("glcanvas_status").innerHTML += 
     "frame: [" + this.active + "," + sampler_num + "," + this.num + "]</br>";
     console.log("frame: [" + this.active + "," + sampler_num + "," + this.num + "]");

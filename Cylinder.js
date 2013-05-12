@@ -46,12 +46,39 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
     // B  D   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
-    for (var latitude = 0; latitude < this.stacks; latitude++) {
-	for (var longitude = 0; longitude < this.slices; longitude++) {
-	    var A = (latitude * (this.slices + 1)) + longitude;
+    var index_uses = [];
+    for (var i = 0; i < this.stacks; i++) {
+	for (var j = 0; j < this.slices; j++) {
+
+
+	    var A = (i * (this.slices + 1)) + j;
 	    var B = A + this.slices + 1;
 	    var C = A + 1;
 	    var D = B + 1;
+
+	    if(!index_uses[A]) { 
+		index_uses[A] = 1; index_uses[B] = 1; 
+		this.o.data["col"][3*C] = 0;
+		this.o.data["col"][3*C+1] = 0.7;
+		this.o.data["col"][3*C+2] = 0.7;
+		this.o.data["col"][3*D] = 0;
+		this.o.data["col"][3*D+1] = 0;
+		this.o.data["col"][3*D+2] = 1;
+	    } else {
+		this.o.data["col"][3*A] = 1;
+		this.o.data["col"][3*A+1] = 0;
+		this.o.data["col"][3*A+2] = 0;
+		this.o.data["col"][3*B] = 0;
+		this.o.data["col"][3*B+1] = 1;
+		this.o.data["col"][3*B+2] = 0;
+		this.o.data["col"][3*C] = 0;
+		this.o.data["col"][3*C+1] = 0.7;
+		this.o.data["col"][3*C+2] = 0.7;
+		this.o.data["col"][3*D] = 0;
+		this.o.data["col"][3*D+1] = 0;
+		this.o.data["col"][3*D+2] = 1;
+	    }
+
 	    this.o.addIndexes(A, B, C);
 	    this.o.addIndexes(B, D, C);
 	}

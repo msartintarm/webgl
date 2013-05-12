@@ -26,9 +26,9 @@ function Stadium() {
     this.width = piecesPerSide;
 
     this.introScreen = new GLstring(
-	"Welcome to our game, ", TEXT_TEXTURE);
+	"Welcome to our game, ", TEXT_TEXTURE, theCanvas.gl.shader_canvas);
     this.introScreen2 = new GLstring(document.getElementById("stadium_name").value + ".",
-	TEXT_TEXTURE4);
+	TEXT_TEXTURE4, theCanvas.gl.shader_canvas);
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.jumboScreen = new Jumbotron();
     this.jumboScreen.translate([2640,1500,-2640]);
@@ -54,6 +54,7 @@ function Stadium() {
     this.intro.setTexture(TEXT_TEXTURE);
     this.intro2.setTexture(TEXT_TEXTURE4);
     this.intro.setShader(theCanvas.gl.shader_canvas);
+    this.intro2.setShader(theCanvas.gl.shader_canvas);
     
 
     //initializes the field...floor and walls

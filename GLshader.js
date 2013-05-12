@@ -114,9 +114,7 @@ void main(void) {\n\
     this.fragment["canvas"] = "\
 void colorTexture(sampler2D theSampler) {\n\
   vec3 textureColor = texture2D(theSampler, textureV).xyz;\n\
-  vec3 ambColor = textureColor / 3.0 * ambient_coeff_u;\n\
-\n\
-  gl_FragColor = vec4(ambColor, 1.0);\n\
+  gl_FragColor = vec4(textureColor * 1.6, 0.7);\n\
 }\n\
 \n\
 void main(void) {\n\
@@ -176,7 +174,7 @@ void main(void) {\n\
     this.fragment["frame"] = "\
 void main(void) {\n\
 \n\
-  gl_FragColor = vec4(colorV * specular(), 1.0);\n\
+  gl_FragColor = vec4(colorV * vec3(2.0, 0.0, 0.5) * specular(), 1.0);\n\
 }\n\
 ";
 
