@@ -52,21 +52,6 @@ function Stadium() {
     return this;
 }
 
-Stadium.prototype.initBuffers = function(gl_) {
-
-    this.intro.initBuffers(gl_);
-    this.introScreen.initBuffers(gl_);
-    this.numbers.initBuffers(gl_);
-    for(var i=0; i < this.pieces.length; ++i){
-	this.pieces[i].initBuffers(gl_);
-    }
-
-    for(i=0; i < this.balls.length; ++i){
-	this.balls[i].initBuffers(gl_);
-    }
-    this.jumboScreen.initBuffers(gl_);
-};
-
 Stadium.prototype.InitBalls = function(){
     for(var i=0; i < this.numberBalls; ++i){
 	var x_dist = Math.round(Math.random()*5000);
@@ -75,6 +60,28 @@ Stadium.prototype.InitBalls = function(){
 				 this.numberBalls,
 				 TEXT_TEXTURE2));
     }
+};
+
+Stadium.prototype.initBuffers = function(gl_) {
+
+    this.intro.initBuffers(gl_);
+    this.introScreen.initBuffers(gl_);
+    this.numbers.initBuffers(gl_);
+
+    var oneFloor = this.pieces[0].qFloor;
+    for(var i=1; i < this.pieces.length; ++i){
+	this.pieces[0].qFloor.joinQuad(this.pieces[i].qFloor);
+	this.pieces[i].qFloor = null;
+    }
+
+    for(var i=0; i < this.pieces.length; ++i){
+	this.pieces[i].initBuffers(gl_);
+    }
+
+    for(i=0; i < this.balls.length; ++i){
+	this.balls[i].initBuffers(gl_);
+    }
+    this.jumboScreen.initBuffers(gl_);
 };
 
 Stadium.prototype.Field = function(){

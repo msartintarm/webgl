@@ -44,6 +44,112 @@ function GLcanvas() {
     return this;
 }
 
+/**
+ * Begins the canvas.
+ */
+GLcanvas.prototype.start = function(theScene) {
+
+    // Instantiate the Div this canvas element is within.
+    expand("webgl_settings_button");
+
+    if (this.gl === null) {
+	// One-time display methods
+	this.canvas.style.display = "inline-block";
+	this.canvas.style.width = "100%";
+	this.canvas.width = this.canvas.offsetWidth - 16;
+	this.canvas.height = window.innerHeight - 150;
+
+	if(this.initGL() !== 0) {
+	    var theWindow = window.open(
+		"GLerror.php", 
+		"",
+		"height=110,width=220,location=no,scrollbars=no");
+	    theWindow.focus();
+	    return;
+	}
+	
+	this.shader_source = new GLshader;
+
+	this.gl.shader = this.gl.createProgram();
+	this.gl.shader_ball = this.gl.createProgram();
+	this.gl.shader_frame = this.gl.createProgram();
+	this.gl.shader_color = this.gl.createProgram();
+	this.gl.shader_canvas = this.gl.createProgram();
+	if(this.initShaders(this.gl.shader, 
+			    "default", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_frame, 
+			    "frame", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_ball, 
+			    "ball", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_canvas, 
+			    "canvas", 
+			    "default") !== 0 ||
+	   this.initShaders(this.gl.shader_color, 
+			    "color", 
+			    "color") !== 0) {
+	    var theWindow = window.open(
+		"GLerror_shader.php", 
+		"",
+		"height=110,width=250,location=no,scrollbars=no");
+	    theWindow.focus();
+	    return;
+	}
+	this.gl.useProgram(this.gl.shader);
+	    document.getElementById("glcanvas_status").innerHTML = 
+	    "Shaders compiled.</br>";
+
+	// Get rid of unused JS  memory
+	this.shader_source.cleanup();
+
+	theMatrix.viewInit();
+	this.objects = [];
+	priveledgedMode.reset();
+	mazeMode = 0;
+
+    theMatrix.perspective(zoom.val,
+			  this.canvas.clientWidth / 
+			  Math.max(1, this.canvas.clientHeight),
+			  0.1, 300000.0);
+
+	// Instantiate models
+	this.createScene(theScene);
+
+	// Instantiate any framebuffers created
+	for(var i = 0; i < this.frames.length; ++i) {
+	    this.frames[i].init(this.gl);
+	}
+
+	if(textures_loading !== 0) 
+	    document.getElementById("glcanvas_status").innerHTML += 
+	    "" + textures_loading + " textures.</br>";
+	this.bufferModels();
+
+	// Set background color, clear everything, and
+	//  enable depth testing
+	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+	this.gl.clearDepth(1.0);
+	this.gl.enable(this.gl.DEPTH_TEST);
+	
+	// Set up to draw the scene periodically.
+	document.onmousedown = handleMouseDown;
+	document.onmouseup = handleMouseUp;
+	document.onmousemove = handleMouseMove;
+	document.onkeydown = handleKeyDown;
+    } else {
+	// If we have started GL already, 
+	//  just add the new model.
+	this.createScene(theScene);
+	this.bufferModels();
+    }
+    // After the scene is complete, see if we have textures to load..?
+    // If not, let's draw right away
+    if(textures_loading === 0) this.done_loading(1500);
+
+};
+
 GLcanvas.prototype.createScene = function(objToDraw) {
 
     mazeMode = 0;
@@ -133,118 +239,10 @@ GLcanvas.prototype.drawModels = function() {
     } 
 };
 
-/**
- * Begins the canvas.
- */
-GLcanvas.prototype.start = function(theScene) {
-
-    // Instantiate the Div this canvas element is within.
-    expand("webgl_settings_button");
-
-    if (this.gl === null) {
-	// One-time display methods
-	this.canvas.style.display = "inline-block";
-	this.canvas.style.width = "100%";
-	this.canvas.width = this.canvas.offsetWidth - 16;
-	this.canvas.height = window.innerHeight - 150;
-
-	if(this.initGL() !== 0) {
-	    var theWindow = window.open(
-		"GLerror.php", 
-		"",
-		"height=110,width=220,location=no,scrollbars=no");
-	    theWindow.focus();
-	    return;
-	}
-
-	this.shader_source = new GLshader;
-
-	this.gl.shader = this.gl.createProgram();
-	this.gl.shader_ball = this.gl.createProgram();
-	this.gl.shader_frame = this.gl.createProgram();
-	this.gl.shader_color = this.gl.createProgram();
-	this.gl.shader_canvas = this.gl.createProgram();
-	if(this.initShaders(this.gl.shader, 
-			    "default", 
-			    "default") !== 0 ||
-	   this.initShaders(this.gl.shader_frame, 
-			    "frame", 
-			    "default") !== 0 ||
-	   this.initShaders(this.gl.shader_ball, 
-			    "ball", 
-			    "default") !== 0 ||
-	   this.initShaders(this.gl.shader_canvas, 
-			    "canvas", 
-			    "default") !== 0 ||
-	   this.initShaders(this.gl.shader_color, 
-			    "color", 
-			    "color") !== 0) {
-	    var theWindow = window.open(
-		"GLerror_shader.php", 
-		"",
-		"height=110,width=250,location=no,scrollbars=no");
-	    theWindow.focus();
-	    return;
-	}
-	this.gl.useProgram(this.gl.shader);
-	    document.getElementById("glcanvas_status").innerHTML = 
-	    "Shaders compiled.</br>";
-
-	// Get rid of unused JS  memory
-	this.shader_source.cleanup();
-
-	theMatrix.viewInit();
-	this.objects = [];
-	priveledgedMode.reset();
-	mazeMode = 0;
-
-    theMatrix.perspective(zoom.val,
-			  this.canvas.clientWidth / 
-			  Math.max(1, this.canvas.clientHeight),
-			  0.1, 300000.0);
-
-	// Instantiate models
-	this.createScene(theScene);
-
-	// Instantiate any framebuffers created
-	for(var i = 0; i < this.frames.length; ++i) {
-	    this.frames[i].init(this.gl);
-	}
-
-	if(textures_loading !== 0) 
-	    document.getElementById("glcanvas_status").innerHTML += 
-	    "" + textures_loading + " textures.</br>";
-	this.bufferModels();
-
-	// Set background color, clear everything, and
-	//  enable depth testing
-	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
-	this.gl.clearDepth(1.0);
-	this.gl.enable(this.gl.DEPTH_TEST);
-	
-	// Set up to draw the scene periodically.
-	document.onmousedown = handleMouseDown;
-	document.onmouseup = handleMouseUp;
-	document.onmousemove = handleMouseMove;
-	document.onkeydown = handleKeyDown;
-    } else {
-	// If we have started GL already, 
-	//  just add the new model.
-	this.createScene(theScene);
-	this.bufferModels();
-    }
-    // After the scene is complete, see if we have textures to load..?
-    // If not, let's draw right away
-    if(textures_loading === 0) this.done_loading(1500);
-
-};
-
-
 GLcanvas.prototype.done_loading = function(timeout) { 
     // Wait 1.5 seconds for no reason
     setTimeout(tick,timeout); 
 };
-
 
 /*
  * Initialize WebGL, returning the GL context or null if
@@ -365,6 +363,8 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lMatU"); // Lighting matrix
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
+
+    gl_shader.is_active = false;
     
     return 0;
 };
@@ -386,15 +386,20 @@ GLcanvas.prototype.initAttribute = function(gl_shader, attr) {
 
 GLcanvas.prototype.changeShader = function(new_shader) {
 
-    var old_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
+
+
+    this.gl.curr_shader = this.gl.getParameter(this.gl.CURRENT_PROGRAM);
 //    if(old_shader === new_shader) return;
 
-    this.disableAttribute(old_shader, "vPosA");
-    this.disableAttribute(old_shader, "vNormA");
-    this.disableAttribute(old_shader, "vColA");
-    this.disableAttribute(old_shader, "textureA");
+    this.disableAttribute(this.gl.curr_shader, "vPosA");
+    this.disableAttribute(this.gl.curr_shader, "vNormA");
+    this.disableAttribute(this.gl.curr_shader, "vColA");
+    this.disableAttribute(this.gl.curr_shader, "textureA");
+    this.gl.useProgram(this.gl.curr_shader);
 
-    this.gl.useProgram(new_shader);
+    this.gl.curr_shader.is_active = false;
+    this.gl.curr_shader = new_shader;
+    this.gl.curr_shader.is_active = true;
 };
 
 GLcanvas.prototype.initUniform = function(gl_shader, uni) {

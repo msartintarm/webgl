@@ -4,7 +4,7 @@ b d
 */
 function Quad(a, b, c, d) { 
     this.o = new GLobject();
-    this.indexPos = 0;
+    this.indexed = false;
 
     this.o.addPosVec(a);
     this.o.addPosVec(b);   
@@ -22,13 +22,9 @@ function Quad(a, b, c, d) {
 	this.o.addColors(0.2, 0.5, 0.7);
     }
 
-    this.o.addQuadIndexes(
-	this.indexPos,
-	this.indexPos + 2);
-    this.indexPos += 4;
-  
+    this.o.addQuadIndexes(0, 2);
+    return this;
 }
-
 
 Quad.prototype.invertNorms = _oInvertNorms;
 
@@ -101,33 +97,60 @@ Quad.prototype.setStringTexture = function(texture, val) {
     var x_dist_8 = 0.096;
     var x_dist_9 = 0.096;
     var offset = 0.06;
-
-    if(val==0)
-	this.o.initTextures([x_dist,0.0],[x_dist,1.0],[offset,0.0],[offset,1.0]);
-    else if(val==1)
-	this.o.initTextures([2*x_dist,0.0],[2*x_dist,1.0],[x_dist,0.0],[x_dist,1.0]);
-    else if(val==2)
-	this.o.initTextures([3*x_dist_2,0.0],[3*x_dist_2,1.0],[2*x_dist_2,0.0],[2*x_dist_2,1.0]);
-    else if(val==3)
-	this.o.initTextures([4*x_dist_3,0.0],[4*x_dist_3,1.0],[3*x_dist_3,0.0],[3*x_dist_3,1.0]);
-    else if(val==4)
-	this.o.initTextures([5*x_dist_4,0.0],[5*x_dist_4,1.0],[4*x_dist_4,0.0],[4*x_dist_4,1.0]);
-    else if(val==5)
-	this.o.initTextures([6*x_dist_4,0.0],[6*x_dist_4,1.0],[5*x_dist_4,0.0],[5*x_dist_4,1.0]);
-    else if(val==6)
-	this.o.initTextures([7*x_dist_6,0.0],[7*x_dist_6,1.0],[6*x_dist_6,0.0],[6*x_dist_6,1.0]);
-    else if(val==7)
-	this.o.initTextures([8*x_dist_7,0.0],[8*x_dist_7,1.0],[7*x_dist_7,0.0],[7*x_dist_7,1.0]);
-    else if(val==8)
-	this.o.initTextures([9*x_dist_8,0.0],[9*x_dist_8,1.0],[8*x_dist_8,0.0],[8*x_dist_8,1.0]);
-    else if(val==9)
-	this.o.initTextures([10*x_dist_9,0.0],[10*x_dist_9,1.0],[9*x_dist_9,0.0],[9*x_dist_9,1.0]);
     
+    if(val==0) this.o.initTextures([x_dist,0.0], [x_dist,1.0],
+				   [offset,0.0], [offset,1.0]);
+    else if(val==1) this.o.initTextures([2*x_dist,0.0], [2*x_dist,1.0],
+					[x_dist,0.0], [x_dist,1.0]);
+    else if(val==2) this.o.initTextures([3*x_dist_2,0.0], [3*x_dist_2,1.0],
+					[2*x_dist_2,0.0], [2*x_dist_2,1.0]);
+    else if(val==3) this.o.initTextures([4*x_dist_3,0.0], [4*x_dist_3,1.0],
+					[3*x_dist_3,0.0], [3*x_dist_3,1.0]);
+    else if(val==4) this.o.initTextures([5*x_dist_4,0.0], [5*x_dist_4,1.0],
+					[4*x_dist_4,0.0], [4*x_dist_4,1.0]);
+    else if(val==5) this.o.initTextures([6*x_dist_4,0.0], [6*x_dist_4,1.0],
+					[5*x_dist_4,0.0], [5*x_dist_4,1.0]);
+    else if(val==6) this.o.initTextures([7*x_dist_6,0.0], [7*x_dist_6,1.0],
+					[6*x_dist_6,0.0], [6*x_dist_6,1.0]);
+    else if(val==7) this.o.initTextures([8*x_dist_7,0.0], [8*x_dist_7,1.0],
+					[7*x_dist_7,0.0], [7*x_dist_7,1.0]);
+    else if(val==8) this.o.initTextures([9*x_dist_8,0.0], [9*x_dist_8,1.0],
+					[8*x_dist_8,0.0], [8*x_dist_8,1.0]);
+    else if(val==9) this.o.initTextures([10*x_dist_9,0.0], [10*x_dist_9,1.0],
+					[9*x_dist_9,0.0],[9*x_dist_9,1.0]);
     return this;
-}
-
+};
 
 Quad.prototype.initBuffers = _oInitBuffers;
+
+/*
+ * If the attributes for a quad don't change, stitch them together
+ * It is assumed calling function will delete quad
+ */
+Quad.prototype.joinQuad = function(one_quad) {
+
+    var attribs = [];
+    attribs.push('norm');
+    attribs.push('pos');
+    attribs.push('col');
+    attribs.push('index');
+    attribs.push('tex');
+    for(var i = 0; i < attribs.length; ++i) {
+	
+	var data1 = one_quad.o.data[attribs[i]];
+	var data2 = this.o.data[attribs[i]];
+	
+	// must set above because these attributes will be changing
+	var begin_index = data2.length;
+	var array_size = data1.length;
+	
+	for(var j = 0; j < array_size; ++j) {
+	    data2.push(data1[j]);
+	}
+//	alert(begin_index + "," + array_size);
+    }
+};
+
 Quad.prototype.scale = _oScale;
 Quad.prototype.rotatePos = _oRotatePos;
 Quad.prototype.rotateNeg = _oRotateNeg;

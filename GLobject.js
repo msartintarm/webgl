@@ -139,6 +139,7 @@ GLobject.prototype.initTextures = function(at, bt, ct, dt) {
     this.addTexture(bt[0], bt[1]);
     this.addTexture(ct[0], ct[1]); 
     this.addTexture(dt[0], dt[1]);
+    return this;
 };
 
 /**

@@ -25,7 +25,7 @@ function Jumbotron() {
 
     this.translateVec = [0,0,0];
     this.numberBalls = document.getElementById("stadium_balls").value;
-    this.display = new GLstring("Balls count: " + this.numberBalls, TEXT_TEXTURE3);
+    this.display = new GLstring("Balls left: " + this.numberBalls, TEXT_TEXTURE3);
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);

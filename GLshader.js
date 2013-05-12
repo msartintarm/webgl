@@ -154,6 +154,9 @@ void colorTexture(sampler2D theSampler) {\n\
 }\n\
 \n\
 void main(void) {\n\
+  if(dot(normalize(vertNorm), vec3(0.0, 0.0, 1.0)) < 0.0) {  \n\
+    discard;                                                 \n\
+  }                                                          \n\
 \n\
   if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
@@ -269,29 +272,29 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
 
     this.vertex["default"] = "\
 void main(void) {\n\
-                                                    \n\
-// Viewing space coordinates of light / vertex      \n\
-vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;   \n\
-lModel = vMatU * lMatU * vec4(lightPosU, 1.0);      \n\
-                        \n\
-  // -- Position -- //  \n\
-                        \n\
-  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);\n\
+                  // -- Position -- //                    \n\
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0); \n\
+                                                          \n\
+// Viewing space coordinates of light / vertex            \n\
+  vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;       \n\
+  lModel = vMatU * lMatU * vec4(lightPosU, 1.0);          \n\
 \n\
-  // -- Lighting -- //\n\
 \n\
-  // Ambient components we'll leave until frag shader\n\
-  colorV = vColA;\n\
-  textureV = textureA;\n\
+                  // -- Lighting -- //                    \n\
 \n\
-  // Diffuse component\n\
-  distanceV = lModel.xyz - vModel.xyz;\n\
-  lightNorm = normalize(distanceV);\n\
+  distanceV = lModel.xyz - vModel.xyz;                    \n\
+  lightNorm = normalize(distanceV);                       \n\
+  vertNorm = (nMatU * vec4(vNormA,1.0)).xyz;              \n\
 \n\
-  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);\n\
-  diffuseV = dot(vertNorm, lightNorm);\n\
-  if (diffuseV < 0.0) { diffuseV = 0.0; }\n\
-}       \n\
+  // Ambient components we'll leave until frag shader     \n\
+  colorV = vColA;                                         \n\
+  textureV = textureA;                                    \n\
+  // Diffuse component                                    \n\
+  diffuseV = dot(vertNorm, lightNorm);                    \n\
+  if (diffuseV < 0.0) { diffuseV = 0.0; }                 \n\
+\n\
+}                                                         \n\
+\n\
 ";
 }    
 

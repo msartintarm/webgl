@@ -56,16 +56,9 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
     b = vec3.fromValues(-this.size/2, 0,-this.size/2);
     c = vec3.fromValues( this.size/2, 0, this.size/2);
     d = vec3.fromValues( this.size/2, 0,-this.size/2);
-    this.qFloor = this.Quad(a, b, c, d).setTexture(TILE_TEXTURE);
+    this.qFloor = new Quad(a, b, c, d);
+    this.qFloor.setTexture(TILE_TEXTURE);
 
- /*
-   It gets a little confusing in here.  We never share walls, so to preserve
-   the coordinate space the walls go from 8.5 to 11.5 (length of 3) expanding
-   off of its coordinate space to another.  Since two quads are never stamped
-   out on top of each other this gives the apperance of sharing walls.  When
-   you see lengths of 11.4 that is to give the long wall texture preference
-   over the short edge(looks crappy) when those conflicts do occur.
-*/
     if(this.f || this.fM){ 
 	this.qFront = this.FrontWall(this.ft, this.fM,
 		     sbX_, sh_, sbZ_, sbW_); }
@@ -83,8 +76,6 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
 	this.south = sbZ_ - 31;	
     if(this.lM)
 	this.west = -(sbZ_ - 31);
-
-    // Bounds - N, S, W, and E - are created within as well.
 }
 
 /**
@@ -164,6 +155,8 @@ StadiumPiece.prototype.BackWall = function(texture, move,
 };
 
 StadiumPiece.prototype.initBuffers = function(gl_){
+    if(this.qFloor !== null) 
+	this.qFloor.initBuffers(gl_);
 
     var i;
     for(i = 0; i < this.objs.length; ++i) {
@@ -186,6 +179,8 @@ StadiumPiece.prototype.initBuffers = function(gl_){
  *  accordingly.
  */
 StadiumPiece.prototype.translate = function(vec_) {
+
+    this.qFloor.translate(vec_);
 
     var i;
     for(i = 0; i < this.objs.length; ++i) {
@@ -358,6 +353,9 @@ StadiumPiece.prototype.ballPositionLegal = function(currentPosition, newPosition
 StadiumPiece.prototype.draw = function(gl_) {
 
     var i;
+
+    if(this.qFloor !== null) 
+	this.qFloor.draw(gl_);
 
     for(i = 0; i < this.objs.length; ++i) {
 	this.objs[i].draw(gl_);

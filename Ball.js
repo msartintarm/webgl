@@ -1,3 +1,7 @@
+Ball.sphere = -1;
+Ball.half_sphere = -1;
+Ball.textQuad = [];
+
 function Ball(position, numBalls, texture_num) {
 //    this.velocity;
 //    this.position;
@@ -6,9 +10,21 @@ function Ball(position, numBalls, texture_num) {
     this.timeLeft = 100;
     this.hit = false;
 
-    this.sphere = new Sphere(this.radius);
-    this.sphere.setTexture(HELL_TEXTURE);
-    this.sphere.setShader(theCanvas.gl.shader_ball);
+    if(Ball.sphere === -1) {
+	Ball.sphere = new Sphere(this.radius);
+	Ball.sphere.setShader(theCanvas.gl.shader_ball);
+	Ball.half_sphere = new Sphere(this.radius);
+	Ball.half_sphere.setShader(theCanvas.gl.shader_ball);
+    
+	for(var i=0; i<10; i++){
+	    Ball.textQuad[i] = new Quad([0,60,10],
+					[0,30,10],
+					[0,60,-10],
+					[0,30,-10]);
+	    Ball.textQuad[i].setStringTexture(texture_num, i);
+//	this.textQuad[i].setShader(theCanvas.gl.shader_canvas);
+	}
+    }
 
     this.frozenTime = 0;
     this.timer = 0;
@@ -22,17 +38,6 @@ function Ball(position, numBalls, texture_num) {
     //array of quads, then change to coordinates of the texture
     //all set the same texture but the coorinates being picked off in the texture
     //will change.
-    
-    this.textQuad = [];
-    
-    for(var i=0; i<10; i++){
-	this.textQuad[i] = new Quad([0,60,10],
-				    [0,30,10],
-				    [0,60,-10],
-				    [0,30,-10]);
-	this.textQuad[i].setStringTexture(texture_num, i);
-//	this.textQuad[i].setShader(theCanvas.gl.shader_canvas);
-    }
 	  
     this.position = vec3.fromValues(50,this.radius,-50);
     this.init = true;
@@ -64,11 +69,16 @@ Ball.prototype.initBalls = function(){
 	this.position[1] = this.radius;
     }
 }
+
+Ball.initialized = false;
 Ball.prototype.initBuffers = function (gl_){
-    this.sphere.initBuffers(gl_);
-    for(var i=0; i<10; i++){
-	this.textQuad[i].initBuffers(gl_);
-    }
+    if(Ball.initialized === false) {
+	Ball.initialized = true;
+	Ball.sphere.initBuffers(gl_);
+	for(var i=0; i<10; i++){
+	    Ball.textQuad[i].initBuffers(gl_);
+	}
+    }	
 }
 
 Ball.prototype.getRotationAngle= function (viewerPos){
@@ -103,18 +113,18 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
     theMatrix.rotate(this.ballRotationAngle, [0,1,0]);
-    this.sphere.draw(gl_);
+    Ball.sphere.draw(gl_);
 
     //center quad
-    this.textQuad[this.tens].draw(gl_);
+    Ball.textQuad[this.tens].draw(gl_);
 
     //right quad
     theMatrix.translate([0,0,20]);
-    this.textQuad[this.ones].draw(gl_);
+    Ball.textQuad[this.ones].draw(gl_);
 
     //left quad
     theMatrix.translate([0,0,-40]);
-    this.textQuad[this.hundreds].draw(gl_);
+    Ball.textQuad[this.hundreds].draw(gl_);
 
     theMatrix.pop();
 }
@@ -155,7 +165,7 @@ Ball.prototype.drawAgain = function(gl_) {
 
     theMatrix.push();
     theMatrix.translate([this.position[0],this.position[1],this.position[2]]);
-    this.sphere.drawAgain(gl_);
+    Ball.sphere.drawAgain(gl_);
     theMatrix.pop();
 }
 
