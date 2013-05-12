@@ -380,10 +380,11 @@ GLmatrix.prototype.jump = function() {
     var is_front = (the_angle > 0);
     if(the_angle !== 0) the_angle = Math.acos(the_angle);
 
-    var is_left = (vec3.dot(jumbo_dir, left_dir) < 0);
+    // compensate for the range of arccos
+    var is_left = (vec3.dot(jumbo_dir, left_dir) > 0);
+    if(!is_left) the_angle = -the_angle;
 
-
-    if(envDEBUG) {
+    if(envDEBUG_JUMP) {
 	console.log("current: " + vec3.str(curr_dir));
 	console.log("viewer: " + vec4.str(viewer_pos));
 	console.log("jumbo:   " + vec3.str(jumbo_dir));
@@ -391,18 +392,12 @@ GLmatrix.prototype.jump = function() {
 	else console.log("jumbotron is FRONT.");
 	if (!is_left) console.log("jumbotron is RIGHT.");
 	else console.log("jumbotron is LEFT.");
-//	if(the_angle < 0) the_angle = -the_angle;
 	console.log("angle:   " + the_angle + " degrees");
     }
 
-    // One final check: see whether we should go LEFT or RIGHT.
-    // Basically check the sign of the X-axis dot product.
-//    if(jumbo_dir[0] < 0) the_angle = -the_angle;
-
-    if(envDEBUG) console.log("relative jumbo direction:   " + vec3.str(jumbo_dir));
-
     this.jump_rotation = the_angle;
 
+    // must be symmetrical
     this.up3 = 2;
     this.up2 = 8;
     this.up1 = 16;

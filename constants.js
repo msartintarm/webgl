@@ -41,6 +41,7 @@ const FRONT_LEFT = FRONT | LEFT;
 
 // -- Environment Variables -- //
 const envDEBUG = true;
+const envDEBUG_JUMP = true;
 
 //-- Bakk shader variables -- //
 //Code for the special ball shader was taken from 
