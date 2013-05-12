@@ -440,6 +440,8 @@ GLmatrix.prototype.update = function() {
 	StadiumInitSeqNum = 4;
     }
 
+    if(GLobject.has_collided > 0) GLobject.has_collided --;
+
     const x = 50.0;
     if(this.inJump === false) {
 	this.gradualMove();

@@ -362,6 +362,7 @@ var click_y = null;
 var mouse_movement = false;
 
 function handleMouseDown(event) {
+    GLobject.has_collided += 3;
     if(!stadiumMode || (stadiumMode && StadiumInitSeqNum == 4 && !freeze)){
 
 	mouse_movement = !mouse_movement;
