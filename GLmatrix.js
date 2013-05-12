@@ -342,14 +342,72 @@ GLmatrix.prototype.gradualRotate = function() {
 
 /*
  * Jumps upwards, and rotates the user towards the Jumbotron
+ * Pretends the viewer and Jumbotron are on the same axis
  */
 GLmatrix.prototype.jump = function() {
 
-//    this.jumboScreen.translate([2640,1500,-2640]);
+    if(this.inJump === true) return;
+    this.inJump = true;
+
+    // determine view vectors by transposing the known direction: (0,0,-1)
+    // we also need the LHS (-1,0,0) to see if the angle is less than 0.
+
+    var viewer_pos = vec4.fromValues(0, 0, 0, 1);
+    var curr_dir = vec4.fromValues(0, 0,-1, 1);
+    var left_dir = vec4.fromValues(-1, 0, 0, 1);
+    // this is actually where the Jumbotron would be if it were on ground
+    var jumbo_dir = vec3.fromValues(2640, 0, -2640);
+
+    // calc current positions
+    vec4.transformMat4(viewer_pos, viewer_pos, theMatrix.vMatrix);
+    vec4.transformMat4(curr_dir, curr_dir, theMatrix.vMatrix);
+    vec4.transformMat4(left_dir, left_dir, theMatrix.vMatrix);
+    viewer_pos[1] = 0;
+    curr_dir[1] = 0;
+    left_dir[1] = 0;
+
+    // calc current directions
+
+    vec3.sub(curr_dir, curr_dir, viewer_pos);
+    vec3.sub(jumbo_dir, jumbo_dir, viewer_pos);
+    vec3.sub(left_dir, left_dir, viewer_pos);
+    vec3.normalize(curr_dir, curr_dir);
+    vec3.normalize(jumbo_dir, jumbo_dir);
+    vec3.normalize(left_dir, left_dir);
+
+    // find angle from dot product
+    var the_angle = vec3.dot(jumbo_dir, curr_dir);
+    var is_front = (the_angle > 0);
+    if(the_angle !== 0) the_angle = Math.acos(the_angle);
+
+    var is_left = (vec3.dot(jumbo_dir, left_dir) < 0);
+
+
+    if(envDEBUG) {
+	console.log("current: " + vec3.str(curr_dir));
+	console.log("viewer: " + vec4.str(viewer_pos));
+	console.log("jumbo:   " + vec3.str(jumbo_dir));
+	if (!is_front) console.log("jumbotron is BACK.");
+	else console.log("jumbotron is FRONT.");
+	if (!is_left) console.log("jumbotron is RIGHT.");
+	else console.log("jumbotron is LEFT.");
+//	if(the_angle < 0) the_angle = -the_angle;
+	console.log("angle:   " + the_angle + " degrees");
+    }
+
+    // One final check: see whether we should go LEFT or RIGHT.
+    // Basically check the sign of the X-axis dot product.
+//    if(jumbo_dir[0] < 0) the_angle = -the_angle;
+
+    if(envDEBUG) console.log("relative jumbo direction:   " + vec3.str(jumbo_dir));
+
+    this.jump_rotation = the_angle;
 
     this.up3 = 2;
     this.up2 = 8;
     this.up1 = 16;
+    this.up0 = 5;
+    this.dn0 = 5;
     this.dn1 = 16;
     this.dn2 = 8;
     this.dn3 = 2;
@@ -407,24 +465,36 @@ GLmatrix.prototype.update = function() {
     if(this.up3 >= 0) { 
 	this.vTranslate([0, 3*x, 0]); 
 	this.vRotate(Math.PI/64,[-1, 0, 0]); 
+	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
 	this.up3--;
     } else if(this.up2 >= 0) { 
 	this.vTranslate([0, 2*x, 0]); 
 	this.vRotate(Math.PI/128,[-1, 0, 0]); 
+	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
 	this.up2--;
     } else if(this.up1 >= 0) {
 	this.vTranslate([0, 1*x, 0]); 
 	this.vRotate(Math.PI/256,[-1, 0, 0]); 
+	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
 	this.up1--; 
+    } else if(this.up0 >= 0) {
+	this.vRotate(this.jump_rotation / 100, [0, 1, 0]);
+	this.up0--; 
+    } else if(this.dn0 >= 0) { 
+	this.vRotate(this.jump_rotation / 100, [0,-1, 0]);
+	this.dn0--;
     } else if(this.dn1 >= 0) { 
+	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
 	this.vRotate(Math.PI/256,[1, 0, 0]); 
 	this.vTranslate([0,-1*x, 0]);
 	this.dn1--;
     } else if(this.dn2 >= 0) {
+	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
 	this.vRotate(Math.PI/128,[1, 0, 0]); 
 	this.vTranslate([0,-2*x, 0]);
 	this.dn2--;
     } else if(this.dn3 >= 0) {
+	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
 	this.vRotate(Math.PI/64,[1, 0, 0]); 
 	this.vTranslate([0,-3*x, 0]);
 	this.dn3--;

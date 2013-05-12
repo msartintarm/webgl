@@ -105,16 +105,17 @@ Ball.prototype.draw = function(gl_) {
     theMatrix.rotate(this.ballRotationAngle, [0,1,0]);
     this.sphere.draw(gl_);
 
-    //center quad
-    this.textQuad[this.tens].draw(gl_);
 
-    //right quad
-    theMatrix.translate([0,0,20]);
-    this.textQuad[this.ones].draw(gl_);
-
-    //left quad
-    theMatrix.translate([0,0,-40]);
-    this.textQuad[this.hundreds].draw(gl_);
+    if(this.ones !== 0 || this.tens !== 0 || this.hundreds !== 0) {
+	//center quad
+	this.textQuad[this.tens].draw(gl_);
+	//right quad
+	theMatrix.translate([0,0,20]);
+	this.textQuad[this.ones].draw(gl_);
+	//left quad
+	theMatrix.translate([0,0,-40]);
+	this.textQuad[this.hundreds].draw(gl_);
+    }
 
     theMatrix.pop();
 }

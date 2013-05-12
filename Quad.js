@@ -4,7 +4,6 @@ b d
 */
 function Quad(a, b, c, d) { 
     this.o = new GLobject();
-    this.indexPos = 0;
 
     this.o.addPosVec(a);
     this.o.addPosVec(b);   
@@ -22,11 +21,8 @@ function Quad(a, b, c, d) {
 	this.o.addColors(0.2, 0.5, 0.7);
     }
 
-    this.o.addQuadIndexes(
-	this.indexPos,
-	this.indexPos + 2);
-    this.indexPos += 4;
-  
+    this.o.addQuadIndexes(0, 2);
+    return this;
 }
 
 
@@ -124,7 +120,7 @@ Quad.prototype.setStringTexture = function(texture, val) {
 	this.o.initTextures([10*x_dist_9,0.0],[10*x_dist_9,1.0],[9*x_dist_9,0.0],[9*x_dist_9,1.0]);
     
     return this;
-}
+};
 
 
 Quad.prototype.initBuffers = _oInitBuffers;

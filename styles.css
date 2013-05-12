@@ -101,6 +101,7 @@ div#stadium_params {
     font-variant: small-caps;
     text-align: left;
     margin-left: 20px;
+    font-size: 20px;
 }
 
 input.stadium_input {

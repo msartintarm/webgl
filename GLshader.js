@@ -50,12 +50,13 @@ uniform sampler2D sampler10;\n\
 \n\
 //Specular function\n\
 float specular() {\n\
-    vec3 reflectionV2 = (normalize(vertNorm) * diffuseV *\n\
-		 2.0) - lightNorm;\n\
-    vec3 viewer = vec3(0.,0.,0.);\n\
+\n\
+    vec3 reflectionV2 = reflect(normalize(lightNorm), normalize(vertNorm));\n\
+\n\
+\n\
 float specularV2 = dot(normalize(reflectionV2), \n\
-                    normalize(viewer - vModel.xyz));\n\
-    if (specularV2 <= 0. || diffuseV <= 0.) { specularV2 = 0.0; }\n\
+                    normalize(vModel.xyz));\n\
+    if (specularV2 <= 0.) { specularV2 = 0.0; }\n\
     specularV2 = specularV2 * specularV2;\n\
     specularV2 = specularV2 * specularV2;\n\
     specularV2 = specularV2 * specularV2;\n\
@@ -154,7 +155,8 @@ void colorTexture(sampler2D theSampler) {\n\
 }\n\
 \n\
 void main(void) {\n\
-\n\
+//  if(dot(normalize(vertNorm), vec3(0.0, 0.0,-1.0)) < 0.0) {  \n\
+//    discard; \n\
   if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
@@ -174,7 +176,7 @@ void main(void) {\n\
     this.fragment["frame"] = "\
 void main(void) {\n\
 \n\
-  gl_FragColor = vec4(colorV, 1.0);\n\
+  gl_FragColor = vec4(colorV * specular(), 1.0);\n\
 }\n\
 ";
 
@@ -206,7 +208,9 @@ vec4 getFilterEffect(sampler2D theSampler) {\n\
        if (kernelWeight <= 0.0) {\n\
           kernelWeight = 1.0;\n\
        }\n\
-       return vec4((blurColor / kernelWeight).rgb, 1.0);\n\
+       vec3 new_vec = (blurColor / kernelWeight).rgb;\n\
+       vec3 specularVec = new_vec * 4.0 * specular();\n\
+       return vec4(new_vec + specularVec, 1.0);\n\
 }\n\
 \n\
 \n\
@@ -269,29 +273,28 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
 
     this.vertex["default"] = "\
 void main(void) {\n\
-                                                    \n\
-// Viewing space coordinates of light / vertex      \n\
-vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;   \n\
-lModel = vMatU * lMatU * vec4(lightPosU, 1.0);      \n\
-                        \n\
-  // -- Position -- //  \n\
-                        \n\
-  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0);\n\
+                  // -- Position -- //                    \n\
+  gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0); \n\
+                                                          \n\
+// Viewing space coordinates of light / vertex            \n\
+  vModel = (vMatU * mMatU  * vec4(vPosA, 1.0)).xyz;       \n\
+  lModel = vMatU * lMatU * vec4(lightPosU, 1.0);          \n\
 \n\
-  // -- Lighting -- //\n\
 \n\
-  // Ambient components we'll leave until frag shader\n\
-  colorV = vColA;\n\
-  textureV = textureA;\n\
+                  // -- Lighting -- //                    \n\
+  distanceV = lModel.xyz - vModel.xyz;                    \n\
+  lightNorm = normalize(distanceV);                       \n\
+  vertNorm = (nMatU * vec4(vNormA,1.0)).xyz;              \n\
 \n\
-  // Diffuse component\n\
-  distanceV = lModel.xyz - vModel.xyz;\n\
-  lightNorm = normalize(distanceV);\n\
+  // Ambient components we'll leave until frag shader     \n\
+  colorV = vColA;                                         \n\
+  textureV = textureA;                                    \n\
+  // Diffuse component                                    \n\
+  diffuseV = dot(vertNorm, lightNorm);                    \n\
+  if (diffuseV < 0.0) { diffuseV = 0.0; }                 \n\
 \n\
-  vertNorm = normalize((nMatU * vec4(vNormA,1.0)).xyz);\n\
-  diffuseV = dot(vertNorm, lightNorm);\n\
-  if (diffuseV < 0.0) { diffuseV = 0.0; }\n\
-}       \n\
+}                                                         \n\
+\n\
 ";
 }    
 
