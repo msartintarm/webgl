@@ -50,7 +50,7 @@ GLcanvas.prototype.createScene = function(objToDraw) {
     stadiumMode = 0;
 
     if(objToDraw == "cylinder") {
-	this.objects.push(new Cylinder(1, 4, 5, 150, 150));
+	this.objects.push(new Cylinder(1, 4, 5, 8, 3));
     } else if(objToDraw == "sphere") {
 	this.objects.push(new Sphere(2));
     } else if(objToDraw == "skybox") {
@@ -365,6 +365,10 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initUniform(gl_shader, "lMatU"); // Lighting matrix
     this.initUniform(gl_shader, "lightPosU"); // Initial light's position
     this.initUniform(gl_shader, "textureNumU");
+
+    for(var i_ = 0; i_ < 11; ++i_) {
+	this.initUniform(gl_shader, "sampler" + i_);
+    }
     
     return 0;
 };
