@@ -10,15 +10,16 @@ function Ball(position, numBalls, texture_num) {
     this.sphere.setTexture(HELL_TEXTURE);
     this.sphere.setShader(theCanvas.gl.shader_ball);
 
-    this.frozenTime = 0;
-    this.timer = 0;
-    this.hundreds = 0;
-    this.tens = 0;
-    this.ones = 0;
-    this.birthTime = 0;
+    this.frozenTime = 0; //time spent paused
+    this.timer = 0; //timer value for ball
+    this.hundreds = 0; //digit above ball
+    this.tens = 0; //digit above ball
+    this.ones = 0; //digit above ball
+    this.birthTime = 0; //timing purposes
     this.numberBalls = numBalls;
-    this.localFrame = 0;
-    this.gameOver = false;
+    this.localFrame = 0; 
+    this.gameOver = false; //flag for ball indicated game over
+    this.timeStep = 0; //counter for cosine function on init
     //array of quads, then change to coordinates of the texture
     //all set the same texture but the coorinates being picked off in the texture
     //will change.
@@ -34,34 +35,46 @@ function Ball(position, numBalls, texture_num) {
 //	this.textQuad[i].setShader(theCanvas.gl.shader_canvas);
     }
 	  
-    this.position = vec3.fromValues(50,this.radius,-50);
-    this.init = true;
-    this.velocityVec = vec3.create();
-    this.velocity = 0;
+    this.position = vec3.fromValues(50,this.radius,-50); //ball position
+    this.init = true; //flag to tell when init fly is over
+    this.velocityVec = vec3.create(); //direction of velocity 
+    this.velocity = 0; //velocity value
     vec3.normalize(this.velocityVec, vec3.fromValues(position[0],position[1],position[2]));
-    this.startPosition = position;
-    this.oldPosition = position;
-    this.ballCollide = false;
-    this.ballRotationAngle = Math.PI/4;
+    this.startPosition = position; //starting position
+    this.oldPosition = position; //variable needed for collision detection
+    this.ballCollide = false; //ball has hit another ball
+    this.ballRotationAngle = Math.PI/4; //to rotate towards the viewer
 }
 
-var timeStep = 0;
+//Runs the init sequence and the drop down boucning for the balls at the beginning.
 Ball.prototype.initBalls = function(){
     var y_position = ( ((Math.abs(this.position[0]-this.startPosition[0]))/5) *
-	Math.abs(Math.cos(timeStep/(300*Math.PI)))) + this.radius;
+	Math.abs(Math.cos(this.timeStep/(10*Math.PI)))) + this.radius;
 
-    timeStep++;
+    this.timeStep++;
 
-    if(Math.abs(this.position[0]-this.startPosition[0]) +
-       Math.abs(this.position[2] < this.startPosition[2]) > 50){
-
+    //find out if we are close enough to our final ball resting place
+    var distToStartPosition = vec2.distance(
+	    vec2.fromValues(this.position[0],this.position[2]),
+	    vec2.fromValues(this.startPosition[0],this.startPosition[2]));
+    if(distToStartPosition > 50.0){
+	//update fly in positions
 	this.position[1] = Math.abs(y_position);
 	this.position[0] += this.velocityVec[0]*20;
 	this.position[2] += this.velocityVec[2]*20;
     }
     else{
-	this.init = false;
+	//Ball is placed.  Make sure the y position is on 
+	//the ground where it should be
+
+	//make sure we have moved far enough in to start drop
+	//will just keep checking here until we are good
+	if(this.timeStep > 250)
+	    this.init = false;
+
+	this.position[0] = this.startPosition[0];
 	this.position[1] = this.radius;
+	this.position[2] = this.startPosition[2];
     }
 }
 Ball.prototype.initBuffers = function (gl_){

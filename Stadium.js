@@ -1,12 +1,12 @@
-var stadiumInit;
 
+var ballInitSeqOver; //signals to GLmatrix when all the balls are in place
 var frame_draw = false;
 
 function Stadium() {  
 
     moveDist = 100.1;
     lookDist = 1/15;
-    stadiumInit = 0;
+    ballInitSeqOver = false;
 
     this.gameStart = 0.0;
     //f b r l
@@ -55,7 +55,7 @@ function Stadium() {
 Stadium.prototype.initBuffers = function(gl_) {
 
     this.intro.initBuffers(gl_);
-    this.introScreen.initBuffers(gl_);
+    this.introScreen.initBuffers(gl_); 
     this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
@@ -132,7 +132,7 @@ Stadium.prototype.Field = function(){
 Stadium.prototype.draw = function(gl_) {
 
 
-    if(stadiumInit === 0)
+    if(ballInitSeqOver === false)
 	this.intro.draw(gl_);
 
     for(i = 0; i < this.balls.length; i++){
@@ -151,7 +151,6 @@ Stadium.prototype.updateStadium = function(){
     //this flag will tell us when we have a collision so that we 
     //do not encounter a deadlock type situation where both balls
     //are setting reflections on each other
-    var ballInitOver = true;
     var numBallsHit = 0;
     var gameOver = false;
     for(var i = 0; i<this.balls.length; i++){
@@ -175,8 +174,11 @@ Stadium.prototype.updateStadium = function(){
 	theWindow.focus();
     }
     
+    ballInitSeqOver = true;
     for(i = 0; i < this.balls.length; i++){
-	if(this.balls[i].init) ballInitOver = false;
+	//if one of the balls is still in init then we are as well
+	if(this.balls[i].init)
+	    ballInitSeqOver = false;
 	
 	//the game has ended let every ball know
 	if(gameOver)
@@ -221,10 +223,10 @@ Stadium.prototype.updateStadium = function(){
 	this.balls[i].update(this.gameStart);
 	
     }
-    if(ballInitOver && stadiumInit == 0){
-	stadiumInit = 1;
-    }
+
+    //when StadiumInitSeqNum === 3 the viewer has sucessfuly dropped into the maze
     if(StadiumInitSeqNum === 3){
+	console.log("%d num balls", this.numberBalls);
 	//priveledgedMode.toggle();
 	this.gameStart = Math.round(new Date().getTime()/1000);
 	console.log("gameStart %f", this.gameStart);

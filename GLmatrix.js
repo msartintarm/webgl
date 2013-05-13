@@ -89,11 +89,10 @@ GLmatrix.prototype.viewMaze = function() {
     this.vRotate(Math.PI, [0, 1, 0]);
 };
 
-var StadiumInitSeqNum;
+var StadiumInitSeqNum = 0;
 GLmatrix.prototype.viewStadium = function() {
     this.vTranslate([-1500,1000,1500]);
     this.vRotate(-Math.PI/4, [0, 1, 0]);
-    StadiumInitSeqNum = 0;
 };
 
 GLmatrix.prototype.translate = function(vector) {
@@ -281,6 +280,45 @@ GLmatrix.prototype.dropIn = function() {
     StadiumInitSeqNum = 2;
 };
 
+GLmatrix.prototype.runStadiumInit = function() {
+    /*
+      StadiumInitSeqNum === 0 
+             balls are still flying in to position
+      StadiumInitSeqNum === 1 
+             balls in position call dropIn function
+	     only call dropIn once but it runs 100 frames
+      StadiumInitSeqNum === 2
+             drop in has finished its 100 frames
+      StadiumInitSeqNum === 3
+              we are in place
+	      turn on priveledgedMode (collision detection only really
+	        as you can't move during init sequence anyways)
+      StadiumInitSeqNum == 4
+              init sequence has completed
+     */
+    if(stadiumMode && StadiumInitSeqNum === 0){
+	this.moveInToPlay();
+	//console.log("Made it to seq 1");
+	if(ballInitSeqOver === true)
+	    StadiumInitSeqNum = 1;
+    }
+    else if(stadiumMode && StadiumInitSeqNum === 1){
+	this.dropIn(); 
+	//console.log("Made it to seq 2");
+    }
+    else if(stadiumMode && StadiumInitSeqNum === 2){
+	if(moveCount === 0)
+	    StadiumInitSeqNum = 3;
+        //console.log("Made it to seq 3");
+    }
+    else if(stadiumMode && StadiumInitSeqNum === 3){
+	priveledgedMode.toggle();
+	StadiumInitSeqNum = 4;
+	//console.log("Made it to seq 4");
+    }
+}
+    
+
 /**
    Rotate between supported speed modes:
    0 = normal
@@ -420,24 +458,9 @@ GLmatrix.prototype.newViewAllowed = function() {
  * Input: amount of time to go up for x squares.
  */
 GLmatrix.prototype.update = function() {
-    if(stadiumMode===1)
+    if(stadiumMode===1){
+	this.runStadiumInit();
 	myStadium.updateStadium();
-
-    if(stadiumMode && StadiumInitSeqNum === 0){
-	this.moveInToPlay();
-	if(stadiumInit === 1)
-	    StadiumInitSeqNum = 1;
-    }
-    else if(stadiumMode && StadiumInitSeqNum === 1){
-	this.dropIn(); 
-    }
-    else if(stadiumMode && StadiumInitSeqNum === 2){
-	if(moveCount === 0)
-	    StadiumInitSeqNum = 3;
-    }
-    else if(stadiumMode && StadiumInitSeqNum === 3){
-	priveledgedMode.toggle();
-	StadiumInitSeqNum = 4;
     }
 
     if(GLobject.has_collided > 0) GLobject.has_collided --;

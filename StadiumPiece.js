@@ -363,8 +363,8 @@ StadiumPiece.prototype.draw = function(gl_) {
 	this.objs[i].draw(gl_);
     }
 
-    
-    if(stadiumInit == 1){
+    //after balls have dropped in start moving the walls (that move)
+    if(ballInitSeqOver === true){
 	if(frame_draw === false) { 
 	    //console.log("timeStep: %d", this.timeStep);
 	    this.y_positionEWMoving = 100*(Math.sin(this.timeStep/(2*Math.PI)))-100;
@@ -373,7 +373,7 @@ StadiumPiece.prototype.draw = function(gl_) {
 	    else this.timeStep += 0.1;
 	}
 	
-	if(this.y_positionEWMoving >= -125){
+	if(this.y_positionEWMoving >= -100){
 	    for(i = 0; i < this.objsMoveFront.length; ++i) {
 		//console.log("here2 %f", this.y_positionEWMoving);
 		theMatrix.push();
@@ -383,7 +383,7 @@ StadiumPiece.prototype.draw = function(gl_) {
 	    }
 	}
 	
-	if(this.y_positionNSMoving >= -125){
+	if(this.y_positionNSMoving >= -100){
 	    for(i = 0; i < this.objsMoveRight.length; ++i) {
 //		console.log("here3 %f", this.y_positionNSMoving);
 		theMatrix.push();
