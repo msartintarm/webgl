@@ -2,13 +2,27 @@
 var ballInitSeqOver; //signals to GLmatrix when all the balls are in place
 var frame_draw = false;
 
-function Stadium() {  
-
+function Stadium() {  
+    
     moveDist = 100.1;
     lookDist = 1/15;
     ballInitSeqOver = false;
-
+    
     this.gameStart = 0.0;
+
+    this.hit_sound = [];
+    
+    this.hit_sound[0] = new Audio("drums_1.wav");
+    this.hit_sound[0].load();
+    this.hit_sound[1] = new Audio("drums_2.wav");
+    this.hit_sound[1].load();
+    this.hit_sound[2] = new Audio("drums_3.wav");
+    this.hit_sound[2].load();
+    this.hit_sound[3] = new Audio("drums_4.wav");
+    this.hit_sound[3].load();
+    this.hit_sound[4] = new Audio("drums_5.wav");
+    this.hit_sound[4].load();
+    
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
@@ -25,9 +39,9 @@ function Stadium() {
     this.size = pieceLength;
     this.width = piecesPerSide;
 
-    this.introScreen = new GLstring(
+    this.intro_string = new GLstring(
 	"Welcome to our game, ", TEXT_TEXTURE, theCanvas.gl.shader_canvas);
-    this.introScreen2 = new GLstring(document.getElementById("stadium_name").value + ".",
+    this.intro_string2 = new GLstring(document.getElementById("stadium_name").value + ".",
 	TEXT_TEXTURE4, theCanvas.gl.shader_canvas);
     this.numbers = new GLstring("0 1 2 3 4 5 6 7 8 9", TEXT_TEXTURE2);
     this.jumboScreen = new Jumbotron();
@@ -38,7 +52,7 @@ function Stadium() {
 
     var dist = 300;
     var length = 80;
-    var height = 650;
+    var height = 600;
     var width = 50;
     this.intro2 = new Quad(
 	[-dist + length, height + width, dist + length],
@@ -65,9 +79,9 @@ function Stadium() {
 Stadium.prototype.initBuffers = function(gl_) {
 
     this.intro.initBuffers(gl_);
-    this.introScreen.initBuffers(gl_);
+    this.intro_string.initBuffers(gl_);
     this.intro2.initBuffers(gl_);
-    this.introScreen2.initBuffers(gl_);
+    this.intro_string2.initBuffers(gl_);
     this.numbers.initBuffers(gl_);
     for(var i=0; i < this.pieces.length; ++i){
 	this.pieces[i].initBuffers(gl_);
@@ -141,9 +155,20 @@ Stadium.prototype.Field = function(){
     }
 };
 
+var last_seq_num = 0;
+
 Stadium.prototype.draw = function(gl_) {
-
-
+
+    if(last_seq_num !== StadiumInitSeqNum) {
+	this.intro_string.update(gl_, "You have 40 seconds");
+    this.intro_string2.update(gl_, "to play the game. " + StadiumInitSeqNum);
+	last_seq_num = StadiumInitSeqNum;
+
+
+
+    }
+
+
     if(ballInitSeqOver === false){	
 	this.intro.draw(gl_);
 	this.intro2.draw(gl_);
@@ -160,9 +185,11 @@ Stadium.prototype.draw = function(gl_) {
 };
 
 Stadium.total_balls_hit = 0;
+Stadium.sound_cycle = 0;
 
-Stadium.prototype.updateStadium = function() {
-
+
+Stadium.prototype.updateStadium = function() {
+    
     //we haven't looked at any balls yet so lets reset the collisions
     //this flag will tell us when we have a collision so that we 
     //do not encounter a deadlock type situation where both balls
@@ -180,7 +207,11 @@ Stadium.prototype.updateStadium = function() {
 	    gameOver = true;
     }
 
-    Stadium.total_balls_hit = numBallsHit;   					     
+    if (Stadium.total_balls_hit !== numBallsHit) {
+	this.hit_sound[Stadium.sound_cycle++].play();
+	Stadium.sound_cycle %= 5;
+	Stadium.total_balls_hit = numBallsHit;   					     
+    }
 
     //this is how you win the game
     if(numBallsHit == this.numberBalls){

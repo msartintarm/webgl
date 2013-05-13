@@ -117,14 +117,14 @@ void colorTexture(sampler2D theSampler) {\n\
 \n\
 float delta = 1.0 / 512.0;\n\
 float sway = sin(frames_elapsed_u / 50.0) / 2.0;\n\
-float sway2 = cos(frames_elapsed_u / 50.0) / 2.0;\n\
+float sway2 = cos(frames_elapsed_u / 55.0) / 2.0;\n\
 \n\
   vec3 textureColor = texture2D(theSampler, textureV).xyz;\n\
   textureColor[0] *= sway;\n\
   textureColor[1] *= -sway2;\n\
   textureColor[2] *= abs((sway * sway2));\n\
 \n\
-  float background = clamp(length(textureColor) * 5.0, 0.7, 1.0);\n\
+  float background = clamp(length(textureColor) * 5.0, 0.8, 1.0);\n\
 \n\
   gl_FragColor = vec4(textureColor * 1.6, background);\n\
 }\n\
