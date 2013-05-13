@@ -17,8 +17,9 @@ function ThickCyl(inner_radius, width, height, slices, stacks) {
     return this;
 }
 
-ThickCyl.prototype.wrapTexture = function(the_texture) {
+ThickCyl.prototype.wrapTexture = function(the_texture, the_shader) {
     this.outerCyl.wrapTexture(the_texture);
+    if(the_shader) this.outerCyl.setShader(the_shader);
 }
 
 ThickCyl.prototype.Disk = _Disk;
@@ -27,7 +28,6 @@ ThickCyl.prototype.rotatePos = _objsRotatePos;
 ThickCyl.prototype.rotateNeg = _objsRotateNeg;
 ThickCyl.prototype.flip = _objsFlip;
 ThickCyl.prototype.scale = _objsScale;
-ThickCyl.prototype.setShader = _oSetShader;
 ThickCyl.prototype.translate = _objsTranslate;
 ThickCyl.prototype.initBuffers = _objsInitBuffers;
 ThickCyl.prototype.draw = _objsDraw;

@@ -8,6 +8,7 @@ function GLshader() {
 precision mediump float;\n\
 \n\
 uniform float ambient_coeff_u;\n\
+uniform float frames_elapsed_u;\n\
 uniform float diffuse_coeff_u;\n\
 uniform float specular_coeff_u;\n\
 uniform vec3 specular_color_u;\n\
@@ -113,8 +114,19 @@ void main(void) {\n\
 
     this.fragment["canvas"] = "\
 void colorTexture(sampler2D theSampler) {\n\
+\n\
+float delta = 1.0 / 512.0;\n\
+float sway = sin(frames_elapsed_u / 50.0) / 2.0;\n\
+float sway2 = cos(frames_elapsed_u / 50.0) / 2.0;\n\
+\n\
   vec3 textureColor = texture2D(theSampler, textureV).xyz;\n\
-  gl_FragColor = vec4(textureColor * 1.6, 0.7);\n\
+  textureColor[0] *= sway;\n\
+  textureColor[1] *= -sway2;\n\
+  textureColor[2] *= abs((sway * sway2));\n\
+\n\
+  float background = clamp(length(textureColor) * 5.0, 0.7, 1.0);\n\
+\n\
+  gl_FragColor = vec4(textureColor * 1.6, background);\n\
 }\n\
 \n\
 void main(void) {\n\
@@ -158,14 +170,6 @@ void main(void) {\n\
   if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
-  } else if (textureNumU < 3.1) { colorTexture(sampler3);\n\
-  } else if (textureNumU < 4.1) { colorTexture(sampler4);\n\
-  } else if (textureNumU < 5.1) { colorTexture(sampler5);\n\
-  } else if (textureNumU < 6.1) { colorTexture(sampler6);\n\
-  } else if (textureNumU < 7.1) { colorTexture(sampler7);\n\
-  } else if (textureNumU < 8.1) { colorTexture(sampler8);\n\
-  } else if (textureNumU < 9.1) { colorTexture(sampler9);\n\
-  } else if (textureNumU < 10.1) { colorTexture(sampler10);\n\
   } else { colorize();\n\
   }\n\
 }\n\

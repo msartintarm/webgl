@@ -14,6 +14,7 @@ function GLcanvas() {
     this.textures = [];
     this.textureNums = [];
     this.frames = [];
+    this.frame_count = 0;
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
 	
@@ -107,12 +108,12 @@ GLcanvas.prototype.createScene = function(objToDraw) {
 	    [ 1.5, 0.8,-4.0],
 	    [ 1.5,-0.8,-4.0],
 	    [-1.5, 0.8,-4.0],
-	    [-1.5,-0.8,-4.0]).setTexture(TEXT_TEXTURE));
+	    [-1.5,-0.8,-4.0]).setTexture(TEXT_TEXTURE).setShader(this.gl.shader_canvas));
 	this.objects.push(new Quad(
 	    [ 1.5, 2.4,-4.0],
 	    [ 1.5, 0.8,-4.0],
 	    [-1.5, 2.4,-4.0],
-	    [-1.5, 0.8,-4.0]).setTexture(TEXT_TEXTURE2));
+	    [-1.5, 0.8,-4.0]).setTexture(TEXT_TEXTURE2).setShader(this.gl.shader_canvas));
 
     } else if(objToDraw == "torus") {
 	this.objects.push(new Torus(0.2, 2));
@@ -323,6 +324,7 @@ GLcanvas.prototype.drawScene = function() {
 	}
     }
 
+    this.frame_count++;
 //    this.gl.clear(this.gl.STENCIL_BUFFER_BIT);
 
 };
@@ -351,6 +353,7 @@ GLcanvas.prototype.initShaders = function(gl_shader, frag, vert) {
     this.initAttribute(gl_shader, "textureA");
 
     this.initUniform(gl_shader, "ballHitu")
+    this.initUniform(gl_shader, "frames_elapsed_u")
     this.initUniform(gl_shader, "has_collided_u")
     this.initUniform(gl_shader, "u_kernel")
     this.initUniform(gl_shader, "u_textureSize")

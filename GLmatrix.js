@@ -485,7 +485,7 @@ GLmatrix.prototype.update = function() {
     if(this.up3 >= 0) { 
 	this.vTranslate([0, 3*x, 0]); 
 	this.vRotate(Math.PI/64,[-1, 0, 0]); 
-	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
+	this.vRotate(this.jump_rotation / 30, [0, 1, 0]);
 	this.up3--;
     } else if(this.up2 >= 0) { 
 	this.vTranslate([0, 2*x, 0]); 
@@ -498,10 +498,10 @@ GLmatrix.prototype.update = function() {
 	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
 	this.up1--; 
     } else if(this.up0 >= 0) {
-	this.vRotate(this.jump_rotation / 100, [0, 1, 0]);
+	this.vRotate(this.jump_rotation  * this.up0/ 100, [0, 1, 0]);
 	this.up0--; 
     } else if(this.dn0 >= 0) { 
-	this.vRotate(this.jump_rotation / 100, [0,-1, 0]);
+	this.vRotate(this.jump_rotation * (5 - this.dn0) / 100, [0,-1, 0]);
 	this.dn0--;
     } else if(this.dn1 >= 0) { 
 	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
@@ -514,7 +514,7 @@ GLmatrix.prototype.update = function() {
 	this.vTranslate([0,-2*x, 0]);
 	this.dn2--;
     } else if(this.dn3 >= 0) {
-	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
+	this.vRotate(this.jump_rotation / 30, [0,-1, 0]);
 	this.vRotate(Math.PI/64,[1, 0, 0]); 
 	this.vTranslate([0,-3*x, 0]);
 	this.dn3--;

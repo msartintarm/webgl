@@ -353,6 +353,9 @@ GLobject.prototype.linkAttribs = function(gl_, shader_) {
     if(shader_.unis["has_collided_u"] !== -1)
     gl_.uniform1f(shader_.unis["has_collided_u"], GLobject.has_collided);
 
+    if(shader_.unis["frames_elapsed_u"] !== -1)
+    gl_.uniform1f(shader_.unis["frames_elapsed_u"], theCanvas.frame_count);
+
     if(shader_.unis["u_textureSize"] !== -1)
     gl_.uniform2f(shader_.unis["u_textureSize"], 1024, 1024);
 

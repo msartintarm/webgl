@@ -75,3 +75,9 @@ GLstring.prototype.initBuffers = function(gl_) {
 };
 
 GLstring.prototype.draw = function(gl_) { return; };
+GLstring.prototype.update = function(gl_, new_string) {
+    this.text = new_string;
+    this.initBuffers(gl_);
+};
+
+

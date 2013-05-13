@@ -24,8 +24,10 @@ function Jumbotron() {
     var stacks = 30;
 
     this.translateVec = [0,0,0];
-    this.numberBalls = document.getElementById("stadium_balls").value;
-    this.display = new GLstring("Balls left: " + this.numberBalls, TEXT_TEXTURE3);
+    this.total_balls = document.getElementById("stadium_balls").value;
+    this.balls_hit = document.getElementById("stadium_balls").value;
+    this.display = new GLstring("Balls left: " + this.total_balls, 
+				TEXT_TEXTURE3);
 
     this.thickCylA = new ThickCyl(radiusA, widthA, heightA, slices, stacks);
     this.thickCylB = new ThickCyl(radiusB, widthB, heightB, slices, stacks);
@@ -34,8 +36,8 @@ function Jumbotron() {
     this.thickCylB.flip();
     this.thickCylA.rotatePos();
     this.thickCylB.rotatePos();
-    this.thickCylA.wrapTexture(TEXT_TEXTURE3);
-    this.thickCylB.wrapTexture(TEXT_TEXTURE3);
+    this.thickCylA.wrapTexture(TEXT_TEXTURE3, theCanvas.gl.shader_canvas);
+    this.thickCylB.wrapTexture(TEXT_TEXTURE3, theCanvas.gl.shader_canvas);
 
     // RectangularPrism: a, b, c, d, width
     // The Jumbotrons's screen's corners are symmetrical to the center of the plane,
@@ -100,13 +102,23 @@ Jumbotron.prototype.initBuffers = function(gl_) {
 };
 
 Jumbotron.prototype.setShader = function(shader) {
-    this.frame.setShader(shader);
+//    this.frame.setShader(shader);
     this.thickCylA.setShader(shader);
-    this.thickCylB.setShader(shader);
-    this.jumboScreen.setShader(shader);
+//    this.thickCylB.setShader(shader);
+//    this.jumboScreen.setShader(shader);
 };
 
 Jumbotron.prototype.draw = function(gl_) {
+
+    // check to see if ball cound has changed
+    if(this.balls_hit !== Stadium.total_balls_hit) {
+	this.balls_hit = Stadium.total_balls_hit;
+	this.display.update(gl_, "Balls left: " + 
+			    (this.total_balls - this.balls_hit) + "/" + 
+			    this.total_balls);
+    }
+
+
     this.frame.drawScene(gl_);
     
     theMatrix.push();
