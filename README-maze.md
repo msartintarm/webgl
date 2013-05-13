@@ -1,6 +1,7 @@
 - https://www.khronos.org/registry/webgl/specs/1.0/#2.1: Excellent WebGL specifications reference
 - http://webglstats.com/#h_texsize: WebGL Browser State
-
+- http://webglstats.com/#h_texsize: WebGL Browser State
+- http://www.html5rocks.com/en/tutorials/webaudio/intro/: Intro to using sounds in HTML5
 ##  CS 559 Spring 2013: Project #2
 
 **Title:** Caged
