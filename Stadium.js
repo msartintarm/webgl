@@ -2,6 +2,23 @@
 var ballInitSeqOver; //signals to GLmatrix when all the balls are in place
 var frame_draw = false;
 
+
+function set_buffer(buffer) {
+    this = buffer;
+}
+
+function stadium_load_sound(event) {
+    var request = event.target;
+    theCanvas.audio.decodeAudioData(request.response, 
+				    set_buffer.bind(this),
+				    onError);
+}						
+
+function stadium_play_sound(buffer_) {
+    Stadium.hit_sound.connect(theCanvas.audio.destination);
+    Stadium.hit_sound.start(0);
+}
+
 function Stadium() {  
     
     moveDist = 100.1;
@@ -10,19 +27,16 @@ function Stadium() {
     
     this.gameStart = 0.0;
 
-    this.hit_sound = [];
+    Stadium.hit_sound = [];
     
-    this.hit_sound[0] = new Audio("drums_1.wav");
-    this.hit_sound[0].load();
-    this.hit_sound[1] = new Audio("drums_2.wav");
-    this.hit_sound[1].load();
-    this.hit_sound[2] = new Audio("drums_3.wav");
-    this.hit_sound[2].load();
-    this.hit_sound[3] = new Audio("drums_4.wav");
-    this.hit_sound[3].load();
-    this.hit_sound[4] = new Audio("drums_5.wav");
-    this.hit_sound[4].load();
-    
+    for(var i = 0; i < 5; ++i) {
+	Stadium.hit_sound[i] = new Audio("drums_" + (i + 1) + ".wav");
+	Stadium.hit_sound[i].load();
+    }
+
+    Stadium.tick_sound = new Audio("rim_1.wav");
+    Stadium.tick_sound.load();
+
     //f b r l
     //meaning the order this data is pushed in is front, back, left, right wall.
     this.pieces = [];
@@ -159,16 +173,6 @@ var last_seq_num = 0;
 
 Stadium.prototype.draw = function(gl_) {
 
-    if(last_seq_num !== StadiumInitSeqNum) {
-	this.intro_string.update(gl_, "You have 40 seconds");
-    this.intro_string2.update(gl_, "to play the game. " + StadiumInitSeqNum);
-	last_seq_num = StadiumInitSeqNum;
-
-
-
-    }
-
-
     if(ballInitSeqOver === false){	
 	this.intro.draw(gl_);
 	this.intro2.draw(gl_);
@@ -182,6 +186,21 @@ Stadium.prototype.draw = function(gl_) {
 	this.pieces[i].draw(gl_);
     }
     this.jumboScreen.draw(gl_);
+
+
+    if(theMatrix.num_frames === 100) {
+	this.intro_string.update(gl_, "You have 40 secs");
+    } else if(theMatrix.num_frames === 101) {
+	this.intro_string2.update(gl_, "for each ball. ");
+    } else if(theMatrix.num_frames === 150) {
+	this.intro_string.update(gl_, "Click to use");
+    } else if(theMatrix.num_frames === 151) {
+	this.intro_string2.update(
+	    gl_, "mouse controls, " + 
+		document.getElementById("stadium_name").value + ".");
+    }
+
+
 };
 
 Stadium.total_balls_hit = 0;
@@ -208,7 +227,7 @@ Stadium.prototype.updateStadium = function() {
     }
 
     if (Stadium.total_balls_hit !== numBallsHit) {
-	this.hit_sound[Stadium.sound_cycle++].play();
+	Stadium.hit_sound[Stadium.sound_cycle++].play();
 	Stadium.sound_cycle %= 5;
 	Stadium.total_balls_hit = numBallsHit;   					     
     }
@@ -276,13 +295,13 @@ Stadium.prototype.updateStadium = function() {
 
     //when StadiumInitSeqNum === 3 the viewer has sucessfuly dropped into the maze
     if(StadiumInitSeqNum === 3){
-	console.log("%d num balls", this.numberBalls);
+//	console.log("%d num balls", this.numberBalls);
 	//priveledgedMode.toggle();
 	this.gameStart = Math.round(new Date().getTime()/1000);
-	console.log("gameStart %f", this.gameStart);
+//	console.log("gameStart %f", this.gameStart);
     }
 }
-
+
 var stadium_check_position = false;
 /**
  *  Remember: (0,0) is top left, (20 * Width, -20 * Height) is

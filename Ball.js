@@ -146,6 +146,14 @@ Ball.prototype.update = function(gameStart){
 	this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-(this.birthTime+this.frozenTime)));
 	}
     }
+
+    if(this.timer == 5 && this.hit && !this.gameOver) {
+	if(!this.played) {
+	    Stadium.tick_sound.play();
+	    this.played = true;
+	}
+    }
+
     if(this.timer == 0 && this.hit && !this.gameOver){
 	var endTime = Math.round(new Date().getTime()/1000)-gameStart-this.frozenTime;
 	alert("You lost the game in " + endTime + " seconds");

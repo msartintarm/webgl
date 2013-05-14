@@ -20,10 +20,10 @@ function Jumbotron() {
 
     var distB = heightA + 106;
 
-    var slices = 30;
-    var stacks = 30;
+    var slices = 60;
+    var stacks = 10;
 
-    this.translateVec = [0,0,0];
+    Jumbotron.position = [0,0,0];
     this.total_balls = document.getElementById("stadium_balls").value;
     this.balls_hit = document.getElementById("stadium_balls").value;
     this.display = new GLstring("Balls left: " + this.total_balls, 
@@ -82,7 +82,7 @@ function Jumbotron() {
 }
 
 Jumbotron.prototype.translate = function(vec) {
-    this.translateVec = vec;
+    Jumbotron.position = vec;
     return this;
 };
 
@@ -122,7 +122,7 @@ Jumbotron.prototype.draw = function(gl_) {
     this.frame.drawScene(gl_);
     
     theMatrix.push();
-    theMatrix.translate(this.translateVec);
+    theMatrix.translate(Jumbotron.position);
     this.thickCylA.draw(gl_);
     this.thickCylB.draw(gl_);
     for(var i = 0; i < 4; ++i) {

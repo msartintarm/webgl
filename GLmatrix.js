@@ -6,6 +6,8 @@
  */
 function GLmatrix() {
 
+    this.num_frames = 0
+
     // Model, viewing, and light matrix
     this.mMatrix = mat4.create();
     this.vMatrix = mat4.create();
@@ -379,6 +381,92 @@ GLmatrix.prototype.gradualRotate = function() {
 };
 
 /*
+ * Jumps upwards, and rotates the user so they can view the whole map 
+ */
+GLmatrix.prototype.jump_map = function() {
+
+    if(this.inJump === true) return;
+    this.inJump = true;
+
+    // determine view vectors by transposing the known direction: (0,0,-1)
+    // we also need the LHS (-1,0,0) to see if the angle is less than 0.
+
+    var viewer_pos = vec4.fromValues(0, 0, 0, 1);
+    var curr_dir = vec4.fromValues(0, 0,-1, 1);
+    var left_dir = vec4.fromValues(-1, 0, 0, 1);
+    var center_dir = vec3.fromValues(2640, 0, -2640);
+
+    // calc current positions
+    vec4.transformMat4(viewer_pos, viewer_pos, theMatrix.vMatrix);
+    vec4.transformMat4(curr_dir, curr_dir, theMatrix.vMatrix);
+    vec4.transformMat4(left_dir, left_dir, theMatrix.vMatrix);
+    viewer_pos[1] = 0;
+    curr_dir[1] = 0;
+    left_dir[1] = 0;
+
+    // calc current directions
+
+    vec3.sub(curr_dir, curr_dir, viewer_pos);
+    vec3.sub(center_dir, center_dir, viewer_pos);
+    vec3.sub(left_dir, left_dir, viewer_pos);
+
+    var dist_to_center = vec3.clone(center_dir);
+
+    vec3.normalize(curr_dir, curr_dir);
+    vec3.normalize(center_dir, center_dir);
+    vec3.normalize(left_dir, left_dir);
+
+    // find angle from dot product
+    var the_angle = -1 * curr_dir[2];
+    var is_front = (the_angle > 0);
+    if(the_angle !== 0) the_angle = Math.acos(the_angle);
+
+    // compensate for the range of arccos
+    var is_left = (left_dir[2] * -1 > 0);
+    if(!is_left) the_angle = -the_angle;
+
+    if(envDEBUG_JUMP) {
+	console.log("current: " + vec3.str(curr_dir));
+	console.log("viewer: " + vec4.str(viewer_pos));
+	console.log("center:   " + vec3.str(center_dir));
+	if (!is_front) console.log("center is BACK.");
+	else console.log("center is FRONT.");
+	if (!is_left) console.log("center is RIGHT.");
+	else console.log("center is LEFT.");
+	console.log("angle:   " + the_angle + " degrees");
+    }
+
+    this.jump_rotation = the_angle;
+
+    this.jumps = [];
+
+    const x = 50.0;
+
+    vec3.scale(dist_to_center, 1/30);
+
+    // must be symmetrical
+    this.jumps[3] = [ 2, 0, 0, dist_to_center, [-1,0,0], [0,1,0]];
+    this.jumps[2] = [ 8, 0, 0, dist_to_center, [-1,0,0], [0,1,0]];
+    this.jumps[1] = [16, 0, 0, dist_to_center, [-1,0,0], [0,1,0]];
+    this.jumps[0] = [ 5, 0, 0, dist_to_center, [-1,0,0], [0,1,0]];
+
+/*
+    this.up3 = 2;
+    this.up2 = 8;
+    this.up1 = 16;
+    this.up0 = 5;
+    this.dn0 = 5;
+    this.dn1 = 16;
+    this.dn2 = 8;
+    this.dn3 = 2;
+*/
+    this.jump_i = this.jumps.length - 1;
+    this.jump_i2 = -1;
+    this.jump_j = -1;
+    this.inJump = true;
+};
+
+/*
  * Jumps upwards, and rotates the user towards the Jumbotron
  * Pretends the viewer and Jumbotron are on the same axis
  */
@@ -394,7 +482,8 @@ GLmatrix.prototype.jump = function() {
     var curr_dir = vec4.fromValues(0, 0,-1, 1);
     var left_dir = vec4.fromValues(-1, 0, 0, 1);
     // this is actually where the Jumbotron would be if it were on ground
-    var jumbo_dir = vec3.fromValues(2640, 0, -2640);
+    var jumbo_dir = vec3.clone(Jumbotron.position);
+    jumbo_dir[1] = 0;
 
     // calc current positions
     vec4.transformMat4(viewer_pos, viewer_pos, theMatrix.vMatrix);
@@ -433,18 +522,73 @@ GLmatrix.prototype.jump = function() {
 	console.log("angle:   " + the_angle + " degrees");
     }
 
+    /*
+     * Set up the jump_update method below, which will get called each frame
+     */
     this.jump_rotation = the_angle;
+    const x = 50.0;
+    // tick length, 2 rotation magnitudes, 1 translate / 2 rotation vectors
+    this.jumps = [];
+    this.jumps[3] = [ 2, Math.PI / 64, the_angle / 30, [0,3*x,0], [-1,0,0], [0,1,0]];
+    this.jumps[2] = [ 8, Math.PI /128, the_angle / 26, [0,2*x,0], [-1,0,0], [0,1,0]];
+    this.jumps[1] = [16, Math.PI /256, the_angle / 26, [0,1*x,0], [-1,0,0], [0,1,0]];
+    this.jumps[0] = [ 5,            0, the_angle /200, [0, 0, 0], [-1,0,0], [0,1,0]];
 
-    // must be symmetrical
-    this.up3 = 2;
-    this.up2 = 8;
-    this.up1 = 16;
-    this.up0 = 5;
-    this.dn0 = 5;
-    this.dn1 = 16;
-    this.dn2 = 8;
-    this.dn3 = 2;
+    if(Math.abs(the_angle) > Math.PI / 4) vec3.set(this.jumps[0][3], 0, 0.2 * x, 0);
+
+    this.jump_i = this.jumps.length - 1;
+    this.jump_i2 = -1;
+    this.jump_j = -1;
     this.inJump = true;
+};
+
+GLmatrix.prototype.jump_update = function(the_jumps) {
+
+    var the_length, rotation1, rotation2, translate_vec, rotate_vec1, rotate_vec2;
+    if(this.jump_i >= 0) {
+	// increment jumping up pointers
+	if(this.jump_j + 1 >= this.jumps[this.jump_i][0]) {
+	    this.jump_i--;
+	    this.jump_j = 0;
+	} else {
+	    this.jump_j ++;
+	}
+	if(this.jump_i < 0) { this.jump_i2 = 0; this.jump_j = -1; } else {
+	    the_length = this.jumps[this.jump_i][0];
+	    rotation1 = this.jumps[this.jump_i][1];
+	    rotation2 = this.jumps[this.jump_i][2];
+	    translate_vec = this.jumps[this.jump_i][3];
+	    rotate_vec1 = this.jumps[this.jump_i][4];
+	    rotate_vec2 = this.jumps[this.jump_i][5];
+	    this.vTranslate(translate_vec);
+	    this.vRotate(rotation1, rotate_vec1); 
+	    this.vRotate(rotation2, rotate_vec2); 
+	}
+    }
+    if(this.jump_i2 >= 0 && this.jump_i2 < this.jumps.length) {
+	// increment jumping up pointers
+	if(this.jump_j + 1 >= this.jumps[this.jump_i2][0]) {
+	    this.jump_i2++;
+	    this.jump_j = 0;
+	} else {
+	    this.jump_j ++;
+	}
+	if(this.jump_i2 >= this.jumps.length) { this.inJump = false; } else {
+	    the_length = this.jumps[this.jump_i2][0];
+	    rotation1 = this.jumps[this.jump_i2][1];
+	    rotation2 = this.jumps[this.jump_i2][2];
+	    translate_vec = this.jumps[this.jump_i2][3];
+	    rotate_vec1 = this.jumps[this.jump_i2][4];
+	    rotate_vec2 = this.jumps[this.jump_i2][5];
+	    this.vRotate(-rotation2, rotate_vec2); 
+	    this.vRotate(-rotation1, rotate_vec1); 
+	    this.vTranslate([-translate_vec[2], -translate_vec[1], -translate_vec[0]]);
+	}
+    }
+    if(envDEBUG_JUMP) {
+	console.log("i: " + this.jump_i + ", i2: " + this.jump_i2 + ", j: " +
+		    this.jump_j);
+    }
 };
 
 GLmatrix.prototype.newViewAllowed = function() {
@@ -454,74 +598,33 @@ GLmatrix.prototype.newViewAllowed = function() {
 	return myStadium.checkPosition();
 };
 
-/**
- * Input: amount of time to go up for x squares.
+/*
+ * Determines the next matrix for program to load.
+ * This should be done AFTER draw calls.
  */
 GLmatrix.prototype.update = function() {
-    if(stadiumMode===1){
-	this.runStadiumInit();
-	myStadium.updateStadium();
-    }
-
+    this.num_frames ++;
     if(GLobject.has_collided > 0) GLobject.has_collided --;
-
-    const x = 50.0;
+    
     if(this.inJump === false) {
+	if(stadiumMode===1){
+	    this.runStadiumInit();
+	    myStadium.updateStadium();
+	}
 	this.gradualMove();
 	this.gradualRotate();
 	if(this.vMatrixNewChanged === false) { return; }
 	if( priveledgedMode.val || this.newViewAllowed()){
 	    // We only check the view if we are
 	    //  not in 'god mode'
-
+	    
 	    //Multiplies vMatrixNew * vMatrix
 	    //therefore if vMatrixNew==identity we have no movement
-	    this.vMul(this.vMatrixNew);
-	    this.vMatrixChanged = true;
 	}
-	mat4.identity(this.vMatrixNew);
-	return; 
+    } else { 
+	this.jump_update(); 
     }
-    if(this.up3 >= 0) { 
-	this.vTranslate([0, 3*x, 0]); 
-	this.vRotate(Math.PI/64,[-1, 0, 0]); 
-	this.vRotate(this.jump_rotation / 30, [0, 1, 0]);
-	this.up3--;
-    } else if(this.up2 >= 0) { 
-	this.vTranslate([0, 2*x, 0]); 
-	this.vRotate(Math.PI/128,[-1, 0, 0]); 
-	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
-	this.up2--;
-    } else if(this.up1 >= 0) {
-	this.vTranslate([0, 1*x, 0]); 
-	this.vRotate(Math.PI/256,[-1, 0, 0]); 
-	this.vRotate(this.jump_rotation / 26, [0, 1, 0]);
-	this.up1--; 
-    } else if(this.up0 >= 0) {
-	this.vRotate(this.jump_rotation  * this.up0/ 100, [0, 1, 0]);
-	this.up0--; 
-    } else if(this.dn0 >= 0) { 
-	this.vRotate(this.jump_rotation * (5 - this.dn0) / 100, [0,-1, 0]);
-	this.dn0--;
-    } else if(this.dn1 >= 0) { 
-	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
-	this.vRotate(Math.PI/256,[1, 0, 0]); 
-	this.vTranslate([0,-1*x, 0]);
-	this.dn1--;
-    } else if(this.dn2 >= 0) {
-	this.vRotate(this.jump_rotation / 26, [0,-1, 0]);
-	this.vRotate(Math.PI/128,[1, 0, 0]); 
-	this.vTranslate([0,-2*x, 0]);
-	this.dn2--;
-    } else if(this.dn3 >= 0) {
-	this.vRotate(this.jump_rotation / 30, [0,-1, 0]);
-	this.vRotate(Math.PI/64,[1, 0, 0]); 
-	this.vTranslate([0,-3*x, 0]);
-	this.dn3--;
-    } else {
-	this.inJump = false; return; 
-    }
-
+    
     this.vMul(this.vMatrixNew);
     mat4.identity(this.vMatrixNew);
     this.vMatrixChanged = true;

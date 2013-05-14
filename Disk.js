@@ -35,11 +35,8 @@ function Disk(inner_radius, outer_radius, slices, loops) {
     for (var latitude = 0; latitude < slices; latitude++) {
 	for (var longitude = 0; longitude < loops; longitude++) {
 	    var A = (latitude * (slices + 1)) + longitude;
-	    var B = A + slices + 1;
-	    var C = A + 1;
-	    var D = B + 1;
-	    this.o.addIndexes(A, B, C);
-	    this.o.addIndexes(B, D, C);
+	    var C = A + slices + 1;
+	    this.o.addQuadIndexes(A, C);
 	}
     }
 }

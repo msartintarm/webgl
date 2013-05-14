@@ -41,13 +41,6 @@ uniform sampler2D sampler0;\n\
 uniform sampler2D sampler1;\n\
 uniform sampler2D sampler2;\n\
 uniform sampler2D sampler3;\n\
-uniform sampler2D sampler4;\n\
-uniform sampler2D sampler5;\n\
-uniform sampler2D sampler6;\n\
-uniform sampler2D sampler7;\n\
-uniform sampler2D sampler8;\n\
-uniform sampler2D sampler9;\n\
-uniform sampler2D sampler10;\n\
 \n\
 //Specular function\n\
 float specular() {\n\
@@ -116,15 +109,16 @@ void main(void) {\n\
 void colorTexture(sampler2D theSampler) {\n\
 \n\
 float delta = 1.0 / 512.0;\n\
-float sway = sin(frames_elapsed_u / 50.0) / 2.0;\n\
-float sway2 = cos(frames_elapsed_u / 55.0) / 2.0;\n\
+float sway = 0.5 + (sin(frames_elapsed_u / 5.0) / 2.0);\n\
+float sway2 = 0.5 + (cos(frames_elapsed_u / 10.0) / 2.0);\n\
 \n\
   vec3 textureColor = texture2D(theSampler, textureV).xyz;\n\
   textureColor[0] *= sway;\n\
-  textureColor[1] *= -sway2;\n\
-  textureColor[2] *= abs((sway * sway2));\n\
+  textureColor[1] *= sway2;\n\
+  textureColor[2] *= (sway * sway2);\n\
 \n\
   float background = clamp(length(textureColor) * 5.0, 0.8, 1.0);\n\
+  \n\
 \n\
   gl_FragColor = vec4(textureColor * 1.6, background);\n\
 }\n\
@@ -134,8 +128,7 @@ void main(void) {\n\
   if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
-  } else if (textureNumU < 3.1) { colorTexture(sampler3);\n\
-  } else { colorTexture(sampler4);\n\
+  } else { colorTexture(sampler3);\n\
   }\n\
 }\n\
 ";
@@ -162,12 +155,12 @@ void colorTexture(sampler2D theSampler) {\n\
   vec3 blendColor = mod(distanceV, 50.0) / 50.0;\n\
   vec3 normalColor = ambColor + diffColor + specColor;\n\
   gl_FragColor = vec4(normalColor, 1.0);\n\
-}\n\
+}                              \n\
 \n\
-void main(void) {\n\
-//  if(dot(normalize(vertNorm), vec3(0.0, 0.0,-1.0)) < 0.0) {  \n\
-//    discard; \n\
-  if (textureNumU < 0.1) { colorTexture(sampler0);\n\
+void main(void) {              \n\
+  if(vertNorm.z > 0.0) {       \n\
+    discard;                   \n\
+  } else if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
   } else { colorize();\n\

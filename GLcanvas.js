@@ -17,7 +17,11 @@ function GLcanvas() {
     this.frame_count = 0;
     this.canvas = document.getElementById("glcanvas");
     this.gl = null;
-	
+
+    if('AudioContext' in window) this.audio = new AudioContext();
+    else this.audio = new webkitAudioContext();
+//    this.audio = new AudioContext();
+
     // Create status bar
     var display = document.getElementById("display");
     display.innerHTML = "<p id=\"glcanvas_status\"></p>" + display.innerHTML;
@@ -158,6 +162,7 @@ GLcanvas.prototype.start = function(theScene) {
 	    return;
 	}
 
+
 	this.shader_source = new GLshader;
 
 	this.gl.shader = this.gl.createProgram();
@@ -222,6 +227,7 @@ GLcanvas.prototype.start = function(theScene) {
 	this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
 	this.gl.clearDepth(1.0);
 	this.gl.enable(this.gl.DEPTH_TEST);
+	this.gl.enable(this.gl.CULL_FACE);
 	
 	// Set up to draw the scene periodically.
 	document.onmousedown = handleMouseDown;

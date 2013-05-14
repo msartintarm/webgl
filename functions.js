@@ -14,6 +14,47 @@ function MatrixData(htmlID) {
     this.html = document.getElementById(htmlID); 
 }
 
+// adapted from HTML5 Rocks!
+var context;
+var bufferLoader;
+
+function audio_init() {
+    // Fix up prefixing
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+
+    bufferLoader = new BufferLoader(
+	context,
+	[
+	    'drums_1.wav',
+	    'drums_2.wav',
+	],
+	finishedLoading
+    );
+
+    bufferLoader.load();
+}
+
+function playSound(buffer, time) {
+  var source = context.createBufferSource();
+  source.buffer = buffer;
+  source.connect(context.destination);
+  source.start(time);
+}
+
+function finishedLoading(bufferList) {
+    // Create two sources and play them both together.
+    var source1 = context.createBufferSource();
+    var source2 = context.createBufferSource();
+    source1.buffer = bufferList[0];
+    source2.buffer = bufferList[1];
+    
+    source1.connect(context.destination);
+    source2.connect(context.destination);
+    source1.start(0);
+    source2.start(0);
+}
+
 // Quad constructor that pushes
 // it to an internal 'objs' array,
 // making it easier to draw
@@ -423,6 +464,11 @@ function handleKeyDown(theEvent) {
 	theMatrix.jump();
 	document.getElementById("keyboard").innerHTML = 
 	    "Jump!";
+	break;
+    case 67: // 'c' key
+	theMatrix.jump_map();
+	document.getElementById("keyboard").innerHTML = 
+	    "View Map!";
 	break;
     case 39: // ->
 	theMatrix.moveLeft();

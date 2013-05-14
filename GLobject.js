@@ -102,11 +102,11 @@ GLobject.prototype.invertFlatNorms = function() {
  */
 GLobject.prototype.addQuadIndexes = function(a, c) {
     this.data["index"].push(a);
-    this.data["index"].push(a+1);
     this.data["index"].push(c);
+    this.data["index"].push(a+1);
     this.data["index"].push(c+1);
-    this.data["index"].push(c);
     this.data["index"].push(a+1);
+    this.data["index"].push(c);
 };
 
 /**

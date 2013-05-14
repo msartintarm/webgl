@@ -33,6 +33,7 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.fillStyle = "#000000";
     ctx.fillRect(0,0, this.canvas.width, this.canvas.height);
 
+
     ctx.fillStyle = "#123456";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -45,6 +46,7 @@ GLstring.prototype.initBuffers = function(gl_) {
     ctx.fillText(this.text, this.canvas.width/2 + 3, this.canvas.height/2 + 3);
 
   if(this.texture === -1) this.texture = gl_.createTexture();
+
     gl_.activeTexture(gl_.TEXTURE0 + this.active);
     gl_.bindTexture(gl_.TEXTURE_2D, this.texture);
 
@@ -62,11 +64,6 @@ GLstring.prototype.initBuffers = function(gl_) {
     gl_.texParameteri(gl_.TEXTURE_2D, gl_.TEXTURE_MIN_FILTER, gl_.LINEAR);
     gl_.generateMipmap(gl_.TEXTURE_2D);
 
-    theCanvas.changeShader(this.shader);
-    var gl_sampler = gl_.getUniformLocation(
-	this.shader, "sampler" + this.sampler);
-    gl_.uniform1i(gl_sampler, this.active);
-
     console.log("str: [" + this.active + "," + 
 		this.sampler + "," + this.num + "]");
     document.getElementById("glcanvas_status").innerHTML += 
@@ -76,7 +73,7 @@ GLstring.prototype.initBuffers = function(gl_) {
 
 GLstring.prototype.draw = function(gl_) { return; };
 GLstring.prototype.update = function(gl_, new_string) {
-    this.text = new_string;
+    this.text = new_string.slice(0);
     this.initBuffers(gl_);
 };
 

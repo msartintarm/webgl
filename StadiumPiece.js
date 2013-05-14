@@ -100,14 +100,14 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
 StadiumPiece.prototype.FrontWall = function(texture, move,
 		     sbX_, sh_, sbZ_, sbW_) {
     var front = new SixSidedPrism(
-	[ sbX_, sh_, -(sbZ_ + sbW_)],
-	[ sbX_,  0,  -(sbZ_ + sbW_)],
-	[ sbX_,  0,  -(sbZ_      )],
-	[ sbX_, sh_, -(sbZ_      )],
 	[-sbX_, sh_, -(sbZ_ + sbW_)],
 	[-sbX_,  0,  -(sbZ_ + sbW_)],
 	[-sbX_,  0,  -(sbZ_      )],
-	[-sbX_, sh_, -(sbZ_      )]).setTexture(texture);
+	[-sbX_, sh_, -(sbZ_      )],
+	[ sbX_, sh_, -(sbZ_ + sbW_)],
+	[ sbX_,  0,  -(sbZ_ + sbW_)],
+	[ sbX_,  0,  -(sbZ_      )],
+	[ sbX_, sh_, -(sbZ_      )]).setTexture(texture);
     if(move) this.objsMoveFront.push(front);
     else this.objs.push(front);
     this.north = -(sbZ_ - 15);
