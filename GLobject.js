@@ -74,15 +74,17 @@ GLobject.prototype.addColorVec =
 		    this.data["col"].push(vec[2]); };
 
 /**
- * Sometimes, we'll have to invert the norms 
- *  of objects
+ * Sometimes, we'll have to invert objects
  */
-GLobject.prototype.invertNorms = function() {
+GLobject.prototype.invertPos = function() {
     this.normsInverted = true;
     for (var i = 0; i < this.data["norm"].length; ++i) {
+	this.data["pos"][i] = -this.data["pos"][i];
 	this.data["norm"][i] = -this.data["norm"][i];
     }
 };
+
+GLobject.prototype.invertNorms = GLobject.prototype.invertPos;
 
 /**
  * Sometimes, we'll have to invert the norms 
@@ -251,7 +253,10 @@ GLobject.prototype.initBuffers = function(gl_) {
 GLobject.prototype.bufferData = function(gl_, attribute, size) {
 
     var theData = this.data[attribute];
-    if(theData.length < 1) { this.buff[attribute] = -1; return; }
+    if(theData.length < 1) { 
+	this.buff[attribute] = -1; return; 
+    }
+
     this.buff[attribute] = gl_.createBuffer();
     gl_.bindBuffer(gl_.ARRAY_BUFFER, this.buff[attribute]);
     gl_.bufferData(gl_.ARRAY_BUFFER, 
@@ -292,6 +297,9 @@ GLobject.prototype.rotateXZ = function(vec) {
 	temp = this.data["pos"][i];
 	this.data["pos"][i]   = -this.data["pos"][i+2];
 	this.data["pos"][i+2] = temp;
+	temp = this.data["norm"][i];
+	this.data["norm"][i]   = -this.data["norm"][i+2];
+	this.data["norm"][i+2] = temp;
     }
     return this;
 };

@@ -214,9 +214,14 @@ function _oSetShader(shader) {
     return this;
 }
 
+/*
+ * switches two sets of triangle indexes around
+ */
 function _oInvertNorms() {
-    for(var i = 0; i < this.o.data["norm"].length; ++i) {
-	this.o.data["norm"][i] = -this.o.data["norm"][i];
+    for(var i = 0; i < this.o.data["index"].length; i += 3) {
+	this.o.data["index"][i] ^= this.o.data["index"][i+1];
+	this.o.data["index"][i+1] ^= this.o.data["index"][i];
+	this.o.data["index"][i] ^= this.o.data["index"][i+1];
     }
     return this;
 }

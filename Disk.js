@@ -32,9 +32,9 @@ function Disk(inner_radius, outer_radius, slices, loops) {
     // B  D   Longitude lines run through AB and  CD
     //        Array indices of C and D are A / B + 1
 
-    for (var latitude = 0; latitude < slices; latitude++) {
-	for (var longitude = 0; longitude < loops; longitude++) {
-	    var A = (latitude * (slices + 1)) + longitude;
+    for (var i = 0; i < loops; ++i) {
+	for (var j = 0; j < slices; ++j) {
+	    var A = (i * (slices + 1)) + j;
 	    var C = A + slices + 1;
 	    this.o.addQuadIndexes(A, C);
 	}

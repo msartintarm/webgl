@@ -43,9 +43,9 @@ SixSidedPrism.rectangle = function(a, b, c, d, width) {
 
     // Must compute the vector for the back face (e-h). It will
     //  be going in the opposite direction of the normal vector.
-    vec3.cross(backV, vec3.sub(temp2,c,a), vec3.sub(temp1,b,a));
+    vec3.cross(backV, vec3.sub(temp2,b,a), vec3.sub(temp1,c,a));
     vec3.normalize(backV, backV);
-    vec3.scale(backV, backV, -width);
+    vec3.scale(backV, backV, width);
 
     vec3.add(e, e, backV);
     vec3.add(f, f, backV);

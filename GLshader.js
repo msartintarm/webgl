@@ -101,7 +101,10 @@ void colorize() {\n\
 }\n\
 \n\
 void main(void) {\n\
-  colorize();\n\
+ if(vertNorm.z > 0.0) {       \n\
+//    discard;                   \n\
+    gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
+ } else {  colorize(); }\n\
 }\n\
 ";
 
@@ -125,7 +128,10 @@ float sway2 = 0.5 + (cos(frames_elapsed_u / 10.0) / 2.0);\n\
 \n\
 void main(void) {\n\
 \n\
-  if (textureNumU < 0.1) { colorTexture(sampler0);\n\
+  if(vertNorm.z > 0.0) {       \n\
+//    discard;                   \n\
+    gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
+  } else if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\
   } else { colorTexture(sampler3);\n\
@@ -152,14 +158,15 @@ void colorTexture(sampler2D theSampler) {\n\
   vec3 diffColor = textureColor * diffuseV * diffuse_coeff_u;\n\
   vec3 specColor = textureColor * specular();\n\
 \n\
-  vec3 blendColor = mod(distanceV, 50.0) / 50.0;\n\
+//  vec3 blendColor = mod(distanceV, 50.0) / 50.0;\n\
   vec3 normalColor = ambColor + diffColor + specColor;\n\
   gl_FragColor = vec4(normalColor, 1.0);\n\
 }                              \n\
 \n\
 void main(void) {              \n\
   if(vertNorm.z > 0.0) {       \n\
-    discard;                   \n\
+//    discard;                   \n\
+    gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
   } else if (textureNumU < 0.1) { colorTexture(sampler0);\n\
   } else if (textureNumU < 1.1) { colorTexture(sampler1);\n\
   } else if (textureNumU < 2.1) { colorTexture(sampler2);\n\

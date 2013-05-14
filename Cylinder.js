@@ -55,7 +55,7 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    var B = A + this.slices + 1;
 	    var C = A + 1;
 	    var D = B + 1;
-
+/*
 	    if(!index_uses[A]) { 
 		index_uses[A] = 1; index_uses[B] = 1; 
 		this.o.data["col"][3*C] = 0;
@@ -78,25 +78,31 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 		this.o.data["col"][3*D+1] = 0;
 		this.o.data["col"][3*D+2] = 1;
 	    }
-
+*/
 	    this.o.addIndexes(A, B, C);
 	    this.o.addIndexes(B, D, C);
 	}
     }
 }
 
-Cylinder.prototype.invertNorms = _oInvertNorms;
+Cylinder.prototype.invertNorms = function() {
+    for(var i = 0; i < this.o.data["norm"].length; i += 1) {
+	this.o.data["norm"][i] = -this.o.data["norm"][i];
+    }
+    return this;
+}
 
 Cylinder.prototype.wrapText = function() {
-    return;
+
     this.o.setTexture(TEXT_TEXTURE);
 
-    var xPos, yPos;
-    for (var latitude = 0; i <= this.stacks; i++) {
-	yPos = i / (this.stacks - 1);
+    var xPos = 0;
+    var yPos = 0;
+    for (var i = 0; i <= this.stacks; i++) {
+	yPos += 1 / (this.stacks - 1);
 	
 	for (var j = 0; j <= this.slices; j++) {
-	xPos = 10 * (j / (this.slices)) % 1;
+	    xPos += 1 / (this.slices - 1);
 	    this.o.addTexture(xPos, yPos);
 	}
     }

@@ -23,7 +23,7 @@ function Jumbotron() {
     var slices = 60;
     var stacks = 10;
 
-    Jumbotron.position = [0,0,0];
+    Jumbotron.position = vec3.create();
     this.total_balls = document.getElementById("stadium_balls").value;
     this.balls_hit = document.getElementById("stadium_balls").value;
     this.display = new GLstring("Balls left: " + this.total_balls, 
