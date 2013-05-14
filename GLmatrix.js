@@ -384,7 +384,7 @@ GLmatrix.prototype.gradualRotate = function() {
  */
 GLmatrix.prototype.jump = function() {
 
-    if(this.inJump === true) return;
+    if(this.inJump === true  || freeze) return;
     this.inJump = true;
 
     // determine view vectors by transposing the known direction: (0,0,-1)
@@ -519,6 +519,11 @@ GLmatrix.prototype.update = function() {
 	this.vTranslate([0,-3*x, 0]);
 	this.dn3--;
     } else {
+	if(stadiumMode && StadiumInitSeqNum===4){
+	    freeze = 0;
+	    freezeOff = 1;
+	    //alert("Game back in play");
+	}
 	this.inJump = false; return; 
     }
 

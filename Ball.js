@@ -143,7 +143,7 @@ Ball.prototype.update = function(gameStart){
 	}
 	//subtract starting time with difference between birthtime and now
 	if(!freeze){
-	this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-(this.birthTime+this.frozenTime)));
+	    this.timer = (this.numberBalls*2 +30) - Math.round(((new Date().getTime()/1000)-(this.birthTime+this.frozenTime)));
 	}
     }
     if(this.timer == 0 && this.hit && !this.gameOver){

@@ -421,6 +421,11 @@ function handleKeyDown(theEvent) {
 	break;
     case 32: // spacebar
 	theMatrix.jump();
+	if(freeze === 0 && (StadiumInitSeqNum === 4 && stadiumMode)){
+	    freezeBirth = Math.round(new Date().getTime()/1000);
+	    freeze = 1;
+	    //alert("Game Paused");
+	}
 	document.getElementById("keyboard").innerHTML = 
 	    "Jump!";
 	break;
