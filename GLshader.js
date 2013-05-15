@@ -5,42 +5,43 @@ function GLshader() {
     this.vertex = [];
 
     this.f_decls = "\
-precision mediump float;\n\
+precision mediump float;          \n\
+                                  \n\
+uniform float ambient_coeff_u;    \n\
+uniform float frames_elapsed_u;   \n\
+uniform float diffuse_coeff_u;    \n\
+uniform float specular_coeff_u;   \n\
+uniform vec3 specular_color_u;    \n\
 \n\
-uniform float ambient_coeff_u;\n\
-uniform float frames_elapsed_u;\n\
-uniform float diffuse_coeff_u;\n\
-uniform float specular_coeff_u;\n\
-uniform vec3 specular_color_u;\n\
+varying vec3 distanceV;           \n\
+varying float diffuseV;           \n\
+varying float specularV;          \n\
+varying vec3 colorV;              \n\
 \n\
-varying vec3 distanceV;\n\
-varying float diffuseV;\n\
-varying float specularV;\n\
-varying vec3 colorV;\n\
+uniform vec2 gaussFilter[7];      \n\
+uniform float ballHitu;           \n\
+uniform float has_collided_u;     \n\
+uniform vec2 u_Scale;             \n\
 \n\
-uniform vec2 gaussFilter[7];\n\
-uniform float ballHitu;\n\
-uniform float has_collided_u;\n\
-uniform vec2 u_Scale;\n\
+varying vec3 reflectionV;         \n\
+varying vec3 viewPosV;            \n\
+varying vec3 vModel;              \n\
+varying vec4 lModel;              \n\
+varying vec3 lightNorm;           \n\
+varying vec3 vertNorm;            \n\
 \n\
-varying vec3 reflectionV;\n\
-varying vec3 viewPosV;\n\
-varying vec3 vModel;\n\
-varying vec4 lModel;\n\
-varying vec3 lightNorm;\n\
-varying vec3 vertNorm;\n\
+varying vec2 textureV;            \n\
 \n\
-varying vec2 textureV;\n\
+uniform float textureNumU;        \n\
 \n\
-uniform float textureNumU;\n\
+uniform float u_kernel[9];        \n\
+uniform vec2 u_textureSize;       \n\
 \n\
-uniform float u_kernel[9];\n\
-uniform vec2 u_textureSize;\n\
-\n\
-uniform sampler2D sampler0;\n\
-uniform sampler2D sampler1;\n\
-uniform sampler2D sampler2;\n\
-uniform sampler2D sampler3;\n\
+uniform mat4 pMatU;               \n\
+uniform sampler2D sampler0;       \n\
+uniform sampler2D sampler1;       \n\
+uniform sampler2D sampler2;       \n\
+uniform sampler2D sampler3;       \n\
 \n\
 //Specular function\n\
 float specular() {\n\
@@ -101,12 +102,11 @@ void colorize() {\n\
 }\n\
 \n\
 void main(void) {\n\
- if(vertNorm.z > 0.0) {       \n\
+if((pMatU * vec4(vertNorm, 1.0)).z < -0.01) {       \n\
 //    discard;                   \n\
     gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
  } else {  colorize(); }\n\
-}\n\
-";
+}";
 
     this.fragment["canvas"] = "\
 void colorTexture(sampler2D theSampler) {\n\
@@ -128,7 +128,7 @@ float sway2 = 0.5 + (cos(frames_elapsed_u / 10.0) / 2.0);\n\
 \n\
 void main(void) {\n\
 \n\
-  if(vertNorm.z > 0.0) {       \n\
+if((pMatU * vec4(vertNorm, 1.0)).z < -0.01) {       \n\
 //    discard;                   \n\
     gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
   } else if (textureNumU < 0.1) { colorTexture(sampler0);\n\
@@ -164,7 +164,7 @@ void colorTexture(sampler2D theSampler) {\n\
 }                              \n\
 \n\
 void main(void) {              \n\
-  if(vertNorm.z > 0.0) {       \n\
+if((pMatU * vec4(vertNorm, 1.0)).z < -0.01) {       \n\
 //    discard;                   \n\
     gl_FragColor = vec4(0.6, 0.0, 0.0, 1.0);                   \n\
   } else if (textureNumU < 0.1) { colorTexture(sampler0);\n\
@@ -274,7 +274,7 @@ lModel = vMatU * lMatU * vec4(lightPosU, 1.0);\n\
 ";
 
     this.vertex["default"] = "\
-void main(void) {\n\
+void main(void) {                                         \n\
                   // -- Position -- //                    \n\
   gl_Position = pMatU * vMatU * mMatU * vec4(vPosA, 1.0); \n\
                                                           \n\
@@ -295,9 +295,7 @@ void main(void) {\n\
   diffuseV = dot(vertNorm, lightNorm);                    \n\
   if (diffuseV < 0.0) { diffuseV = 0.0; }                 \n\
 \n\
-}                                                         \n\
-\n\
-";
+}";
 }    
 
 

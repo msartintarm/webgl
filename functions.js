@@ -218,10 +218,14 @@ function _oSetShader(shader) {
  * switches two sets of triangle indexes around
  */
 function _oInvertNorms() {
+    var temp;
     for(var i = 0; i < this.o.data["index"].length; i += 3) {
-	this.o.data["index"][i] ^= this.o.data["index"][i+1];
-	this.o.data["index"][i+1] ^= this.o.data["index"][i];
-	this.o.data["index"][i] ^= this.o.data["index"][i+1];
+	temp = this.o.data["index"][i + 2];
+	this.o.data["index"][i + 2] = this.o.data["index"][i + 1];
+	this.o.data["index"][i + 1] = temp;
+    }
+    for(var i = 0; i < this.o.data["norm"].length; i += 1) {
+	this.o.data["norm"][i] = -this.o.data["norm"][i];
     }
     return this;
 }

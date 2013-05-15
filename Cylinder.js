@@ -1,3 +1,6 @@
+/*
+ * You view the exterior of the cylinder.
+ */
 function Cylinder(base_radius, top_radius, height, slices, stacks) { 
     this.o = new GLobject();
 
@@ -28,10 +31,10 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 	    var y = 1 * Math.sin(phi);
 
 	    var x_norm = x*xy;
-	    var y_norm = y*xy
+	    var y_norm = y*xy;
 	    // z norm = sin theta
 
-	    this.o.addNorms(x_norm, y_norm, z_norm);
+	    this.o.addNorms(-x_norm, -y_norm, -z_norm);
 	    this.o.addPos(radius * x, radius * y, z);
 	    this.o.addColors(colorVec[2],
 			     colorVec[1],
@@ -79,8 +82,8 @@ function Cylinder(base_radius, top_radius, height, slices, stacks) {
 		this.o.data["col"][3*D+2] = 1;
 	    }
 */
-	    this.o.addIndexes(A, B, C);
-	    this.o.addIndexes(B, D, C);
+	    this.o.addIndexes(A, C, B);
+	    this.o.addIndexes(B, C, D);
 	}
     }
 }

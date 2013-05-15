@@ -7,11 +7,12 @@ function ThickCyl(inner_radius, width, height, slices, stacks) {
     this.topDisk = this.Disk(inner_radius, 
 			     inner_radius + width, 
 			     slices, 
-			     stacks).invertNorms();
+			     stacks);
     this.bottomDisk = this.Disk(inner_radius, 
 				inner_radius + width, 
 				slices, 
-				stacks).translate([0, 0, height]);
+				stacks).flip();
+    this.bottomDisk.translate([0, 0, height]);
     this.innerCyl = this.Cyl(inner_radius, 
 			     inner_radius, 
 			     height, 

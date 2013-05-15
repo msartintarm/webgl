@@ -283,6 +283,12 @@ GLobject.prototype.bufferElements = function(gl_, elem_name) {
 
 // Flip across the Z-axis.
 GLobject.prototype.flip = function(vec) {
+    var temp;
+    for(var i = 0; i < this.data["index"].length; i += 3) {
+	temp = this.data["index"][i + 2];
+	this.data["index"][i + 2] = this.data["index"][i + 1];
+	this.data["index"][i + 1] = temp;
+    }
     for(var i = 0; i < this.data["pos"].length; i += 3) {
 	this.data["pos"][i+2] = -this.data["pos"][i+2];
 	this.data["norm"][i+2] = -this.data["norm"][i+2];
@@ -290,15 +296,15 @@ GLobject.prototype.flip = function(vec) {
     return this;
 };
 
-// Rotate around the Y-axis
+// Rotate 90 degrees around the Y-axis
 GLobject.prototype.rotateXZ = function(vec) {
     var temp;
     for(var i = 0; i < this.data["pos"].length; i += 3) {
-	temp = this.data["pos"][i];
-	this.data["pos"][i]   = -this.data["pos"][i+2];
+	temp = -this.data["pos"][i];
+	this.data["pos"][i]   = this.data["pos"][i+2];
 	this.data["pos"][i+2] = temp;
-	temp = this.data["norm"][i];
-	this.data["norm"][i]   = -this.data["norm"][i+2];
+	temp = -this.data["norm"][i];
+	this.data["norm"][i]   = this.data["norm"][i+2];
 	this.data["norm"][i+2] = temp;
     }
     return this;

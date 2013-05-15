@@ -56,7 +56,7 @@ function StadiumPiece(room_size, walls, movingWalls, textures,
     b = vec3.fromValues(-this.size/2, 0,-this.size/2);
     c = vec3.fromValues( this.size/2, 0, this.size/2);
     d = vec3.fromValues( this.size/2, 0,-this.size/2);
-    this.qFloor = this.Quad(a, b, c, d).setTexture(TILE_TEXTURE);
+    this.qFloor = this.Quad(a, b, c, d).flip().setTexture(TILE_TEXTURE);
 
  /*
    It gets a little confusing in here.  We never share walls, so to preserve
